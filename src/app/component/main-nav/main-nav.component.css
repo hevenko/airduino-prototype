@@ -30,4 +30,6 @@
   left: 00;
   right: 0;
 }
-
+.spacer {
+  flex: 1 1 auto;
+}

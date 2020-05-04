@@ -1,3 +1,8 @@
+          <div class="row">
+            <div class="col-md-3">
+              <div shadow-sm p-3 mb-5 bg-white rounded>teks</div>
+            </div>
+          </div>
 <mat-sidenav-container class="sidenav-container">  
   <mat-sidenav #drawer class="sidenav" fixedInViewport
       [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
@@ -13,22 +18,18 @@
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
-    <div class="row">
-      <div class="col-md-10">
+    <mat-toolbar>
         <button
         type="button"
         aria-label="Toggle sidenav"
         mat-icon-button
         (click)="drawer.toggle()">
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
-      </button>
-  
-      </div>
-      <div class="col-md-2">
-        <app-location></app-location>
+        </button>
+        <span class="spacer"></span>
         <app-sensor></app-sensor>
-      </div>
-    </div>
+        <app-location></app-location>
+    </mat-toolbar>
     <mat-divider></mat-divider>
     <ng-content></ng-content>
   </mat-sidenav-content>

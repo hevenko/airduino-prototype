@@ -1,11 +1,17 @@
-<div appDropdown class="dropdown pull-right">
+<div appDropdown class="dropdown pull-right" style="margin-left:10px">
     <a class="dropdown-toogle" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
         4 locations<span class="caret"></span>
       </a> 
     <div class="dropdown-menu" style="padding: 5px;" id="collapseExample">
         <mat-radio-group aria-label="Select an option">
-            <mat-radio-button value="1">Option 1</mat-radio-button>
+            <mat-radio-button value="1">Option 1</mat-radio-button><br>
             <mat-radio-button value="2">Option 2</mat-radio-button>
+            <select matNativeControl style="margin-left: 5px;">
+                <option value="volvo">Volvo</option>
+                <option value="saab">Saab</option>
+                <option value="mercedes">Mercedes</option>
+                <option value="audi">Audi</option>
+              </select>
         </mat-radio-group>
     </div>
 </div>
