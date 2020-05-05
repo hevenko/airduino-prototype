@@ -7,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LocationComponent implements OnInit {
 
+  selectedOption: string;
+
   constructor() { }
 
   ngOnInit(): void {
