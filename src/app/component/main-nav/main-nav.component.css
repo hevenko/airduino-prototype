@@ -11,7 +11,7 @@
   align-items: center;
   justify-content: center;
   width: 200px;
-  background: rgba(255, 0, 0, 0.5);
+  background: rgb(132, 61, 61);
 }
 
 .sidenav .mat-toolbar {
@@ -32,4 +32,8 @@
 }
 .spacer {
   flex: 1 1 auto;
+}
+
+mat-nav-list a.mat-list-item {
+  color: white;
 }
