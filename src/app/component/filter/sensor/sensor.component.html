@@ -1,7 +1,7 @@
 <form [formGroup]="compForm">
     <div appDropdown class="dropdown pull-right">
         <a class="dropdown-toogle" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-            {{getLabel()}}<span class="caret"></span>
+            <span [innerHTML]="getLabel()"></span><span class="caret"></span>
         </a> 
         <div class="dropdown-menu" style="padding: 15px;" id="collapseExample">
             <ng-container formArrayName="sensors" *ngFor="let s of getSensorControls();let i = index">
