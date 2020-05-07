@@ -8,17 +8,25 @@ import { MatInputModule } from '@angular/material/input';
   styleUrls: ['./time.component.css']
 })
 export class TimeComponent implements OnInit, AfterViewInit {
-  values = [
+  hoursTime = [
     {value: '1', desc: 'Last hour'},
     {value: '2', desc: 'Last 3 hours'},
     {value: '3', desc: 'Last 12 hours'},
     {value: '4', desc: 'Last 24 hours'},
     {value: '5', desc: 'Last week'}
-  ];tref
-
+  ];
+  customTimeUnits = [
+    {value: '0', desc: 'Hours'},
+    {value: '1', desc: 'Days'},
+    {value: '2', desc: 'Weeks'},
+    {value: '3', desc: 'Years'}
+  ];
   timeForm: FormGroup = new FormGroup({});
-  label = 'Period';
-  
+  defaultLabel = 'Time period';
+  label = this.defaultLabel;
+  date: any;
+  @ViewChild('customTime') customTime: ElementRef;
+
   constructor() { }
 
   ngOnInit(): void {
@@ -33,10 +41,30 @@ export class TimeComponent implements OnInit, AfterViewInit {
       customUnits: new FormControl()
     })
   }
-  setLabel(ind: number) {
-    this.label = this.values[ind].desc;
+  setVariableTimeLabel(ind: number) {    
+    this.label = this.hoursTime[ind].desc;
+    this.clearCustomTime();
+  }
+  setCustomTimeLabel(value: string, timeUnit: number) {
+    // console.log(evt);
+    if (value !== '') {
+      this.label = value + ' ' + this.customTimeUnits[timeUnit].desc;
+    } else {
+      this.label = this.defaultLabel;
+    }
+  }
+  setFixedTimeLabel(evt: any) {
+    if (evt.target.value !== '') {
+      this.label = evt.targetElement ? evt.targetElement.value : evt.target.value;
+    } else {
+      this.label = this.defaultLabel;
+    }
+    this.clearCustomTime();
   }
   popup(str: string) {
     alert(str);
+  }
+  clearCustomTime() {  
+    this.customTime.nativeElement.value = '';
   }
 }

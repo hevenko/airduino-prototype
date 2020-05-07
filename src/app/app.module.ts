@@ -23,6 +23,8 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { TimeComponent } from './component/filter/time/time.component';
 import { MatInputModule } from '@angular/material/input';
+import { SatDatepickerModule, SatNativeDateModule } from 'saturn-datepicker';
+import {MatDatepickerModule} from "@angular/material/datepicker";
 
 @NgModule({
   declarations: [
@@ -51,7 +53,10 @@ import { MatInputModule } from '@angular/material/input';
     MatCheckboxModule,
     MatSelectModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    SatDatepickerModule, 
+    SatNativeDateModule,
+    MatDatepickerModule
   ],
   providers: [],
   bootstrap: [AppComponent]
