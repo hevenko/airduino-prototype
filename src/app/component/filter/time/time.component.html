@@ -1,0 +1,22 @@
+<form [formGroup]="timeForm">
+  <div appDropdown class="dropdown pull-right" style="margin-right: 4px;" >
+      <a class="dropdown-toogle" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+          <span [innerHTML]="label"></span><span class="caret"></span>
+      </a>
+      <div class="dropdown-menu" style="padding: 15px;" id="collapseExample">
+        <ng-container *ngFor="let s of values;let i = index">
+          <a style="display: block;" (click)="setLabel(i)">{{s.desc}}</a>
+          <div style="text-align: left;" *ngIf="i === (values.length - 1)">
+            <input placeholder="Custom" size="5" style="border: 0px;background: transparent;">
+            <select style="margin-left: 5px;">
+              <option value="1">Hours</option>
+              <option value="2">Days</option>
+              <option value="3">Weeks</option>
+              <option value="4">Years</option>
+            </select>
+          </div>
+        </ng-container>
+        <mat-divider></mat-divider>
+      </div>
+  </div>
+</form> 

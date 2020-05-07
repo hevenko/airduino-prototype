@@ -1,0 +1,14 @@
+div {
+    background-color: inherit;
+    cursor: pointer;
+}
+a {
+    font-size: 14px;
+    font-weight: normal;
+    text-decoration: none;
+}
+.vertical-radio-group {
+    display: flex;
+    flex-direction: column;
+    margin: 15px 0;
+  }

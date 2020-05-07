@@ -21,6 +21,8 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 import { SensorComponent } from './component/filter/sensor/sensor.component';
 import {MatSelectModule} from '@angular/material/select';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import { TimeComponent } from './component/filter/time/time.component';
+import { MatInputModule } from '@angular/material/input';
 
 @NgModule({
   declarations: [
@@ -28,7 +30,8 @@ import {MatFormFieldModule} from '@angular/material/form-field';
     MainNavComponent,
     DropdownDirective,
     LocationComponent,
-    SensorComponent
+    SensorComponent,
+    TimeComponent
   ],
   imports: [
     FormsModule,
@@ -47,7 +50,8 @@ import {MatFormFieldModule} from '@angular/material/form-field';
     MatRadioModule,
     MatCheckboxModule,
     MatSelectModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    MatInputModule
   ],
   providers: [],
   bootstrap: [AppComponent]
