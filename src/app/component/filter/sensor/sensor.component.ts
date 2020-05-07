@@ -36,6 +36,6 @@ export class SensorComponent implements OnInit {
     const label = this.compForm.value.sensors
       .map((v, i) => (v ? i === 0 ? this.values[i].label :  ' ' + this.values[i].label : null))
       .filter(v => v !== null);
-    return !!label && label.length > 0  ? label : 'sensors';
+    return !!label && label.length > 0  ? label : 'Sensors';
   }
 }
