@@ -1,14 +1,14 @@
 <div appDropdown class="dropdown pull-right">
-    <a class="dropdown-toogle" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false"
-        aria-controls="collapseExample">
+    <a class="dropdown-toogle" data-toggle="collapse" href="#locationComponentDropdown" role="button" aria-expanded="false"
+        aria-controls="locationComponentDropdown">
         4 locations
         <span class="caret"></span>
     </a>
-    <div class="dropdown-menu" style="padding: 5px;" id="collapseExample">
+    <div class="dropdown-menu" style="padding: 5px;" id="locationComponentDropdown">
         <mat-radio-group aria-label="Select an option" [(ngModel)]="selectedOption">
             <mat-radio-button value="1">My devices</mat-radio-button><br>
             <mat-radio-button value="2">Region</mat-radio-button>
-            <select matNativeControl style="margin-left: 5px;">
+            <select style="margin-left: 5px;">
                 <option value="1">Varaždin</option>
                 <option value="2">Radovan</option>
                 <option value="3">Čakovec</option>
