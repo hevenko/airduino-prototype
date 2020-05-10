@@ -1,9 +1,9 @@
 <form [formGroup]="compForm">
     <div appDropdown class="dropdown pull-right">
-        <a class="dropdown-toogle" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+        <a class="dropdown-toogle" data-toggle="collapse" href="#senssorComponentDropdown" role="button" aria-expanded="false" aria-controls="senssorComponentDropdown">
             <span [innerHTML]="getLabel()"></span><span class="caret"></span>
         </a> 
-        <div class="dropdown-menu" style="padding: 15px;" id="collapseExample">
+        <div class="dropdown-menu" style="padding: 15px;" id="senssorComponentDropdown">
             <ng-container formArrayName="sensors" *ngFor="let s of getSensorControls();let i = index">
                 <mat-checkbox formControlName="{{i}}">{{values[i].desc}}</mat-checkbox ><br>
             </ng-container>
