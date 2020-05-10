@@ -1,9 +1,9 @@
 <form [formGroup]="timeForm">
-  <div class="dropdown pull-right" style="margin-right: 4px;" >
-      <a class="dropdown-toogle" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+  <div appDropdown [class.calendarOpen]="calendarIsOpened" class="dropdown pull-right" style="margin-right: 4px;">
+      <a class="dropdown-toogle" data-toggle="collapse" href="#timeCoponentDropdown" role="button" aria-expanded="false" aria-controls="timeCoponentDropdown">
           <span [innerHTML]="label"></span><span class="caret"></span>
       </a>
-      <div class="dropdown-menu" style="padding: 15px;" id="collapseExample">
+      <div class="dropdown-menu" style="padding: 15px;" id="timeCoponentDropdown">
         <ng-container *ngFor="let s of hoursTime;let i = index">
           <a style="display: block;" (click)="setVariableTimeLabel(i)">{{s.desc}}</a>
           <div style="text-align: left;" *ngIf="i === (hoursTime.length - 1)">
@@ -18,10 +18,10 @@
         <mat-form-field>
           <input matInput placeholder="fixed date range" 
               (keyup)="setFixedTimeLabel($event)"
-              (dateChange)="setFixedTimeLabel($event)"
+              (dateInput)="setFixedTimeLabel($event)"
               [satDatepicker]="picker"
               [value]="date">
-          <sat-datepicker #picker [rangeMode]="true"></sat-datepicker>
+          <sat-datepicker #picker [rangeMode]="true" (opened)="setCalendarIsOpen(true)" (closed)="setCalendarIsOpen(false)"></sat-datepicker>
           <sat-datepicker-toggle matSuffix [for]="picker"></sat-datepicker-toggle>
         </mat-form-field>
       </div>

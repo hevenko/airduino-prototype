@@ -26,6 +26,7 @@ export class TimeComponent implements OnInit, AfterViewInit {
   label = this.defaultLabel;
   date: any;
   @ViewChild('customTime') customTime: ElementRef;
+  calendarIsOpened: boolean = false; // prvends the directive to close component upon date select
 
   constructor() { }
 
@@ -66,5 +67,8 @@ export class TimeComponent implements OnInit, AfterViewInit {
   }
   clearCustomTime() {  
     this.customTime.nativeElement.value = '';
+  }
+  setCalendarIsOpen(isopened: boolean) {
+    this.calendarIsOpened = isopened;
   }
 }
