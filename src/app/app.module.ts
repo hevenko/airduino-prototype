@@ -25,6 +25,7 @@ import { TimeComponent } from './component/filter/time-filter/time.component';
 import { MatInputModule } from '@angular/material/input';
 import { SatDatepickerModule, SatNativeDateModule } from 'saturn-datepicker';
 import {MatDatepickerModule} from "@angular/material/datepicker";
+import { PresetFilterComponent } from './component/filter/preset-filter/preset-filter.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import {MatDatepickerModule} from "@angular/material/datepicker";
     DropdownDirective,
     LocationComponent,
     SensorComponent,
-    TimeComponent
+    TimeComponent,
+    PresetFilterComponent
   ],
   imports: [
     FormsModule,

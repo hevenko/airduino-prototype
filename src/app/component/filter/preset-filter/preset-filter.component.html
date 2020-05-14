@@ -1,0 +1,37 @@
+<form [formGroup]="presetForm">
+  <div appDropdown [ngClass]="dialogIsOpen ? stayOpened :''" class="dropdown pull-right" style="margin-right: 4px;">
+    <a class="dropdown-toogle" data-toggle="collapse" href="#presetCoponentDropdown" role="button" aria-expanded="false"
+      aria-controls="presetCoponentDropdown">
+      <span [innerHTML]="label"></span><span class="caret"></span>
+    </a>
+    <div class="dropdown-menu" style="padding: 15px;" id="presetCoponentDropdown">
+      <mat-form-field style="width: 100%;">
+        <input matInput placeholder="Search preset filters">
+        <mat-icon matSuffix (click)="searchPresetFilters()">search</mat-icon>
+      </mat-form-field>
+      <table style="width: 100%;white-space: nowrap;margin-bottom: 10px;">
+        <ng-container *ngFor="let s of filters;let i = index">
+          <tr>
+            <td>
+              <a (click)="setLabel(i)">{{s.desc}}</a>
+            </td>
+            <td style="padding-left: 10px;">
+              <button type="button" mat-stroked-button class="pull-right">
+                <mat-icon style="color: warn;">report_problem</mat-icon>
+              </button>
+            </td>
+          </tr>
+        </ng-container>
+      </table>
+      <mat-divider></mat-divider>
+      <a style="display: block;">
+        <span class="glyphicon glyphicon-check"></span>
+        <span style="margin-left: 10px;"> Save current values in this filter</span>
+      </a>
+      <a style="display: block;">
+        <span class="glyphicon glyphicon-plus"></span>
+        <span style="margin-left: 10px;"> Save current values as new filter</span>
+      </a>
+    </div>
+  </div>
+</form>

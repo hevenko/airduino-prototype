@@ -1,0 +1,15 @@
+div {
+  background-color: inherit;
+  cursor: pointer;
+}
+a {
+  font-size: 14px;
+  font-weight: normal;
+  text-decoration: none;
+}
+.spacer {
+  flex: 1 1 auto;
+}
+table tr td {
+  padding-bottom: 2px;
+}
