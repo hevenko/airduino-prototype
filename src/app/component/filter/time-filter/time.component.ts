@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
+import { Constants } from 'src/app/shared/constants';
 
 @Component({
   selector: 'app-time',
@@ -26,12 +27,14 @@ export class TimeComponent implements OnInit, AfterViewInit {
   label = this.defaultLabel;
   date: any;
   @ViewChild('customTime') customTime: ElementRef;
-  calendarIsOpened: boolean = false; // the class prevents the directive from closing component upon date select
+  calendarIsOpen: boolean = false;
+  stayOpened = Constants.STAY_OPEN;
 
   constructor() { }
 
   ngOnInit(): void {
     this.initForm();
+    Constants
   }
   ngAfterViewInit() {
   }
@@ -69,6 +72,6 @@ export class TimeComponent implements OnInit, AfterViewInit {
     this.customTime.nativeElement.value = '';
   }
   setCalendarIsOpen(isopened: boolean) {
-    this.calendarIsOpened = isopened;
+    this.calendarIsOpen = isopened;
   }
 }

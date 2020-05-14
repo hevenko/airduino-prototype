@@ -1,5 +1,5 @@
 <form [formGroup]="timeForm">
-  <div appDropdown [class.calendarOpen]="calendarIsOpened" class="dropdown pull-right" style="margin-right: 4px;">
+  <div appDropdown [ngClass]="calendarIsOpen ? stayOpened :''" class="dropdown pull-right" style="margin-right: 4px;">
       <a class="dropdown-toogle" data-toggle="collapse" href="#timeCoponentDropdown" role="button" aria-expanded="false" aria-controls="timeCoponentDropdown">
           <span [innerHTML]="label"></span><span class="caret"></span>
       </a>
