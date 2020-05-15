@@ -16,8 +16,8 @@
               <a (click)="setLabel(i)">{{s.desc}}</a>
             </td>
             <td style="padding-left: 10px;">
-              <button type="button" mat-stroked-button class="pull-right">
-                <mat-icon style="color: warn;">report_problem</mat-icon>
+              <button type="button" mat-stroked-button class="pull-right" (click)="openAlertSettingsDialog()">
+                <mat-icon style="color: warn;">{{filterEnabledIcon}}</mat-icon>
               </button>
             </td>
           </tr>
