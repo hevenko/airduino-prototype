@@ -1,0 +1,21 @@
+<mat-label>{{title}}</mat-label>
+<table>
+  <tr *ngFor="let s of sensors;let i = index" class="flex-container">
+    <td>
+      <mat-label style="margin-right:10px">{{sensors[i].desc}}</mat-label>
+    </td>
+    <td>
+      <mat-form-field style="margin-right:10px">
+        <input matInput type="text" placeholder="Treshold">
+      </mat-form-field>
+    </td>
+    <td>
+      <mat-radio-group aria-label="Select an option" class="radio-label-above">
+        <mat-radio-button value="1">{{i === 0 ? 'Min' : ''}}</mat-radio-button>
+        <!-- <input class="mat-radio-button" type="radio" id="male" name="gender" value="male"> -->
+        <!-- <input class="mat-radio-button" type="radio" id="female" name="gender" value="female"> -->
+        <mat-radio-button value="2">{{i === 0 ? 'Max' : ''}}</mat-radio-button>
+      </mat-radio-group>
+    </td>
+  </tr>
+</table>  
