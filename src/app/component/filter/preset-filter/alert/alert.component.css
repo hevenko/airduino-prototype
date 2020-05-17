@@ -7,3 +7,9 @@ table {
   align-items: flex-end !important;
   width: 35px;
 }
+::ng-deep .mat-input-element {
+  width:100px !important;
+}
+::ng-deep .mat-radio-label-content {
+  margin-bottom: 5px;
+}
