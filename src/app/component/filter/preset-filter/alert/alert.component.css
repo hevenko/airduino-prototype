@@ -2,14 +2,14 @@ table {
   border-spacing: 2px;
   border-collapse: separate;
 }
-.radio-label-above::ng-deep.mat-radio-label  {
+:host .radio-label-above ::ng-deep .mat-radio-label  {
   flex-direction: column-reverse !important;
   align-items: flex-end !important;
   width: 35px;
 }
-::ng-deep .mat-input-element {
+:host ::ng-deep .mat-input-element {
   width:100px !important;
 }
-::ng-deep .mat-radio-label-content {
+:host ::ng-deep .mat-radio-label-content {
   margin-bottom: 5px;
 }
