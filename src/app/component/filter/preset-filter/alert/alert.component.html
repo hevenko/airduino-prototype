@@ -17,23 +17,18 @@
     </td>
   </tr>
 </table>
-<table style="width: 100%;margin-top: 15px;margin-bottom: 15px;">
-  <tr>
-    <td style="width:50%">
-      <mat-slide-toggle labelPosition='before'>
-        Enabled
-      </mat-slide-toggle>
-    </td>
-    <td style="text-align: right;">
-      <label for="action" style="margin-right: 10px">Action</label>
-      <select id="action">
-        <option *ngFor="let act of actions" [value]="act.value">
-          {{act.desc}}
-        </option>
-      </select>
-    </td>
-  </tr>
-</table>
+<div style="display: flex; align-items: center; margin-top: 25px; margin-bottom: 25px">
+  <mat-slide-toggle labelPosition='before'>
+    Enabled
+  </mat-slide-toggle>
+  <span class="spacer"></span>
+  <label class="example-label" for="action" style="margin-right: 10px;margin-bottom: 0px;">Action</label>
+  <mat-select id="action" style="width: 70px;border-bottom: 1px solid;">
+    <mat-option *ngFor="let act of actions" [value]="act.value">
+      {{act.desc}}
+    </mat-option>
+  </mat-select>
+</div>
 <div mat-dialog-actions align="end">
   <button mat-stroked-button mat-dialog-close style="margin-right: 5px;">Cancel</button>
   <button mat-stroked-button mat-dialog-close>Confirm</button>

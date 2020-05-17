@@ -13,3 +13,7 @@ table {
 :host ::ng-deep .mat-radio-label-content {
   margin-bottom: 5px;
 }
+  
+.spacer {
+  flex: 1 1 auto;
+}
