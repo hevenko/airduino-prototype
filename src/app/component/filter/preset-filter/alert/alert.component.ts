@@ -14,7 +14,10 @@ export class AlertComponent implements OnInit {
     {value: '4', desc: 'Nitroux oxide NOX'},
     {value: '5', desc: 'Organic burn'}
   ];
-
+  actions = [
+    {value: '1', desc: 'email'},
+    {value: '2', desc: 'sms'},
+  ];
   constructor() { }
 
   ngOnInit(): void {

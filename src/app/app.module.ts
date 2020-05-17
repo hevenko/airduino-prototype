@@ -27,6 +27,7 @@ import { SatDatepickerModule, SatNativeDateModule } from 'saturn-datepicker';
 import {MatDatepickerModule} from "@angular/material/datepicker";
 import { PresetFilterComponent } from './component/filter/preset-filter/preset-filter.component';
 import { AlertComponent } from './component/filter/preset-filter/alert/alert.component';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 
 @NgModule({
   declarations: [
@@ -60,7 +61,8 @@ import { AlertComponent } from './component/filter/preset-filter/alert/alert.com
     MatInputModule,
     SatDatepickerModule, 
     SatNativeDateModule,
-    MatDatepickerModule
+    MatDatepickerModule,
+    MatSlideToggleModule
   ],
   providers: [],
   bootstrap: [AppComponent]
