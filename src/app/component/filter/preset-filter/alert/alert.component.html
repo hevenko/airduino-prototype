@@ -1,21 +1,50 @@
 <mat-label>{{title}}</mat-label>
-<table>
-  <tr *ngFor="let s of sensors;let i = index" class="flex-container">
-    <td style="padding-bottom: 5px; vertical-align: bottom;">
-      <mat-label style="margin-right:30px">{{sensors[i].desc}}</mat-label>
-    </td>
-    <td style="padding-bottom: 5px; vertical-align: bottom;">
-      <input matInput type="text" placeholder="Treshold">
-    </td>
-    <td>
-      <mat-radio-group aria-label="Select an option" class="radio-label-above">
-        <mat-radio-button value="1">{{i === 0 ? 'Min' : ''}}</mat-radio-button>
+<table id="sensors">
+  <thead>
+    <tr>
+      <td></td>
+      <td></td>
+      <td>
+        <table class="radio-group">
+          <tr>
+            <td>
+              <label>Min</label>
+            </td>
+            <td></td>
+            <td>
+              <label>Max</label>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let s of sensors;let i = index" class="flex-container">
+      <td style="padding-bottom: 5px; vertical-align: bottom;">
+        <mat-label style="margin-right:30px">{{sensors[i].desc}}</mat-label>
+      </td>
+      <td style="padding-bottom: 5px; vertical-align: bottom;">
+        <input matInput style="text-align: center;" type="text" placeholder="Treshold">
+      </td>
+      <td>
+        <mat-radio-group aria-label="Select an option" class="radio-label-above">
+          <table class="radio-group">
+            <tr>
+              <td>
+                <mat-radio-button value="min"></mat-radio-button>
+              </td>
+              <td></td>
+              <td>
+                <mat-radio-button class="radio-max" value="max"></mat-radio-button>
+              </td>
+            </tr>
+          </table>
+        </mat-radio-group>
         <!-- <input class="mat-radio-button" type="radio" id="male" name="gender" value="male"> -->
         <!-- <input class="mat-radio-button" type="radio" id="female" name="gender" value="female"> -->
-        <mat-radio-button value="2">{{i === 0 ? 'Max' : ''}}</mat-radio-button>
-      </mat-radio-group>
-    </td>
-  </tr>
+    </tr>
+  </tbody>
 </table>
 <div style="display: flex; align-items: center; margin-top: 25px; margin-bottom: 25px">
   <mat-slide-toggle labelPosition='before'>

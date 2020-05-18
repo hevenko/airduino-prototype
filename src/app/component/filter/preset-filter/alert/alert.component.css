@@ -1,3 +1,15 @@
+::ng-deep #sensors table td:nth-child(3) label {
+  abackground-color: red;
+  align-items: flex-start !important;
+  amargin-left: 1rem;
+}
+
+::ng-deep #sensors table td:nth-child(2) {
+  abackground-color: red;
+  min-width: 1rem;
+  amargin-left: 1rem;
+}
+
 table { 
   border-spacing: 2px;
   border-collapse: separate;
@@ -16,4 +28,36 @@ table {
   
 .spacer {
   flex: 1 1 auto;
+}
+
+table thead tr table, table tbody tr table {
+  min-width: 8rem;
+  width: 100%;
+}
+
+table thead tr table tr td:nth-child(1), table thead tr table tr td:nth-child(3) {
+  width: 50%;
+}
+
+table thead tr table tr td:nth-child(1) {
+  text-align: right;
+}
+
+/*
+table/tbody/tr[1]/td[3]/mat-radio-group/table/tr/td[2]/mat-radio-button/label
+
+table tbody tr:nth-child(1) td:nth-child(3) mat-radio-group table tr td:nth-child(2) mat-radio-button label {
+
+  table tbody tr td:nth-child(3) mat-radio-group table tr td:nth-child(2) mat-radio-button label {
+
+  */
+
+
+mat-radio-button .mat-radio-label {
+  background-color: red !important;
+}
+
+mat-radio-button label {
+  background-color: red !important;
+  align-items: flex-start !important;
 }
