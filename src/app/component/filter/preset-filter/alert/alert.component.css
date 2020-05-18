@@ -1,13 +1,9 @@
 ::ng-deep #sensors table td:nth-child(3) label {
-  abackground-color: red;
   align-items: flex-start !important;
-  amargin-left: 1rem;
 }
 
 ::ng-deep #sensors table td:nth-child(2) {
-  abackground-color: red;
   min-width: 1rem;
-  amargin-left: 1rem;
 }
 
 table { 
