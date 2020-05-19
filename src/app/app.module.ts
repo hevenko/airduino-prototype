@@ -28,6 +28,7 @@ import {MatDatepickerModule} from "@angular/material/datepicker";
 import { PresetFilterComponent } from './component/filter/preset-filter/preset-filter.component';
 import { AlertComponent } from './component/filter/preset-filter/alert/alert.component';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import { MapComponent } from './component/map/map.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
     SensorComponent,
     TimeComponent,
     PresetFilterComponent,
-    AlertComponent
+    AlertComponent,
+    MapComponent
   ],
   imports: [
     FormsModule,
