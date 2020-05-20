@@ -1,9 +1,9 @@
-<mat-sidenav-container class="sidenav-container" [hasBackdrop]="true">
+<mat-sidenav-container class="sidenav-container" [hasBackdrop]="false">
   <mat-sidenav #drawer class="sidenav" fixedInViewport [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
     [mode]="'over'" [opened]="false">
     <mat-nav-list>
       <a mat-list-item href="#">Devices</a>
-      <a mat-list-item href="#">Map</a>
+      <a mat-list-item [routerLink]="'/map'">Map</a>
       <a mat-list-item href="#">Graph</a>
       <a mat-list-item href="#">Raw data</a>
       <a mat-list-item href="#">User</a>
