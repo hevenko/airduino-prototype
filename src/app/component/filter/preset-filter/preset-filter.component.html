@@ -1,10 +1,10 @@
 <form [formGroup]="presetForm">
   <div appDropdown [ngClass]="dialogIsOpen ? stayOpened :''" class="dropdown pull-right" style="margin-right: 4px;">
-    <a class="dropdown-toogle" data-toggle="collapse" href="#presetCoponentDropdown" role="button" aria-expanded="false"
+    <a class="dropdown-toogle" data-toggle="collapse" href="#presetCoponentDropdown" onclick="return false" role="button" aria-expanded="false"
       aria-controls="presetCoponentDropdown">
       <span [innerHTML]="label"></span><span class="caret"></span>
     </a>
-    <div class="dropdown-menu" style="padding: 15px;" id="presetCoponentDropdown">
+    <div class="dropdown-menu filter-menu-expanded" style="padding: 15px" id="presetCoponentDropdown">
       <mat-form-field style="width: 100%;">
         <input matInput placeholder="Search preset filters">
         <mat-icon matSuffix (click)="searchPresetFilters()">search</mat-icon>
