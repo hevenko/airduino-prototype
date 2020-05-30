@@ -1,0 +1,17 @@
+table {
+  width: 100%;
+}
+tr.example-detail-row {
+  height: 0;
+}
+
+/* table tr td {
+  border: 1px solid
+} */
+.expandable-row {
+  border-bottom: 1px solid rgba(0, 0, 0, .1);
+  background-color: #fafafa;
+  min-height: 0;
+  height: 0;
+  overflow: hidden;
+}

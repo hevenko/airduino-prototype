@@ -29,6 +29,13 @@ import { PresetFilterComponent } from './component/filter/preset-filter/preset-f
 import { AlertComponent } from './component/filter/preset-filter/alert/alert.component';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { MapComponent } from './component/map/map.component';
+import {MatTableModule} from '@angular/material/table';
+import { HttpClientModule } from '@angular/common/http';
+import { UserListComponent } from './component/user-devices/user-list.component';
+import { RemoteLoDService } from './component/user-devices/remote-lod.service';
+import { DeviceListComponent } from './component/user-devices/device-list/device-list.component';
+import { NewDeviceComponent } from './component/user-devices/new-device/new-device.component';
+import {MatDialogModule} from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -40,7 +47,10 @@ import { MapComponent } from './component/map/map.component';
     TimeComponent,
     PresetFilterComponent,
     AlertComponent,
-    MapComponent
+    MapComponent,
+    UserListComponent,
+    DeviceListComponent,
+    NewDeviceComponent
   ],
   imports: [
     FormsModule,
@@ -64,9 +74,12 @@ import { MapComponent } from './component/map/map.component';
     SatDatepickerModule, 
     SatNativeDateModule,
     MatDatepickerModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatTableModule,
+    HttpClientModule,
+    MatDialogModule
   ],
-  providers: [],
+  providers: [RemoteLoDService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
