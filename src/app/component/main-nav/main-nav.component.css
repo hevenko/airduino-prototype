@@ -1,4 +1,4 @@
-.sidenav-container {
+ .sidenav-container {
   position: absolute;
   top: 0px;
   bottom: 0px;
@@ -13,7 +13,6 @@
   width: 200px;
   background: rgb(132, 61, 61);
 }
-
 .sidenav .mat-toolbar {
   background: inherit;
 }
@@ -24,12 +23,6 @@
   z-index: 1;
 }
 
-.example-header {
-  position: fixed;
-  top: 0;
-  left: 00;
-  right: 0;
-}
 .spacer {
   flex: 1 1 auto;
 }
