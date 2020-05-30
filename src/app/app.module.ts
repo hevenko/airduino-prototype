@@ -36,6 +36,7 @@ import { RemoteLoDService } from './component/user-devices/remote-lod.service';
 import { DeviceListComponent } from './component/user-devices/device-list/device-list.component';
 import { NewDeviceComponent } from './component/user-devices/new-device/new-device.component';
 import {MatDialogModule} from '@angular/material/dialog';
+import { DeviceSensorComponent } from './component/user-devices/device-sensor/device-sensor.component';
 
 @NgModule({
   declarations: [
@@ -50,7 +51,8 @@ import {MatDialogModule} from '@angular/material/dialog';
     MapComponent,
     UserListComponent,
     DeviceListComponent,
-    NewDeviceComponent
+    NewDeviceComponent,
+    DeviceSensorComponent
   ],
   imports: [
     FormsModule,
