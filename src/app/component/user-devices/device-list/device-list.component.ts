@@ -28,15 +28,15 @@ export class DeviceListComponent implements OnInit {
   }
   expandRow(element: any) {
 
-    let ind = this.expandedElement.map((e) => { return e.CustomerID }).indexOf(element.CustomerID);
+    let ind = this.expandedElement.map((e) => { return e.OrderID }).indexOf(element.OrderID);
     if (ind !== -1) {
       this.expandedElement.splice(ind, 1);
     } else {
       this.expandedElement.push(element);
     }
   }
-  shouldShowDetailRow(element: any): string {
-    let rezultat = this.expandedElement.map((e) => { return e.CustomerID }).indexOf(element.CustomerID) !== -1 ? 'expanded' : 'collapsed';
+  shouldShowDetailRow(element: any): boolean {
+    let rezultat = this.expandedElement.map((e) => { return e.OrderID }).indexOf(element.OrderID) !== -1;
     return rezultat;
   }
   consoleLog(parent: any) {
@@ -48,4 +48,8 @@ export class DeviceListComponent implements OnInit {
   deleteDeviceOnClick(event: any, element: any) {
 
   }
+  getChildDataState(element: any) {
+    return {key: 'Order_Details', parentID: element.OrderID, parentKey: 'OrderID', rootLevel: false};
+  }
+
 }

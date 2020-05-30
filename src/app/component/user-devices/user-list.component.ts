@@ -28,8 +28,8 @@ export class UserListComponent implements OnInit {
   rootData: IDataState = { key: 'Customers', parentID: '', parentKey: '', rootLevel: true };
   expandedElement: any[] = [];
   rowId = 0;
-  @ViewChild('detailComp') detailComp: DeviceListComponent;
   clickedUser: any;
+  @ViewChild('deviceList') deviceList: DeviceListComponent;
 
   constructor(private remoteService: RemoteLoDService, public dialog: MatDialog) { }
 
@@ -50,8 +50,8 @@ export class UserListComponent implements OnInit {
       this.expandedElement.push(element);
     }
   }
-  shouldShowDetailRow(element: any): string {
-    let rezultat = this.expandedElement.map((e) => { return e.CustomerID }).indexOf(element.CustomerID) !== -1 ? 'expanded' : 'collapsed';
+  shouldShowDetailRow(element: any): boolean {
+    let rezultat = this.expandedElement.map((e) => { return e.CustomerID }).indexOf(element.CustomerID) !== -1;
     return rezultat;
   }
   consoleLog(parent: any) {
@@ -74,7 +74,7 @@ export class UserListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if(!!result) {
-        this.expandRow(this.clickedUser);
+        this.deviceList.fetchData();
       }
     });
   }
