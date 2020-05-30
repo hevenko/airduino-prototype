@@ -45,8 +45,8 @@ export class DeviceListComponent implements OnInit {
   getRowId() {
     return this.rowId++;
   }
-  deleteDeviceOnClick(event: any, element: any) {
-
+  deleteDeviceOnClick(e: any, element: any) {
+    e.stopPropagation();
   }
   getChildDataState(element: any) {
     return {key: 'Order_Details', parentID: element.OrderID, parentKey: 'OrderID', rootLevel: false};
