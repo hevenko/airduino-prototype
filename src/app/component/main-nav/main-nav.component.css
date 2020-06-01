@@ -32,5 +32,5 @@ mat-sidenav-content {
     flex-direction: column;
 }
 ::ng-deep .mat-drawer-backdrop {
-  z-index: 199; /* one less than in .sidenav to hide device table sticky headers */
+  z-index: 199 !important; /* one less than in .sidenav to hide device table sticky headers */
 }
