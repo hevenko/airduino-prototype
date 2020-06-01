@@ -14,10 +14,10 @@
   background: rgb(132, 61, 61);
   z-index: 200; /* to hide device table sticky headers */
 }
+
 .sidenav .mat-toolbar {
   background: inherit;
 }
-
 
 .spacer {
   flex: 1 1 auto;
@@ -31,6 +31,7 @@ mat-sidenav-content {
     display: contents;
     flex-direction: column;
 }
+
 ::ng-deep .mat-drawer-backdrop {
   z-index: 199 !important; /* one less than in .sidenav to hide device table sticky headers */
 }
