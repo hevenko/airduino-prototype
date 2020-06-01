@@ -15,3 +15,7 @@ tr.example-detail-row {
   height: 0;
   overflow: hidden;
 }
+.example-container {
+  overflow: auto;
+  height: 100%;
+}
