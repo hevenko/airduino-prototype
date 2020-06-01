@@ -39,16 +39,6 @@ table thead tr table tr td:nth-child(1) {
   text-align: right;
 }
 
-/*
-table/tbody/tr[1]/td[3]/mat-radio-group/table/tr/td[2]/mat-radio-button/label
-
-table tbody tr:nth-child(1) td:nth-child(3) mat-radio-group table tr td:nth-child(2) mat-radio-button label {
-
-  table tbody tr td:nth-child(3) mat-radio-group table tr td:nth-child(2) mat-radio-button label {
-
-  */
-
-
 mat-radio-button .mat-radio-label {
   background-color: red !important;
 }
