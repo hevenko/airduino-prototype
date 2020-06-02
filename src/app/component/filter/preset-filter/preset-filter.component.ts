@@ -40,9 +40,12 @@ export class PresetFilterComponent implements OnInit {
   }
   openAlertSettingsDialog(): void {
     const dialogRef = this.dialog.open(AlertComponent);
-
+    this.setDialogIsOpen(true);
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
+      this.setDialogIsOpen(false);
     });
+  }
+  setDialogIsOpen(isOpen: boolean) {
+    this.dialogIsOpen = isOpen;
   }
 }
