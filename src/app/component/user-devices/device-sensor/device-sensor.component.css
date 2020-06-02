@@ -1,7 +1,3 @@
 table {
-  min-width: 300px
-}
-.sticky-table-header {
-  max-height: 150px;
-  overflow: auto;
+  width: 100%;
 }

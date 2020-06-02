@@ -1,11 +1,20 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { RemoteLoDService, IDataState, IoDataResponse, DataResponse } from '../remote-lod.service';
 import { Observable } from 'rxjs';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-device-list',
   templateUrl: './device-list.component.html',
-  styleUrls: ['./device-list.component.css']
+  styleUrls: ['./device-list.component.css'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({ height: '0px', minHeight: '0', visibility: 'hidden' })),
+      state('expanded', style({ height: '*', visibility: 'visible' })),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ]
+
 })
 export class DeviceListComponent implements OnInit {
   displayedColumns: string[] = ['OrderID', 'CustomerID', 'DeleteDevice'];

@@ -1,5 +1,6 @@
-table {
-  width: 100%;
+mat-table {
+  height: calc( 100vh - 41px);
+  overflow: auto;
 }
 tr.example-detail-row {
   height: 0;
@@ -11,11 +12,7 @@ tr.example-detail-row {
 .expandable-row {
   border-bottom: 1px solid rgba(0, 0, 0, .1);
   background-color: #fafafa;
-  min-height: 0;
-  height: 0;
+  /* min-height: 0;
+  height: 0; */
   overflow: hidden;
-}
-.example-container {
-  overflow: auto;
-  height: 100%;
 }
