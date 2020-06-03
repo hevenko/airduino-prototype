@@ -37,6 +37,8 @@ import { DeviceListComponent } from './component/user-devices/device-list/device
 import { NewDeviceComponent } from './component/user-devices/new-device/new-device.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import { DeviceSensorComponent } from './component/user-devices/device-sensor/device-sensor.component';
+import { AuthComponent } from './component/auth/auth.component';
+import { ShowMessageComponent } from './component/show-message/show-message.component';
 
 @NgModule({
   declarations: [
@@ -52,7 +54,9 @@ import { DeviceSensorComponent } from './component/user-devices/device-sensor/de
     UserListComponent,
     DeviceListComponent,
     NewDeviceComponent,
-    DeviceSensorComponent
+    DeviceSensorComponent,
+    AuthComponent,
+    ShowMessageComponent
   ],
   imports: [
     FormsModule,

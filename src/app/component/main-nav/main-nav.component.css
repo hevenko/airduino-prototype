@@ -33,4 +33,5 @@ mat-nav-list a.mat-list-item {
 mat-sidenav-content {
     display: flex;
     flex-direction: column;
+    background-color: white;
 }

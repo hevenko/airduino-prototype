@@ -1,0 +1,18 @@
+<div class="row" style="margin-top: 50px;">
+  <div class="col-xs-12 col-md-6 col-md-offset-3">
+    <form #authForm="ngForm" (ngSubmit)="onSubmit(authForm)">
+      <mat-form-field style="display: block;">
+        <mat-label>Email</mat-label>
+        <input matInput id="email" name="email" type="email" [(ngModel)]='email' required email>
+      </mat-form-field>
+      <mat-form-field style="display: block;">
+        <mat-label>Password</mat-label>
+        <input matInput id="password" name="password" type="password" [(ngModel)]='password' required>
+      </mat-form-field>
+      <div mat-dialog-actions align="end">
+        <button mat-button mat-stroked-button style="margin-right:5px;">Cancel</button>
+        <button mat-button mat-stroked-button [disabled]="!authForm.valid">Login</button>
+      </div>
+    </form>
+  </div>
+</div>

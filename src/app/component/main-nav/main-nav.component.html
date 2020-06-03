@@ -7,7 +7,7 @@
       <a mat-list-item >Graph</a>
       <a mat-list-item >Raw data</a>
       <a mat-list-item >User</a>
-      <a mat-list-item >Logout</a>
+      <a mat-list-item (click)="authenticationOnCick()">{{isAuthenticated ? 'Logout' : 'Login'}}</a>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
