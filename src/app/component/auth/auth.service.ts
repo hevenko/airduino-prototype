@@ -110,7 +110,7 @@ export class AuthService {
   logout() {
     localStorage.removeItem('userData');
     this.user.next(null);
-    this.messageService.messageBus.next(['You have been logg ed out']);
+    this.messageService.messageBus.next(['You have been logged out']);
     this.router.navigate(['/map']);
   }
 
