@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MessageService } from 'src/app/shared/service/message.service';
+import { MessageService, iMessage, MessageColor } from 'src/app/shared/service/message.service';
 
 @Component({
   selector: 'app-show-message',
@@ -7,11 +7,11 @@ import { MessageService } from 'src/app/shared/service/message.service';
   styleUrls: ['./show-message.component.css']
 })
 export class ShowMessageComponent implements OnInit {
-  errorMessages: string[] = [];
+  errorMessages: iMessage[] = [];
   constructor(private messageService: MessageService) { }
 
   ngOnInit() {
-    this.messageService.messageBus.subscribe(value => {
+    this.messageService.messageBus.subscribe((value: iMessage[]) => {
       if (!!value && value.length > 0) {
         this.errorMessages = this.errorMessages.concat(value);
       }
@@ -19,5 +19,18 @@ export class ShowMessageComponent implements OnInit {
   }
   close(ind: number) {
     this.errorMessages.splice(ind, 1);
+  }
+  messageColourClass(msg: iMessage): string {
+    let result = '';
+    if (msg.messageColor === MessageColor.Green) {
+        result = 'alert-success';
+    } else 
+    if (msg.messageColor === MessageColor.Yellow) {
+        result = 'alert-warning';
+    } else 
+    if (msg.messageColor === MessageColor.Red) {
+      result = 'alert-danger';
+    } 
+    return result;
   }
 }

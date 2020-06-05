@@ -5,7 +5,8 @@ import {User} from './user.model';
 import {tap} from 'rxjs/internal/operators/tap';
 import {Router} from '@angular/router';
 import {catchError} from 'rxjs/operators';
-import { MessageService } from 'src/app/shared/service/message.service';
+import { MessageService, MessageColor } from 'src/app/shared/service/message.service';
+import { Constants } from 'src/app/shared/constants';
 
 
 export interface AuthResponseData {
@@ -110,7 +111,7 @@ export class AuthService {
   logout() {
     localStorage.removeItem('userData');
     this.user.next(null);
-    this.messageService.messageBus.next(['You have been logged out']);
+    this.messageService.showMessage(Constants.MSG_LOGGED_OUT, MessageColor.Green);
     this.router.navigate(['/map']);
   }
 
@@ -121,13 +122,13 @@ export class AuthService {
     }
     switch (errorRes.error.error.message) {
       case 'EMAIL_EXISTS':
-        errorMessage = 'This email exists already';
+        errorMessage = Constants.MSG_DUPLICATE_MAIL;
         break;
       case 'EMAIL_NOT_FOUND':
-        errorMessage = 'This email does not exist.';
+        errorMessage = Constants.MSG_UNKNOWN_MAIL;
         break;
       case 'INVALID_PASSWORD':
-        errorMessage = 'This password is not correct.';
+        errorMessage = Constants.MSG_BAD_PASSWORD;
         break;
     }
     return throwError(errorMessage);

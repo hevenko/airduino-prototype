@@ -3,7 +3,7 @@ import {NgForm} from '@angular/forms';
 import {AuthResponseData, AuthService} from './auth.service';
 import {Observable} from 'rxjs';
 import {Router} from '@angular/router';
-import { MessageService } from 'src/app/shared/service/message.service';
+import { MessageService, MessageColor } from 'src/app/shared/service/message.service';
 
 @Component({
   selector: 'app-auth',
@@ -38,7 +38,7 @@ export class AuthComponent implements OnInit {
       },
         errorMessage => {
           console.log(errorMessage);
-          this.messageService.messageBus.next([errorMessage]);
+          this.messageService.showMessage(errorMessage, MessageColor.Yellow);
           this.isLoading = false;
         }
       );

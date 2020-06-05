@@ -14,7 +14,7 @@ import { Observable } from 'rxjs';
 import { User } from './app/component/auth/user.model';
 import { Injectable } from '@angular/core';
 import { AuthComponent } from './app/component/auth/auth.component';
-import { MessageService } from './app/shared/service/message.service';
+import { MessageService, MessageColor } from './app/shared/service/message.service';
 import { Constants } from './app/shared/constants';
 
 @Injectable()
@@ -29,7 +29,7 @@ export class AuthGuardService implements CanActivate, CanActivateChild {
     console.log(this.router);
     if ((<any>route.component).name === 'AuthComponent') {
       if (this.authService.user.value) {
-        this.messageService.messageBus.next([Constants.MSG_ALREADY_LOGGED_IN]);
+        this.messageService.showMessage(Constants.MSG_ALREADY_LOGGED_IN, MessageColor.Green);
         return this.router.navigate(['map']);
       } else {
         return true;
@@ -39,7 +39,7 @@ export class AuthGuardService implements CanActivate, CanActivateChild {
         return true;
       } else {
         if ((<any>route.component).name === 'UserListComponent') {          
-          this.messageService.messageBus.next([Constants.MSG_LOGIN_TO_ACCESS]);
+          this.messageService.showMessage(Constants.MSG_LOGIN_TO_ACCESS, MessageColor.Yellow);
           return this.router.navigate(['map']);
         }
       }
