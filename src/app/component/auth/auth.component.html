@@ -9,7 +9,7 @@
         <mat-label>Password</mat-label>
         <input matInput id="password" name="password" type="password" [(ngModel)]='password' required>
       </mat-form-field>
-      <div mat-dialog-actions align="end">
+      <div mat-dialog-actions>
         <button mat-button mat-stroked-button style="margin-right:5px;">Cancel</button>
         <button mat-button mat-stroked-button [disabled]="!authForm.valid">Login</button>
       </div>
