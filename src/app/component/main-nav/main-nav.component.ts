@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { AuthComponent } from '../auth/auth.component';
 import { AuthService } from '../auth/auth.service';
 import { Router } from '@angular/router';
+import { User } from '../auth/user.model';
 
 @Component({
   selector: 'app-main-nav',
@@ -14,15 +15,16 @@ import { Router } from '@angular/router';
 })
 export class MainNavComponent implements OnInit {
   isAuthenticated = false;
-
+  welcomeLabel = '';
   constructor(private breakpointObserver: BreakpointObserver,
     private authService: AuthService, private router: Router) {
 
   }
 
   ngOnInit(): void {
-    this.authService.user.subscribe(value => {
+    this.authService.user.subscribe((value: User) => {
       this.isAuthenticated = !!value;
+      this.welcomeLabel = this.isAuthenticated ? value.email : '';
     });
   }
 

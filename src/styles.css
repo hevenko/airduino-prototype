@@ -2,6 +2,10 @@
 
 html, body { height: 100%; }
 body { width: 100%; margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
 .filter-menu-expanded {
   background: white !important;
+}
+.mat-error {
+  text-align: right;
 }

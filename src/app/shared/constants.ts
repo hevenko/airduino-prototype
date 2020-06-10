@@ -6,4 +6,6 @@ export class Constants {
   static MSG_DUPLICATE_MAIL = 'This email exists already.';
   static MSG_UNKNOWN_MAIL = 'This email does not exist.';
   static MSG_BAD_PASSWORD = 'This password is not correct.';
+  static MSG_BAD_EMAIL = 'Bad email.';
+  static MSG_REGISTRATION_SUCCESS = 'Registration successfull, please log in.';
 }

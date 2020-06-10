@@ -16,7 +16,7 @@ export class AuthComponent implements OnInit {
   isLoginMode = true;
   isLoading = false;
 
-  constructor(private auth: AuthService, private router: Router, private messageService: MessageService) { }
+  constructor(private auth: AuthService, public router: Router, private messageService: MessageService) { }
 
   ngOnInit() {
   }

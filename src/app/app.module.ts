@@ -40,6 +40,7 @@ import { DeviceSensorComponent } from './component/user-devices/device-sensor/de
 import { AuthComponent } from './component/auth/auth.component';
 import { ShowMessageComponent } from './component/show-message/show-message.component';
 import { AuthGuardService } from 'src/auth-guard.service';
+import { NewUserComponent } from './component/new-user/new-user.component';
 
 @NgModule({
   declarations: [
@@ -57,7 +58,8 @@ import { AuthGuardService } from 'src/auth-guard.service';
     NewDeviceComponent,
     DeviceSensorComponent,
     AuthComponent,
-    ShowMessageComponent
+    ShowMessageComponent,
+    NewUserComponent
   ],
   imports: [
     FormsModule,

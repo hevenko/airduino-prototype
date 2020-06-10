@@ -1,5 +1,6 @@
 <div class="row" style="margin-top: 50px;">
   <div class="col-xs-12 col-md-6 col-md-offset-3">
+    <div style="text-align: right;"><mat-label>New User?</mat-label>&nbsp;<a [routerLink]="'/newUser'" style="font-weight: bold;" href="#">Register</a></div>
     <form #authForm="ngForm" (ngSubmit)="onSubmit(authForm)">
       <mat-form-field style="display: block;">
         <mat-label>Email</mat-label>
@@ -10,7 +11,7 @@
         <input matInput id="password" name="password" type="password" [(ngModel)]='password' required>
       </mat-form-field>
       <div mat-dialog-actions>
-        <button mat-button mat-stroked-button style="margin-right:5px;">Cancel</button>
+        <button type="button" mat-button mat-stroked-button style="margin-right:5px;" (click)="router.navigate(['/map'])">Cancel</button>
         <button mat-button mat-stroked-button [disabled]="!authForm.valid">Login</button>
       </div>
     </form>

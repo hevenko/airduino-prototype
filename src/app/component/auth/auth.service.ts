@@ -1,10 +1,10 @@
-import {Injectable} from '@angular/core';
-import {HttpClient, HttpErrorResponse} from '@angular/common/http';
-import {BehaviorSubject, throwError} from 'rxjs';
-import {User} from './user.model';
-import {tap} from 'rxjs/internal/operators/tap';
-import {Router} from '@angular/router';
-import {catchError} from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { BehaviorSubject, throwError } from 'rxjs';
+import { User } from './user.model';
+import { tap } from 'rxjs/internal/operators/tap';
+import { Router } from '@angular/router';
+import { catchError } from 'rxjs/operators';
 import { MessageService, MessageColor } from 'src/app/shared/service/message.service';
 import { Constants } from 'src/app/shared/constants';
 
@@ -19,12 +19,12 @@ export interface AuthResponseData {
   registered?: boolean;
 }
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
   user = new BehaviorSubject<User>(null);
   private tokenExpirationTimer: any;
 
-  constructor(private http: HttpClient, private router: Router, private messageService: MessageService) {}
+  constructor(private http: HttpClient, private router: Router, private messageService: MessageService) { }
 
   login(email: string, password: string) {
     return this.http.post<AuthResponseData>(
@@ -42,8 +42,8 @@ export class AuthService {
             resData.idToken,
             +resData.expiresIn
           );
-      })
-    );
+        })
+      );
   }
   signup(email: string, password: string) {
     return this.http.post<AuthResponseData>(
@@ -53,7 +53,7 @@ export class AuthService {
         password: password,
         returnSecureToken: true
       }).pipe(
-        catchError(this.handleError),
+        catchError(this.handleError)/* ,
         tap(resData => {
           this.handleAuthentication(
             resData.email,
@@ -61,8 +61,8 @@ export class AuthService {
             resData.idToken,
             +resData.expiresIn
           );
-        })
-    );
+        } ) */
+      );
   }
   private handleAuthentication(
     email: string,
@@ -120,7 +120,11 @@ export class AuthService {
     if (!errorRes.error || !errorRes.error.error) {
       return throwError(errorMessage);
     }
-    switch (errorRes.error.error.message) {
+    let msg: string = errorRes.error.error.message;
+    let msgParts: string[] = msg.split(':').map(p => p.trim());
+
+
+    switch (msgParts[0]) {
       case 'EMAIL_EXISTS':
         errorMessage = Constants.MSG_DUPLICATE_MAIL;
         break;
@@ -129,6 +133,12 @@ export class AuthService {
         break;
       case 'INVALID_PASSWORD':
         errorMessage = Constants.MSG_BAD_PASSWORD;
+        break;
+      case 'WEAK_PASSWORD':
+        errorMessage = msgParts[1];
+        break;
+      case 'INVALID_EMAIL':
+        errorMessage = Constants.MSG_BAD_EMAIL;
         break;
     }
     return throwError(errorMessage);

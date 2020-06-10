@@ -1,0 +1,53 @@
+<div class="row" style="margin-top: 50px;">
+  <div class="col-xs-12 col-md-6 col-md-offset-3">
+    <form [formGroup]="userForm">
+      
+      <mat-form-field style="display: block;">
+        <mat-label>User name</mat-label>
+        <input matInput id="userName" formControlName="userName" type="text" [errorStateMatcher]="matcher">
+        <mat-error *ngIf="userName.hasError('required')">
+          User name is required
+        </mat-error>
+      </mat-form-field>
+      
+      <mat-form-field style="display: block;">
+        <mat-label>Email</mat-label>
+        <input matInput id="email" formControlName="email" type="email" email [errorStateMatcher]="matcher">
+        <mat-error *ngIf="email.hasError('required')">
+          Email is required
+        </mat-error>
+        <mat-error *ngIf="email.hasError('email')">
+          Bad email
+        </mat-error>
+      </mat-form-field>
+      
+      <mat-form-field style="display: block;">
+        <mat-label>Password</mat-label>
+        <input matInput id="password" formControlName="password" type="password" [errorStateMatcher]="passwordMatcher">
+        <mat-error *ngIf="password.hasError('required')">
+          required
+        </mat-error>
+        <mat-error *ngIf="userForm.errors?.passwordsMismatch">
+          Passwords don't match
+        </mat-error>
+      </mat-form-field>
+      
+      <mat-form-field style="display: block;">
+        <mat-label>Repeat Password</mat-label>
+        <input matInput id="repeatPassword" formControlName="repeatPassword" type="password" [errorStateMatcher]="repeatPasswordMatcher">
+        <mat-error *ngIf="repeatPassword.hasError('required')">
+          required
+        </mat-error>
+        <mat-error *ngIf="userForm.errors?.passwordsMismatch">
+          Passwords don't match
+        </mat-error>
+      </mat-form-field>
+      
+      <div mat-dialog-actions>
+        <button type="button" mat-button mat-stroked-button style="margin-right:5px;"
+          (click)="router.navigate(['/auth'])">Cancel</button>
+        <button mat-button mat-stroked-button  [disabled]="userForm.invalid" (click)="onSubmit()" type="button">Register</button>
+      </div>
+    </form>
+  </div>
+</div>
