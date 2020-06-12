@@ -41,6 +41,8 @@ export class AuthGuardService implements CanActivate, CanActivateChild {
         if ((<any>route.component).name === 'UserListComponent') {          
           this.messageService.showMessage(Constants.MSG_LOGIN_TO_ACCESS, MessageColor.Yellow);
           return this.router.navigate(['map']);
+        } else {
+          return true;
         }
       }
     }

@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
+import { Observable, zip } from "rxjs";
 import { map } from "rxjs/operators";
 
 export interface IoDataResponse {
@@ -37,6 +37,11 @@ export class RemoteLoDService {
     constructor(private http: HttpClient) { }
 
     public getData(dataState?: IDataState): Observable<DataResponse> {
+        // let o1 = <Observable<IoDataResponse>>this.http.get(this.buildUrl(dataState));
+        // let o2 = <Observable<IoDataResponse>>this.http.get(this.buildUrl(dataState));
+        // return zip(o1, o2).pipe(map(o1o2 => {return o1o2[0].value.concat(o1o2[1].value)}), map((x: any[]) => {
+        //     return new DataResponse(dataState, x);
+        // }));
         return this.http.get(this.buildUrl(dataState)).pipe(
             map((response: IoDataResponse) => {
                 return new DataResponse(dataState,response.value);
