@@ -15,10 +15,10 @@ import { Constants } from 'src/app/shared/constants';
 // }
 
 export const passwordsMismatch: any = (control: FormGroup): ValidationErrors | null => {
-  const name = control.get('password');
-  const alterEgo = control.get('repeatPassword');
-  const rezultat = name && alterEgo && name.value !== alterEgo.value ? { 'passwordsMismatch': true } : null;
-  return rezultat;
+  const pwd = control.get('password');
+  const repeatPwd = control.get('repeatPassword');
+  const result = pwd && repeatPwd && pwd.value !== repeatPwd.value ? { 'passwordsMismatch': true } : null;
+  return result;
 };
 
 @Component({
