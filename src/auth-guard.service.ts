@@ -19,6 +19,7 @@ import { Constants } from './app/shared/constants';
 
 @Injectable()
 export class AuthGuardService implements CanActivate, CanActivateChild {
+  restrictVist: string[] = ['UserListComponent', 'UserComponent']; // allowed only when logged in
 
   constructor(private authService: AuthService, private router: Router, private messageService: MessageService) { }
 
@@ -38,7 +39,7 @@ export class AuthGuardService implements CanActivate, CanActivateChild {
       if (this.authService.user.value) {        
         return true;
       } else {
-        if ((<any>route.component).name === 'UserListComponent') {          
+        if (this.restrictVist.includes((<any>route.component).name)) {          
           this.messageService.showMessage(Constants.MSG_LOGIN_TO_ACCESS, MessageColor.Yellow);
           return this.router.navigate(['map']);
         } else {

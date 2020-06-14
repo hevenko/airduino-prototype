@@ -6,7 +6,7 @@
       <a mat-list-item [routerLink]="'/map'">Map</a>
       <a mat-list-item >Graph</a>
       <a mat-list-item >Raw data</a>
-      <a mat-list-item >User</a>
+      <a mat-list-item  [routerLink]="'/user'">User</a>
       <a mat-list-item (click)="authenticationOnCick()">{{isAuthenticated ? 'Logout' : 'Login'}}</a>
     </mat-nav-list>
   </mat-sidenav>
