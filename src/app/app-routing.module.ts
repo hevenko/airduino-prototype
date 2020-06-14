@@ -8,7 +8,7 @@ import { NewUserComponent } from './component/new-user/new-user.component';
 
 
 const routes: Routes = [
-  {path: '', redirectTo: '/userDevices', pathMatch: 'full' },
+  {path: '', redirectTo: '/map', pathMatch: 'full' },
   {path: 'map', component: MapComponent},
   {path: 'userDevices', component: UserListComponent, canActivate: [AuthGuardService]},
   {path: 'auth', component: AuthComponent, canActivate: [AuthGuardService]},
