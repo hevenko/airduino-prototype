@@ -62,7 +62,4 @@ export class NewUserComponent implements OnInit {
         }
       );
   }
-  showPassMismatch(): boolean {
-    return;
-  }
 }
