@@ -7,13 +7,6 @@ import { AuthService } from '../auth/auth.service';
 import { MessageService, MessageColor } from 'src/app/shared/service/message.service';
 import { Constants } from 'src/app/shared/constants';
 
-// export function passwordsMismatch(repeatPassword: FormControl): ValidatorFn {
-//   return (control: AbstractControl): { [key: string]: any } | null => {
-//     const forbidden = repeatPassword.value !== control.value;
-//     return forbidden ? { 'passwordsMismatch': { value: control.value } } : null;
-//   };
-// }
-
 export const passwordsMismatch: any = (control: FormGroup): ValidationErrors | null => {
   const pwd = control.get('password');
   const repeatPwd = control.get('repeatPassword');
