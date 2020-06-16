@@ -42,6 +42,7 @@ import { ShowMessageComponent } from './component/show-message/show-message.comp
 import { AuthGuardService } from 'src/auth-guard.service';
 import { NewUserComponent } from './component/new-user/new-user.component';
 import { UserComponent } from './component/user/user.component';
+import { RawDataComponent } from './component/raw-data/raw-data.component';
 
 @NgModule({
   declarations: [
@@ -61,7 +62,8 @@ import { UserComponent } from './component/user/user.component';
     AuthComponent,
     ShowMessageComponent,
     NewUserComponent,
-    UserComponent
+    UserComponent,
+    RawDataComponent
   ],
   imports: [
     FormsModule,
