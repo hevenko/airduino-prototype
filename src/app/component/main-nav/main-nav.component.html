@@ -4,7 +4,7 @@
     <mat-nav-list (click)="drawer.close()">
       <a mat-list-item [routerLink]="'/userDevices'">Devices</a>
       <a mat-list-item [routerLink]="'/map'">Map</a>
-      <a mat-list-item >Graph</a>
+      <a mat-list-item [routerLink]="'/graph'">Graph</a>
       <a mat-list-item [routerLink]="'/rawData'">Raw data</a>
       <a mat-list-item [routerLink]="'/user'">User</a>
       <a mat-list-item (click)="authenticationOnCick()">{{isAuthenticated ? 'Logout' : 'Login'}}</a>

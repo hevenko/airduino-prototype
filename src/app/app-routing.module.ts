@@ -7,6 +7,7 @@ import { AuthGuardService } from 'src/auth-guard.service';
 import { NewUserComponent } from './component/new-user/new-user.component';
 import { UserComponent } from './component/user/user.component';
 import { RawDataComponent } from './component/raw-data/raw-data.component';
+import { GraphComponent } from './component/graph/graph.component';
 
 
 const routes: Routes = [
@@ -16,6 +17,7 @@ const routes: Routes = [
   {path: 'auth', component: AuthComponent, canActivate: [AuthGuardService]},
   {path: 'user', component: UserComponent, canActivate: [AuthGuardService]},
   {path: 'rawData', component: RawDataComponent, canActivate: [AuthGuardService]},
+  {path: 'graph', component: GraphComponent, canActivate: [AuthGuardService]},
   {path: 'newUser', component: NewUserComponent, canActivate: [AuthGuardService]}
 ];
 
