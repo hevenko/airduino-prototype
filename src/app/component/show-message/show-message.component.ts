@@ -14,6 +14,9 @@ export class ShowMessageComponent implements OnInit {
     this.messageService.messageBus.subscribe((value: iMessage[]) => {
       if (!!value && value.length > 0) {
         this.errorMessages = this.errorMessages.concat(value);
+        setTimeout(() => {
+          this.autoClose();
+        }, 3000);
       }
     });
   }
@@ -32,5 +35,14 @@ export class ShowMessageComponent implements OnInit {
       result = 'alert-danger';
     } 
     return result;
+  }
+  autoClose() {
+    let messages: iMessage[] = [];
+    this.errorMessages?.forEach((v:iMessage, i: number) => {
+      if (v.messageColor === MessageColor.Red) {        
+        messages.push(v);
+      }
+    });
+    this.errorMessages = messages;
   }
 }
