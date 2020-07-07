@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-location',
@@ -6,7 +7,6 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./location.component.css']
 })
 export class LocationComponent implements OnInit {
-
   selectedOption: string;
 
   constructor() { }
@@ -14,4 +14,7 @@ export class LocationComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  getLabel(): string {
+    return '4 locations';
+  }
 }

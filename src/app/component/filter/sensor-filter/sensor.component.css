@@ -1,5 +1,5 @@
 div {
-    padding: 4px;
+  
     background-color: inherit;
     cursor: pointer;
 }
@@ -8,3 +8,4 @@ a {
     font-weight: normal;
     text-decoration: none;
 }
+

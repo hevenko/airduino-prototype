@@ -1,4 +1,4 @@
-div {
+div {  
     background-color: inherit;
     cursor: pointer;
 }
@@ -11,4 +11,4 @@ a {
     display: flex;
     flex-direction: column;
     margin: 15px 0;
-  }
+}

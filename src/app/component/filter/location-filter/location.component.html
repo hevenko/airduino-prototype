@@ -1,19 +1,29 @@
-<div appDropdown class="dropdown pull-right">
-    <a class="dropdown-toogle" data-toggle="collapse" href="#locationComponentDropdown" onclick="return false;" role="button" aria-expanded="false"
-        aria-controls="locationComponentDropdown">
-        4 locations
+<div appDropdown class="dropdown pull-right filter">
+    <a class="dropdown-toogle" data-toggle="collapse" href="#locationComponentDropdown" onclick="return false;"
+        role="button" aria-expanded="false" aria-controls="locationComponentDropdown">
+        <span [innerHTML]="getLabel()"></span>
         <span class="caret"></span>
     </a>
     <div class="dropdown-menu filter-menu-expanded" style="padding: 5px;" id="locationComponentDropdown">
         <mat-radio-group aria-label="Select an option" [(ngModel)]="selectedOption">
-            <mat-radio-button value="1">My devices</mat-radio-button><br>
-            <mat-radio-button value="2">Region</mat-radio-button>
-            <select style="margin-left: 5px;">
-                <option value="1">Varaždin</option>
-                <option value="2">Radovan</option>
-                <option value="3">Čakovec</option>
-                <option value="4">Ivanec</option>
-            </select>
+            <div class="locationitem">
+                <mat-radio-button value="1">My devices</mat-radio-button>
+            </div>
+            <div class="locationitem">
+                <mat-radio-button value="2">Custom polygon</mat-radio-button>
+            </div>
+            <div class="locationitem">
+                <mat-radio-button value="3">Circular perimeter</mat-radio-button>
+            </div>
+            <div class="locationitem">
+                <mat-radio-button value="4"></mat-radio-button>
+                <select>
+                    <option value="1">Varaždin</option>
+                    <option value="2">Radovanasdasdsdsdsdsd</option>
+                    <option value="3">Čakovec</option>
+                    <option value="4">Ivanec</option>
+                </select>
+            </div>
         </mat-radio-group>
     </div>
 </div>
