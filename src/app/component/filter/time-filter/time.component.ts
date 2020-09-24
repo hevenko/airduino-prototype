@@ -45,7 +45,7 @@ export class TimeComponent implements OnInit, AfterViewInit {
       customUnits: new FormControl()
     })
   }
-  setVariableTimeLabel(ind: number) {    
+  setVariableTimeLabel(ind: number) {
     this.label = this.hoursTime[ind].desc;
     this.clearCustomTime();
   }
@@ -68,7 +68,7 @@ export class TimeComponent implements OnInit, AfterViewInit {
   popup(str: string) {
     alert(str);
   }
-  clearCustomTime() {  
+  clearCustomTime() {
     this.customTime.nativeElement.value = '';
   }
   setCalendarIsOpen(isopened: boolean) {
