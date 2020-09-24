@@ -15,9 +15,8 @@
           </select>
         </div>
       </ng-container>
-      <mat-divider></mat-divider>
-      <mat-form-field>
-        <input matInput placeholder="fixed date range"
+      <hr>
+        <input placeholder="fixed date range"
                (keyup)="setFixedTimeLabel($event)"
                (dateInput)="setFixedTimeLabel($event)"
                [satDatepicker]="picker"
@@ -25,7 +24,6 @@
         <sat-datepicker #picker [rangeMode]="true" (opened)="setCalendarIsOpen(true)"
                         (closed)="setCalendarIsOpen(false)"></sat-datepicker>
         <sat-datepicker-toggle matSuffix [for]="picker"></sat-datepicker-toggle>
-      </mat-form-field>
     </div>
   </div>
 </form>
