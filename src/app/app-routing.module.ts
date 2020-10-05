@@ -8,6 +8,7 @@ import { NewUserComponent } from './component/new-user/new-user.component';
 import { UserComponent } from './component/user/user.component';
 import { RawDataComponent } from './component/raw-data/raw-data.component';
 import { GraphComponent } from './component/graph/graph.component';
+import { BedacekComponent } from './bedacek/bedacek.component';
 
 
 const routes: Routes = [
@@ -18,7 +19,8 @@ const routes: Routes = [
   {path: 'user', component: UserComponent, canActivate: [AuthGuardService]},
   {path: 'rawData', component: RawDataComponent, canActivate: [AuthGuardService]},
   {path: 'graph', component: GraphComponent, canActivate: [AuthGuardService]},
-  {path: 'newUser', component: NewUserComponent, canActivate: [AuthGuardService]}
+  {path: 'newUser', component: NewUserComponent, canActivate: [AuthGuardService]},
+  {path: 'bedacek', component: BedacekComponent},
 ];
 
 @NgModule({

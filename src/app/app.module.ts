@@ -44,6 +44,7 @@ import { NewUserComponent } from './component/new-user/new-user.component';
 import { UserComponent } from './component/user/user.component';
 import { RawDataComponent } from './component/raw-data/raw-data.component';
 import { GraphComponent } from './component/graph/graph.component';
+import { BedacekComponent } from './bedacek/bedacek.component';
 
 @NgModule({
   declarations: [
@@ -65,7 +66,8 @@ import { GraphComponent } from './component/graph/graph.component';
     NewUserComponent,
     UserComponent,
     RawDataComponent,
-    GraphComponent
+    GraphComponent,
+    BedacekComponent
   ],
   imports: [
     FormsModule,
