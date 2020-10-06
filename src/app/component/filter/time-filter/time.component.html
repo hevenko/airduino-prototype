@@ -6,7 +6,7 @@
     </a>
     <div class="dropdown-menu filter-menu-expanded" style="padding: 15px;" id="timeCoponentDropdown">
       <ng-container *ngFor="let s of hoursTime;let i = index">
-        <a style="display: block;" (click)="setVariableTimeLabel(i)">{{s.desc}}</a>
+        <a style="display: block;" (click)="setVariableTimeLabel(i)" class="closeMenu">{{s.desc}}</a>
         <div style="text-align: left;" *ngIf="i === (hoursTime.length - 1)">
           <input placeholder="Custom" size="5" style="border: 0px;background: transparent;" #customTime
                  (keyup)="setCustomTimeLabel(customTime.value, timeUnit.value)">
