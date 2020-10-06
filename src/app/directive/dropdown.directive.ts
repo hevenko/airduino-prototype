@@ -8,8 +8,17 @@ export class DropdownDirective {
   @HostBinding('class.open') isOpen = false;
 
   constructor(private elRef: ElementRef) { }
+  /**
 
-  @HostListener('document:click', ['$event']) toggleOpen(event: Event) {
-      this.isOpen = this.elRef.nativeElement.contains(event.target) || this.elRef.nativeElement.classList.contains(Constants.STAY_OPEN);
+  */
+  @HostListener('document:click', ['$event']) toggleOpen(event: any) {
+      if (!!!this.isOpen) {
+        this.isOpen = this.elRef.nativeElement.contains(event.target) || this.elRef.nativeElement.classList.contains(Constants.STAY_OPEN);
+      } else if (this.elRef.nativeElement.contains(event.target)){
+        //toggle open and close when clicking on filter title
+        this.isOpen = !(this.elRef.nativeElement.firstChild.contains(event.target) || this.elRef.nativeElement.firstChild == event.target);
+      } else {
+        this.isOpen = false;
+      }
   }
 }
