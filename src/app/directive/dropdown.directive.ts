@@ -9,7 +9,7 @@ export class DropdownDirective {
 
   constructor(private elRef: ElementRef) { }
 
-  //closeMenu flag may be set on parent or higher up the DOM
+  //closeMenu flag may be set on clicked item or higher up the DOM
   shouldParentCloseTheMenu(target: any): boolean {
     let result = false;
     if (target.tagName.toUpperCase().indexOf("APP-") != -1) { //stop if this component root DOM is reached
