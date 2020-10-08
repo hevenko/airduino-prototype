@@ -7,8 +7,8 @@ import { FormGroup } from '@angular/forms';
   styleUrls: ['./location.component.css']
 })
 export class LocationComponent implements OnInit {
-  selectedOption: string;
-
+  selectedDevices: string;
+  selectedRegion: any;
   constructor() { }
 
   ngOnInit(): void {
@@ -16,5 +16,15 @@ export class LocationComponent implements OnInit {
 
   getLabel(): string {
     return '4 locations';
+  }
+  locationOnChange(e:any) {
+    if (!!e.source && !!e.source.radioGroup && e.source.radioGroup._radios.last != e.source.radioGroup.selected) {
+      this.selectedRegion = '';
+    } else {
+      //last radio btn value
+      let radioBtnCount = e.currentTarget.childElementCount;
+      let lastRadioBtnValue = e.currentTarget.children[radioBtnCount - 1].getElementsByTagName('input')[0].value
+      this.selectedDevices = lastRadioBtnValue;
+    }
   }
 }
