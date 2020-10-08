@@ -18,8 +18,10 @@ export class LocationComponent implements OnInit {
     return '4 locations';
   }
   locationOnChange(e:any) {
-    if (!!e.source && !!e.source.radioGroup && e.source.radioGroup._radios.last != e.source.radioGroup.selected) {
-      this.selectedRegion = '';
+    if (!!e.source && !!e.source.radioGroup ) {
+      if(e.source.radioGroup._radios.last != e.source.radioGroup.selected) {
+        this.selectedRegion = '';
+      }
     } else {
       //last radio btn value
       let radioBtnCount = e.currentTarget.childElementCount;
