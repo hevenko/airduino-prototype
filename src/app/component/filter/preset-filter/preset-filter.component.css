@@ -13,3 +13,7 @@ a {
 table tr td {
   padding-bottom: 2px;
 }
+.pull-right>.dropdown-menu {
+  left: 0;
+  right: auto;
+}
