@@ -11,7 +11,7 @@
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
-    
+
     <mat-toolbar>
       <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
@@ -21,11 +21,11 @@
       <app-time></app-time>
       <app-sensor></app-sensor>
       <app-location></app-location>
-      <div style="font-size: initial; font-weight: lighter; margin-left: 10px;" *ngIf="isAuthenticated">{{welcomeLabel}}</div>
+      <app-login></app-login>
     </mat-toolbar>
 
     <mat-divider></mat-divider>
-    
+
     <ng-content>
     </ng-content>
   </mat-sidenav-content>

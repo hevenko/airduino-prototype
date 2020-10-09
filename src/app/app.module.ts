@@ -45,6 +45,7 @@ import { UserComponent } from './component/user/user.component';
 import { RawDataComponent } from './component/raw-data/raw-data.component';
 import { GraphComponent } from './component/graph/graph.component';
 import { BedacekComponent } from './bedacek/bedacek.component';
+import { LoginComponent } from './component/login/login.component';
 
 @NgModule({
   declarations: [
@@ -67,7 +68,8 @@ import { BedacekComponent } from './bedacek/bedacek.component';
     UserComponent,
     RawDataComponent,
     GraphComponent,
-    BedacekComponent
+    BedacekComponent,
+    LoginComponent
   ],
   imports: [
     FormsModule,

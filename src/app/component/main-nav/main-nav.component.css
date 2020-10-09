@@ -19,6 +19,7 @@
 }
 .mat-toolbar-row, .mat-toolbar-single-row {
   height: auto;
+  padding: 0 0;
 }
 
 .spacer {
