@@ -8,4 +8,6 @@ export class Constants {
   static MSG_BAD_PASSWORD = 'This password is not correct.';
   static MSG_BAD_EMAIL = 'Bad email.';
   static MSG_REGISTRATION_SUCCESS = 'Registration successfull, please log in.';
+  static MSG_FILTER_OVERWRITTEN = 'Filter was overwritten.';
+  static MSG_SELECT_FILTER = 'Select a preset filter.';
 }
