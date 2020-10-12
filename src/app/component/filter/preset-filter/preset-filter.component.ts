@@ -26,15 +26,19 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit  
   filterEnabledIcon = 'report_problem';
   appliedFilter = null;
   showSaveAsNewFilterBtn = false;
+  newFilterName = '';
 
   constructor(public dialog: MatDialog, private messageService: MessageService) {
     super();
   }
 
   initForm() {
-    this.presetForm = new FormGroup({});
+    this.presetForm = new FormGroup({
+      newFilterName: new FormControl()
+    });
   }
   ngOnInit(): void {
+    this.initForm();
   }
   applyFilter(f: any) {
     this.appliedFilter = f;
@@ -72,15 +76,10 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit  
       }
     });
   }
-  /**
-  * show/hide filter save btn
-  */
-  newFilterNameOnKey(e: any): void {
-    this.showSaveAsNewFilterBtn = !!e.srcElement && !!e.srcElement.value;
-  }
   saveNewFilterClick(e:any): void {
     this.showInfoMessage(this.dialog, Constants.MSG_FILTER_ADDED).afterClosed().subscribe(result => {
       this.setDialogIsOpen(false);
+      this.presetForm.patchValue({newFilterName: ''});
     });
     this.setDialogIsOpen(true);
   }

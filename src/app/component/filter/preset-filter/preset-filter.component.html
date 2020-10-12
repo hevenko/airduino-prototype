@@ -32,9 +32,10 @@
         <span style="margin-right: 9px;" class="glyphicon glyphicon-plus" (click)="newFilterNameInput.focus()"></span>
         <mat-form-field style="min-width: 200px; margin-right:15px" floatLabel="auto">
           <mat-label>Save current values as new filter</mat-label>
-          <input #newFilterNameInput matInput placeholder="New filter name" autocomplete="off" (keyup)="newFilterNameOnKey($event)">
+          <input #newFilterNameInput  formControlName="newFilterName" matInput placeholder="New filter name" autocomplete="off">
         </mat-form-field>
-        <button mat-stroked-button *ngIf="showSaveAsNewFilterBtn" (click)="saveNewFilterClick($event)">
+        {{newFilterName}}
+        <button mat-stroked-button *ngIf="!!presetForm.value.newFilterName" (click)="saveNewFilterClick($event)">
           <mat-icon style="color: warn;">save</mat-icon>
         </button>
       </a>
