@@ -10,4 +10,5 @@ export class Constants {
   static MSG_REGISTRATION_SUCCESS = 'Registration successfull, please log in.';
   static MSG_FILTER_OVERWRITTEN = 'Filter was overwritten.';
   static MSG_SELECT_FILTER = 'Select a preset filter.';
+  static MSG_FILTER_ADDED = 'New filter is saved.';
 }

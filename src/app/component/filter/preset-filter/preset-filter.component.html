@@ -25,12 +25,18 @@
       </table>
       <mat-divider></mat-divider>
       <a style="display: block;">
-        <span class="glyphicon glyphicon-check"></span>
-        <span style="margin-left: 10px;" (click)="saveAsCurrentFilter()"> Save current values in selected filter</span>
+        <span class="glyphicon glyphicon-check" style="margin-right: 5px;"></span>
+        <span (click)="saveAsCurrentFilter()"> Save current values in selected filter</span>
       </a>
       <a style="display: block;">
-        <span class="glyphicon glyphicon-plus"></span>
-        <span style="margin-left: 10px;"> Save current values as new filter</span>
+        <span style="margin-right: 9px;" class="glyphicon glyphicon-plus" (click)="newFilterNameInput.focus()"></span>
+        <mat-form-field style="min-width: 200px; margin-right:15px" floatLabel="auto">
+          <mat-label>Save current values as new filter</mat-label>
+          <input #newFilterNameInput matInput placeholder="New filter name" autocomplete="off" (keyup)="newFilterNameOnKey($event)">
+        </mat-form-field>
+        <button mat-stroked-button *ngIf="showSaveAsNewFilterBtn" (click)="saveNewFilterClick($event)">
+          <mat-icon style="color: warn;">save</mat-icon>
+        </button>
       </a>
     </div>
   </div>

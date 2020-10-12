@@ -25,6 +25,7 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit  
   presetForm: FormGroup = new FormGroup({});
   filterEnabledIcon = 'report_problem';
   appliedFilter = null;
+  showSaveAsNewFilterBtn = false;
 
   constructor(public dialog: MatDialog, private messageService: MessageService) {
     super();
@@ -70,5 +71,17 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit  
         this.messageService.showMessage(Constants.MSG_FILTER_OVERWRITTEN, MessageColor.Green);
       }
     });
+  }
+  /**
+  * show/hide filter save btn
+  */
+  newFilterNameOnKey(e: any): void {
+    this.showSaveAsNewFilterBtn = !!e.srcElement && !!e.srcElement.value;
+  }
+  saveNewFilterClick(e:any): void {
+    this.showInfoMessage(this.dialog, Constants.MSG_FILTER_ADDED).afterClosed().subscribe(result => {
+      this.setDialogIsOpen(false);
+    });
+    this.setDialogIsOpen(true);
   }
 }
