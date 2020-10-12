@@ -27,19 +27,19 @@ export class ShowMessageComponent implements OnInit {
     let result = '';
     if (msg.messageColor === MessageColor.Green) {
         result = 'alert-success';
-    } else 
+    } else
     if (msg.messageColor === MessageColor.Yellow) {
         result = 'alert-warning';
-    } else 
+    } else
     if (msg.messageColor === MessageColor.Red) {
       result = 'alert-danger';
-    } 
+    }
     return result;
   }
   autoClose() {
     let messages: iMessage[] = [];
     this.errorMessages?.forEach((v:iMessage, i: number) => {
-      if (v.messageColor === MessageColor.Red) {        
+      if (v.messageColor === MessageColor.Red) {
         messages.push(v);
       }
     });
