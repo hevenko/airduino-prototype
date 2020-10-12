@@ -19,7 +19,12 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit  
     {value: '2', desc: 'Filter B'},
     {value: '3', desc: 'Da li sused kuri kakvu plastiku'},
     {value: '4', desc: 'Long named filter'},
-    {value: '5', desc: 'Prijatelu sam hakiral uređaje, daj njih'}
+    {value: '5', desc: 'Prijatelu sam hakiral uređaje, daj njih'},
+    {value: '6', desc: 'Svi uređaji'},
+    {value: '7', desc: 'Samo tam gdi je fejst vruće'},
+    {value: '8', desc: 'Pravni slučaj jedan'},
+    {value: '9', desc: 'Skladište'},
+    {value: '10', desc: 'Autobusni'},
   ];
   dialogIsOpen = false;
   presetForm: FormGroup = new FormGroup({});

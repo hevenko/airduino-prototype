@@ -9,20 +9,22 @@
         <input matInput placeholder="Search preset filters">
         <mat-icon matSuffix (click)="searchPresetFilters()">search</mat-icon>
       </mat-form-field>
-      <table style="width: 100%;white-space: nowrap;margin-bottom: 10px;">
-        <ng-container *ngFor="let f of filters;let i = index">
-          <tr>
-            <td>
-              <a (click)="applyFilter(f)">{{f.desc}}</a>
-            </td>
-            <td style="padding-left: 10px;">
-              <button type="button" mat-stroked-button class="pull-right" (click)="openAlertSettingsDialog()">
-                <mat-icon style="color: warn;">{{filterEnabledIcon}}</mat-icon>
-              </button>
-            </td>
-          </tr>
-        </ng-container>
-      </table>
+      <div style="height:140px;overflow:auto;">
+        <table style="width: 100%;white-space: nowrap;margin-bottom: 10px;">
+          <ng-container *ngFor="let f of filters;let i = index">
+            <tr>
+              <td>
+                <a (click)="applyFilter(f)">{{f.desc}}</a>
+              </td>
+              <td style="padding-left: 10px;">
+                <button type="button" mat-stroked-button class="pull-right" (click)="openAlertSettingsDialog()">
+                  <mat-icon style="color: warn;">{{filterEnabledIcon}}</mat-icon>
+                </button>
+              </td>
+            </tr>
+          </ng-container>
+        </table>
+      </div>
       <mat-divider></mat-divider>
       <a style="display: block;">
         <span class="glyphicon glyphicon-check" style="margin-right: 5px;"></span>
