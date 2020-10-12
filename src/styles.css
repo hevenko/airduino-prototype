@@ -20,3 +20,6 @@ body { width: 100%; margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif
 .open {
   background: white!important;
 }
+.button-spacing {
+  margin-left: 5px;
+}

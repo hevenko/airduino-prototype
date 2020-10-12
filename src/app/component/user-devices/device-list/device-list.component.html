@@ -11,7 +11,8 @@
       <ng-container *ngIf="column === 'DeleteDevice'">
         <mat-header-cell *matHeaderCellDef></mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <button type="button" (click)="deleteDeviceOnClick($event, element)">Delete device</button>
+          <button type="button" (click)="deleteDeviceOnClick($event, element)">Delete</button>
+          <button type="button" (click)="editDeviceOnClick($event, element)" class="button-spacing">Edit</button>
         </mat-cell>
       </ng-container>
     </ng-container>

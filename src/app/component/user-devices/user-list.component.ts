@@ -74,10 +74,7 @@ export class UserListComponent implements OnInit {
   addDeviceOnClick(e: MouseEvent, clickedUser: any) {
     e.stopPropagation();
     this.clickedUser = clickedUser;
-    this.openAddDeviceDialog();
-  }
-  openAddDeviceDialog(): void {
-    const dialogRef = this.dialog.open(NewDeviceComponent);
+    const dialogRef = this.dialog.open(NewDeviceComponent, {data: {title: 'New device'}});
 
     dialogRef.afterClosed().subscribe(result => {
       if(!!result) {

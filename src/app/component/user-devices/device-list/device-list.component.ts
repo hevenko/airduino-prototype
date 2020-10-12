@@ -2,6 +2,8 @@ import { Component, OnInit, Input } from '@angular/core';
 import { RemoteLoDService, IDataState, IoDataResponse, DataResponse } from '../remote-lod.service';
 import { Observable } from 'rxjs';
 import { trigger, state, style, transition, animate } from '@angular/animations';
+import { MatDialog } from '@angular/material/dialog';
+import { NewDeviceComponent } from '../new-device/new-device.component';
 
 @Component({
   selector: 'app-device-list',
@@ -23,7 +25,7 @@ export class DeviceListComponent implements OnInit {
   rowId = 0;
   @Input() dataState: IDataState; // = { key: 'Orders', parentID: 'ALFKI', parentKey: 'CustomerID', rootLevel: false };
 
-  constructor(private remoteService: RemoteLoDService) { }
+  constructor(private remoteService: RemoteLoDService, public dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.fetchData();
@@ -61,4 +63,16 @@ export class DeviceListComponent implements OnInit {
     return {key: 'Order_Details', parentID: element.OrderID, parentKey: 'OrderID', rootLevel: false};
   }
 
+  editDeviceOnClick(e: MouseEvent, clickedUser: any) {
+    e.stopPropagation();
+    const dialogRef = this.dialog.open(NewDeviceComponent, {data: {title: 'Edit device'}});
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!!result) {
+        //do wathever...
+      }
+    });
+  }
+  openEditDeviceDialog(): void {
+  }
 }
