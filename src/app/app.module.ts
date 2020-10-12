@@ -46,6 +46,9 @@ import { RawDataComponent } from './component/raw-data/raw-data.component';
 import { GraphComponent } from './component/graph/graph.component';
 import { BedacekComponent } from './bedacek/bedacek.component';
 import { LoginComponent } from './component/login/login.component';
+import { ConfirmComponent } from './component/dialog/confirm/confirm.component';
+import { AirduinoComponent } from './component/airduino/airduino.component';
+import { MessageComponent } from './component/dialog/message/message.component';
 
 @NgModule({
   declarations: [
@@ -69,7 +72,10 @@ import { LoginComponent } from './component/login/login.component';
     RawDataComponent,
     GraphComponent,
     BedacekComponent,
-    LoginComponent
+    LoginComponent,
+    ConfirmComponent,
+    AirduinoComponent,
+    MessageComponent
   ],
   imports: [
     FormsModule,
@@ -90,7 +96,7 @@ import { LoginComponent } from './component/login/login.component';
     MatSelectModule,
     MatFormFieldModule,
     MatInputModule,
-    SatDatepickerModule, 
+    SatDatepickerModule,
     SatNativeDateModule,
     MatDatepickerModule,
     MatSlideToggleModule,
