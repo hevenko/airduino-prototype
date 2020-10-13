@@ -23,3 +23,12 @@ body { width: 100%; margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif
 .button-spacing {
   margin-left: 5px;
 }
+.disabled-link {
+  pointer-events:none;
+  cursor:default;
+  color: rgba(0,0,0,.12);
+}
+.enabled-link {
+  pointer-events:auto;
+  cursor:pointer;
+}
