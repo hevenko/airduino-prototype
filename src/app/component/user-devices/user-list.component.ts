@@ -4,6 +4,8 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { DeviceListComponent } from './device-list/device-list.component';
 import { NewDeviceComponent } from './new-device/new-device.component';
 import { MatDialog } from '@angular/material/dialog';
+import { DataStorageService } from 'src/app/shared/service/data-storage.service';
+import { Owner } from 'src/app/model/owner';
 
 export interface PeriodicElement {
   name: string;
@@ -30,7 +32,7 @@ export interface Compound {
 })
 
 export class UserListComponent implements OnInit {
-  displayedColumns: string[] = ['CustomerID', 'CompanyName', 'ContactName', 'AddNewDevice'];
+  displayedColumns: string[] = ['id', 'email', 'name', 'created'];
   dataSource = [];
   rootData: IDataState = { key: 'Customers', parentID: '', parentKey: '', rootLevel: true };
   expandedElement: any[] = [];
@@ -38,19 +40,17 @@ export class UserListComponent implements OnInit {
   clickedUser: any;
   @ViewChild('deviceList') deviceList: DeviceListComponent;
 
-  constructor(private remoteService: RemoteLoDService, public dialog: MatDialog) { }
+  constructor(private dataStorageService: DataStorageService, public dialog: MatDialog) { }
 
   ngOnInit(): void {
 
-    this.remoteService.getData(this.rootData).subscribe((data: IoDataResponse) => {
-      if (data.equals(this.rootData)) {
-        this.dataSource = data.value;
-      }
+    this.dataStorageService.fetchOwners().subscribe((data: Owner[]) => {
+        this.dataSource = data;
     });
   }
   expandRow(element: any) {
 
-    let ind = this.expandedElement.map((e) => { return e.CustomerID }).indexOf(element.CustomerID);
+    let ind = this.expandedElement.map((e) => { return e.id }).indexOf(element.id);
     if (ind !== -1) {
       this.expandedElement.splice(ind, 1);
     } else {
@@ -58,7 +58,7 @@ export class UserListComponent implements OnInit {
     }
   }
   shouldShowDetailRow(element: any): boolean {
-    let rezultat = this.expandedElement.map((e) => { return e.CustomerID }).indexOf(element.CustomerID) !== -1;
+    let rezultat = this.expandedElement.map((e) => { return e.id }).indexOf(element.id) !== -1;
     return rezultat;
   }
   consoleLog(parent: any) {
@@ -68,7 +68,7 @@ export class UserListComponent implements OnInit {
     return this.rowId++;
   }
   getChildDataState(element: any) {
-    return {key: 'Orders', parentID: element.CustomerID, parentKey: 'CustomerID', rootLevel: false};
+    return {key: 'Orders', parentID: element.id, parentKey: 'owner', rootLevel: false};
 
   }
   addDeviceOnClick(e: MouseEvent, clickedUser: any) {

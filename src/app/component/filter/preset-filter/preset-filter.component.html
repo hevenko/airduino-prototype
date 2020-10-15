@@ -32,8 +32,8 @@
       </div>
       <div style="display: block;">
         <span style="margin-right: 9px;" class="glyphicon glyphicon-plus" (click)="newFilterNameInput.focus()"></span>
-        <mat-form-field style="min-width: 200px; margin-right:15px" floatLabel="auto">
-          <mat-label>Save current values as new filter</mat-label>
+        <mat-form-field style="margin-right:15px" floatLabel="auto">
+          <mat-label>Save as new filter</mat-label>
           <input #newFilterNameInput  formControlName="newFilterName" matInput placeholder="New filter name" autocomplete="off">
         </mat-form-field>
         {{newFilterName}}

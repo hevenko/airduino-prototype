@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { Region } from 'src/app/model/region';
+import { DataStorageService } from 'src/app/shared/service/data-storage.service';
 
 @Component({
   selector: 'app-location',
@@ -9,9 +11,14 @@ import { FormGroup } from '@angular/forms';
 export class LocationComponent implements OnInit {
   selectedDevices: string;
   selectedRegion: any;
-  constructor() { }
+  regionList: Region[];
+  
+  constructor(private dataStorageService: DataStorageService) { }
 
   ngOnInit(): void {
+    this.dataStorageService.fetchRegions().subscribe((data: Region[]) => {
+      this.regionList = data;
+    });
   }
 
   getLabel(): string {

@@ -18,11 +18,9 @@
             <div class="locationitem">
                 <mat-radio-button value="4"></mat-radio-button>
                 <select [(ngModel)]="selectedRegion">
-                  <option value="">--</option>
-                  <option value="1">Varaždin</option>
-                  <option value="2">Radovanasdasdsdsdsdsd</option>
-                  <option value="3">Čakovec</option>
-                  <option value="4">Ivanec</option>
+                  <ng-container *ngFor="let r of regionList" >
+                    <option value="r.id">{{r.id}}</option>
+                  </ng-container>
                 </select>
             </div>
         </mat-radio-group>
