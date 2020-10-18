@@ -1,27 +1,36 @@
 <form [formGroup]="timeForm">
-  <div appDropdown [ngClass]="calendarIsOpen ? stayOpened :''" class="dropdown pull-right filter">
+  <div appDropdown [ngClass]="shouldStayOpen() ? stayOpened :''" class="dropdown pull-right filter">
     <a class="dropdown-toogle" data-toggle="collapse" href="#timeCoponentDropdown" role="button" aria-expanded="false"
        aria-controls="timeCoponentDropdown"  onclick="return false;">
       <span [innerHTML]="label"></span><span class="caret"></span>
     </a>
     <div class="dropdown-menu filter-menu-expanded" style="padding: 15px;" id="timeCoponentDropdown">
-      <ng-container *ngFor="let s of hoursTime;let i = index">
-        <a style="display: block;" (click)="setVariableTimeLabel(i)" class="closeMenu">{{s.desc}}</a>
-        <div style="text-align: left;" *ngIf="i === (hoursTime.length - 1)">
-          <input placeholder="Custom" size="5" style="border: 0px;background: transparent;" #customTime
-                 (keyup)="setCustomTimeLabel(customTime.value, timeUnit.value)">
-          <select style="margin-left: 5px;" #timeUnit (change)="setCustomTimeLabel(customTime.value, timeUnit.value)">
-            <option *ngFor="let tu of customTimeUnits" value="{{tu.value}}">{{tu.desc}}</option>
-          </select>
-        </div>
-      </ng-container>
-      <hr>
+      <mat-form-field>
+        <mat-label>Fixed time</mat-label>
+        <mat-select #predefinedSelect matNativeControl formControlName="predefined" (openedChange)="hourRangeOnOpen($event)" 
+        (selectionChange)="setVariableTimeLabel($event)">
+          <ng-container *ngFor="let s of hoursTime">
+            <mat-option [value]="s.value">
+              {{s.desc}}
+            </mat-option>
+          </ng-container>
+        </mat-select>
+      </mat-form-field>
+
+      <div style="text-align: left;">
+        <input formControlName="custom" placeholder="Custom" size="5" style="border: 0px;background: transparent;" #customTime
+               (keyup)="setCustomTimeLabel(customTime.value, timeUnit.value)">
+        <select formControlName="customUnits" style="margin-left: 5px;" #timeUnit (change)="setCustomTimeLabel(customTime.value, timeUnit.value)">
+          <option *ngFor="let tu of customTimeUnits" value="{{tu.value}}">{{tu.desc}}</option>
+        </select>
+      </div>
+    <hr>
         <mat-form-field>
         <input matInput placeholder="fixed date range"
                (keyup)="setFixedTimeLabel($event)"
                (dateInput)="setFixedTimeLabel($event)"
                [satDatepicker]="picker"
-               [value]="date">
+               [value]="date" formControlName="fixedTimeRange">
         </mat-form-field>
         <sat-datepicker #picker [rangeMode]="true" (opened)="setCalendarIsOpen(true)"
                         (closed)="setCalendarIsOpen(false)"></sat-datepicker>
