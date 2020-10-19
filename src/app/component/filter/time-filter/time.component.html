@@ -6,7 +6,7 @@
     </a>
     <div class="dropdown-menu filter-menu-expanded" style="padding: 15px;" id="timeCoponentDropdown">
       <mat-form-field>
-        <mat-label>Fixed time</mat-label>
+        <mat-label>Sliding time</mat-label>
         <mat-select #predefinedSelect matNativeControl formControlName="predefined" (openedChange)="hourRangeOnOpen($event)" 
         (selectionChange)="setVariableTimeLabel($event)">
           <ng-container *ngFor="let s of hoursTime">
