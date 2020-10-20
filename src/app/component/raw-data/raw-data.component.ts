@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { RawData } from 'src/app/model/raw-data';
+import { DataStorageService } from 'src/app/shared/service/data-storage.service';
 
 @Component({
   selector: 'app-raw-data',
@@ -6,14 +8,16 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./raw-data.component.css']
 })
 export class RawDataComponent implements OnInit {
-  displayedColumns: string[] = ['PM10', 'PM25', 'S02', 'CO', 'O3','PB','HC','VOC','TEMP','HUMIDITY','PRESSURE','GPS','BATTERY','MEASURED','AQI'];
-  dataSource = [
-    {'PM10':1, 'PM25':1, 'S02':1, 'CO':1, 'O3':1,'PB':1,'HC':1,'VOC':1,'TEMP':1,'HUMIDITY':16,'PRESSURE':1023,'GPS':'1121.121.454545; 1234.45.345233','BATTERY':1,'MEASURED':1,'AQI':1}
+  displayedColumns: string[] = ['pm10', 'pm25', 'so2', 'co', 'o3','pb','hc','voc','temp','humidity','pressure','gps','battery','measured','aqi'];
+  dataSource: RawData[] = [
   ];
 
-  constructor() { }
+  constructor(private dataStorageService: DataStorageService) { }
 
   ngOnInit(): void {
+    this.dataStorageService.dataBus.subscribe((d: RawData[]) => {
+      this.dataSource = d;
+    });
   }
 
 }

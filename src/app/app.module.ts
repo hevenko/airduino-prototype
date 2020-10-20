@@ -49,6 +49,7 @@ import { LoginComponent } from './component/login/login.component';
 import { ConfirmComponent } from './component/dialog/confirm/confirm.component';
 import { AirduinoComponent } from './component/airduino/airduino.component';
 import { MessageComponent } from './component/dialog/message/message.component';
+import { FilterModel } from './model/filter-model';
 
 @NgModule({
   declarations: [
@@ -104,7 +105,7 @@ import { MessageComponent } from './component/dialog/message/message.component';
     HttpClientModule,
     MatDialogModule
   ],
-  providers: [RemoteLoDService, AuthGuardService],
+  providers: [RemoteLoDService, AuthGuardService, FilterModel],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

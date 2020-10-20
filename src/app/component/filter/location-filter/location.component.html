@@ -1,28 +1,24 @@
-<div appDropdown class="dropdown pull-right filter">
-    <a class="dropdown-toogle" data-toggle="collapse" href="#locationComponentDropdown" onclick="return false;"
-        role="button" aria-expanded="false" aria-controls="locationComponentDropdown">
-        <span [innerHTML]="getLabel()"></span>
-        <span class="caret"></span>
-    </a>
-    <div class="dropdown-menu filter-menu-expanded" style="padding: 5px;" id="locationComponentDropdown">
-        <mat-radio-group aria-label="Select an option" [(ngModel)]="selectedDevices" (change)="locationOnChange($event)">
-            <div class="locationitem">
-                <mat-radio-button value="1">My devices</mat-radio-button>
-            </div>
-            <div class="locationitem">
-                <mat-radio-button value="2">Custom polygon</mat-radio-button>
-            </div>
-            <div class="locationitem">
-                <mat-radio-button value="3">Circular perimeter</mat-radio-button>
-            </div>
-            <div class="locationitem">
-                <mat-radio-button value="4"></mat-radio-button>
-                <select [(ngModel)]="selectedRegion">
-                  <ng-container *ngFor="let r of regionList" >
-                    <option value="r.id">{{r.id}}</option>
-                  </ng-container>
-                </select>
-            </div>
-        </mat-radio-group>
+<form [formGroup]="locationForm">
+    <div appDropdown class="dropdown pull-right filter">
+        <a class="dropdown-toogle" data-toggle="collapse" href="#locationComponentDropdown" onclick="return false;"
+            role="button" aria-expanded="false" aria-controls="locationComponentDropdown">
+            <span [innerHTML]="getLabel()"></span>
+            <span class="caret"></span>
+        </a>
+        <div class="dropdown-menu filter-menu-expanded" style="padding: 5px;" id="locationComponentDropdown">
+            <mat-radio-group aria-label="Select an option" formControlName="selectedDevices"
+                (change)="locationOnChange($event)">
+                <div class="locationitem" *ngFor="let k of locationList; let i = index;">
+                    <mat-radio-button value="{{k.value}}">
+                        <ng-container *ngIf="i !== locationList.length - 1">{{k.desc}}</ng-container>
+                    </mat-radio-button>
+                    <select formControlName="selectedRegion" *ngIf="i === locationList.length - 1">
+                        <ng-container *ngFor="let r of regionList">
+                            <option value="{{r.id}}">{{r.id}}</option>
+                        </ng-container>
+                    </select>
+                </div>
+            </mat-radio-group>
+        </div>
     </div>
-</div>
+</form>

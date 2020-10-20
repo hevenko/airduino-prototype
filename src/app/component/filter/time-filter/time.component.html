@@ -6,9 +6,9 @@
     </a>
     <div class="dropdown-menu filter-menu-expanded" style="padding: 15px;" id="timeCoponentDropdown">
       <mat-form-field>
-        <mat-label>Sliding time</mat-label>
-        <mat-select #predefinedSelect matNativeControl formControlName="predefined" (openedChange)="hourRangeOnOpen($event)" 
-        (selectionChange)="setVariableTimeLabel($event)">
+        <mat-label>Sliding range</mat-label>
+        <mat-select #predefinedSelect matNativeControl formControlName="slidingRange" (openedChange)="hourRangeOnOpen($event)" 
+        (selectionChange)="setSlidingRange($event)">
           <ng-container *ngFor="let s of hoursTime">
             <mat-option [value]="s.value">
               {{s.desc}}
@@ -18,19 +18,19 @@
       </mat-form-field>
 
       <div style="text-align: left;">
-        <input formControlName="custom" placeholder="Custom" size="5" style="border: 0px;background: transparent;" #customTime
-               (keyup)="setCustomTimeLabel(customTime.value, timeUnit.value)">
-        <select formControlName="customUnits" style="margin-left: 5px;" #timeUnit (change)="setCustomTimeLabel(customTime.value, timeUnit.value)">
+        <input formControlName="customRange" placeholder="Custom" size="5" style="border: 0px;background: transparent;" #customTime
+               (keyup)="setCustomRange(customTime.value, timeUnit.value)">
+        <select formControlName="customRangeUnits" style="margin-left: 5px;" #timeUnit (change)="setCustomRange(customTime.value, timeUnit.value)">
           <option *ngFor="let tu of customTimeUnits" value="{{tu.value}}">{{tu.desc}}</option>
         </select>
       </div>
     <hr>
         <mat-form-field>
-        <input matInput placeholder="fixed date range"
-               (keyup)="setFixedTimeLabel($event)"
-               (dateInput)="setFixedTimeLabel($event)"
+        <input formControlName="fixedRange" matInput placeholder="fixed date range"
+               (change)="setFixedRange($event)"
+               (dateInput)="setFixedRange($event)"
                [satDatepicker]="picker"
-               [value]="date" formControlName="fixedTimeRange">
+               [value]="date">
         </mat-form-field>
         <sat-datepicker #picker [rangeMode]="true" (opened)="setCalendarIsOpen(true)"
                         (closed)="setCalendarIsOpen(false)"></sat-datepicker>

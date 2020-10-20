@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import { FilterModel } from 'src/app/model/filter-model';
+import { DataStorageService } from 'src/app/shared/service/data-storage.service';
 
 @Component({
   selector: 'app-sensor',
@@ -14,8 +16,9 @@ export class SensorComponent implements OnInit {
     {value: 'o3', desc: 'Ozone', label: 'O<sub>3</sub>'}
   ];
   compForm: FormGroup = new FormGroup({});
-  
-  constructor() { }
+  defaultLabel = 'Sensors (?)';
+
+  constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { }
 
   ngOnInit(): void {
     this.initForm();
@@ -28,22 +31,26 @@ export class SensorComponent implements OnInit {
     this.compForm = new FormGroup({
       sensors: faSensors
     })
+    this.compForm.valueChanges.subscribe(() => {
+      this.filterModel.sensors = this.getComponentValue();
+      this.dataStorageService.fetchData();
+    });
   }
-  getSensorControls(){
+  getSensorControls() {
     return (this.compForm.get('sensors') as FormArray).controls;
   }
   getLabel() {
     const label = this.compForm.value.sensors
       .map((v, i) => (v ? i === 0 ? this.sensorList[i].label :  ' ' + this.sensorList[i].label : null))
       .filter(v => v !== null);
-    return !!label && label.length > 0  ? label : 'Sensors';
+    return !!label && label.length > 0  ? label : this.defaultLabel;
   }
   getComponentValue(): string[] {
     let result = [];
-    const label = this.compForm.value.sensors
+    result = this.compForm.value.sensors
       .map((v, i) => (v ? this.sensorList[i].value :  null))
       .filter(v => v !== null);
-    return result
+    return !!result ? result : null;
 
   }
 }
