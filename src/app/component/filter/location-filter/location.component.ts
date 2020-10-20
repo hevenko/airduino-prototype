@@ -33,11 +33,12 @@ export class LocationComponent implements OnInit {
     });  
     this.locationForm = new FormGroup({
       selectedDevices: new FormControl(),
-      selectedRegion:  new FormControl(null)
+      selectedRegion:  new FormControl()
     })
     this.locationForm.valueChanges.subscribe(() => {
       this.filterModel.locations = {name : this.locationForm.value.selectedRegion};
     });
+    this.locationForm.patchValue({selectedDevices: '4', selectedRegion: 'ZagrebCounty2'});
   }
 
   getLabel(): string {

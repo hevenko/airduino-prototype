@@ -35,6 +35,7 @@ export class SensorComponent implements OnInit {
       this.filterModel.sensors = this.getComponentValue();
       this.dataStorageService.fetchData();
     });
+    this.compForm.patchValue({"sensors":[true,true,true,true]});
   }
   getSensorControls() {
     return (this.compForm.get('sensors') as FormArray).controls;
