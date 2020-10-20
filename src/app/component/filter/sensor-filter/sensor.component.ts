@@ -51,7 +51,11 @@ export class SensorComponent implements OnInit {
     result = this.compForm.value.sensors
       .map((v, i) => (v ? this.sensorList[i].value :  null))
       .filter(v => v !== null);
+    
+    if (!!result.length) {
+      result = result.concat(['measured','gps','battery']);
+    }
+    
     return !!result ? result : null;
-
   }
 }
