@@ -52,7 +52,7 @@ export class TimeComponent implements OnInit, AfterViewInit {
     this.timeForm.valueChanges.subscribe((v: any) => {
       if (!!this.timeForm.value.slidingRange) {
         this.filterModel.time = {from : {interval : this.timeForm.value.slidingRange}};
-      } else if (!!this.timeForm.value.customRange) {
+      } else if (!!this.timeForm.value.customRange && !!this.timeForm.value.customRangeUnits) {
         this.filterModel.time = {from: {interval : (this.timeForm.value.customRangeUnits as string).replace('?',this.timeForm.value.customRange)}};
       } else if (!!this.timeForm.value.fixedRange && !!this.timeForm.value.fixedRange.begin && !!this.timeForm.value.fixedRange.end) {
         this.filterModel.time = {from: {date :this.timeForm.value.fixedRange.begin}, to: { date: this.timeForm.value.fixedRange.end} }
