@@ -13,7 +13,7 @@ import { Data } from '@angular/router';
 @Injectable({ providedIn: 'root' })
 export class DataStorageService {
   static i = 0;
-  noAccessControlAllowOriginProxy = 'https://cors-anywhere.herokuapp.com/'; //fix thanks to: https://stackoverflow.com/questions/43871637/no-access-control-allow-origin-header-is-present-on-the-requested-resource-whe/43881141#43881141
+  noAccessControlAllowOriginProxy = 'https://thingproxy.freeboard.io/fetch/'; //fix thanks to: https://stackoverflow.com/questions/43871637/no-access-control-allow-origin-header-is-present-on-the-requested-resource-whe/43881141#43881141
   dataBus: BehaviorSubject<RawData[]> = new BehaviorSubject<RawData[]>(null);
 
   constructor(private http: HttpClient,private messageService: MessageService, private filterModel: FilterModel) {
@@ -83,10 +83,12 @@ export class DataStorageService {
           }
           return res.data;
         })
-    ).subscribe((d: RawData[]) => {
-      console.log(d);
-      this.sendData(d);
-    });
+      ).subscribe((d: RawData[]) => {
+        console.log(d);
+        this.sendData(d);
+      });
+    } else {
+      this.sendData([]);
     }
   }
 }
