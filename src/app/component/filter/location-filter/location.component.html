@@ -12,7 +12,7 @@
                     <mat-radio-button value="{{k.value}}">
                         <ng-container *ngIf="i !== locationList.length - 1">{{k.desc}}</ng-container>
                     </mat-radio-button>
-                    <select formControlName="selectedRegion" *ngIf="i === locationList.length - 1">
+                    <select formControlName="selectedRegion" *ngIf="i === locationList.length - 1" (change)="regionOnChange()">
                         <ng-container *ngFor="let r of regionList">
                             <option value="{{r.id}}">{{r.id}}</option>
                         </ng-container>

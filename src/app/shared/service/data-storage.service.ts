@@ -14,13 +14,17 @@ import { Data } from '@angular/router';
 export class DataStorageService {
   static i = 0;
   noAccessControlAllowOriginProxy = 'https://thingproxy.freeboard.io/fetch/'; //fix thanks to: https://stackoverflow.com/questions/43871637/no-access-control-allow-origin-header-is-present-on-the-requested-resource-whe/43881141#43881141
-  dataBus: BehaviorSubject<RawData[]> = new BehaviorSubject<RawData[]>(null);
+  mapDataBus: BehaviorSubject<RawData[]> = new BehaviorSubject<RawData[]>(null);
+  locationDataBus: BehaviorSubject<any[]> = new BehaviorSubject<any[]>(null);
 
   constructor(private http: HttpClient,private messageService: MessageService, private filterModel: FilterModel) {
     console.log('DataStorageService' + (++DataStorageService.i));
   }
-  sendData(data: RawData[]): void {
-    this.dataBus.next(data);
+  sendMapData(data: RawData[]): void {
+    this.mapDataBus.next(data);
+  }
+  sendLocationData(data: RawData[]): void {
+    this.locationDataBus.next(data);
   }
   handleError = (err: HttpErrorResponse) => {
     if (!!err.message) {
@@ -71,7 +75,7 @@ export class DataStorageService {
     filter.time = this.filterModel.time;
     filter.locations = this.filterModel.locations;
     console.log(JSON.stringify(filter));
-    if (!!filter.sensors && !!filter.time && !!filter.locations) {
+    if (!!filter.sensors && !!filter.sensors.length && !!filter.time && !!filter.locations) {
       this.http.post<Data>(this.noAccessControlAllowOriginProxy + 'http://airduino-server.herokuapp.com/api/v1/data', filter)
       .pipe(
         catchError(this.handleError),
@@ -85,10 +89,10 @@ export class DataStorageService {
         })
       ).subscribe((d: RawData[]) => {
         console.log(d);
-        this.sendData(d);
+        this.sendMapData(d);
       });
     } else {
-      this.sendData([]);
+      this.sendMapData([]);
     }
   }
 }

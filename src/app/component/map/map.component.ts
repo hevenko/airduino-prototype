@@ -3,7 +3,13 @@ import Map from 'ol/Map';
 import View from 'ol/View';
 import { defaults as defaultInteractions, DragRotateAndZoom } from 'ol/interaction';
 import TileLayer from 'ol/layer/Tile';
-import OSM from 'ol/source/OSM';
+import XYZSource from 'ol/source/XYZ';
+import { DataStorageService } from 'src/app/shared/service/data-storage.service';
+import VectorLayer from 'ol/layer/Vector';
+import VectorSource from 'ol/source/Vector';
+import GeoJSON from 'ol/format/GeoJSON';
+import {fromLonLat} from 'ol/proj';
+import { TestData } from './testMapData';
 
 @Component({
   selector: 'app-map',
@@ -12,7 +18,14 @@ import OSM from 'ol/source/OSM';
 })
 export class MapComponent implements OnInit {
   map: Map;
-  constructor() { }
+  tileLayer: TileLayer;
+  vectorLayer: VectorLayer;
+  vectorSource: VectorSource;
+  gJson = new GeoJSON();
+
+  constructor(private dataStorageService: DataStorageService) { 
+    
+  }
 
 
   initMap(ctx) {
@@ -25,27 +38,63 @@ export class MapComponent implements OnInit {
           ctx.map = new Map({
             interactions: defaultInteractions().extend([
               new DragRotateAndZoom({ condition: customCondition })
-            ]),
+            ]),            
             layers: [
               new TileLayer({
-                source: new OSM()
+                source: new XYZSource({
+                  url: 'http://tile.stamen.com/terrain/{z}/{x}/{y}.jpg'
+                })
+              }),
+              new VectorLayer({
+                source: ctx.vectorSource
               })
             ],
             target: 'map',
             view: new View({
-              center: [200, 200],
-              zoom: 2
+              center: fromLonLat([0, 0]),
+              zoom: 6
             })
           });
           console.log('before')
+          let td = new TestData()
 
           resolve();
         }, 1);
       });
   }
    async ngOnInit() {
-     await this.initMap(this);
+    this.vectorSource = new VectorSource();
+
+    //subscribing to device list
+    this.dataStorageService.locationDataBus.subscribe((d: any) => {
+      if (!!d) {
+        this.map.getLayers().getArray()[1].getSource().clear(); //clear map
+        d.geometry.coordinates = this.geometryLonLat(d);
+        let feature = new GeoJSON().readFeature(d);
+        this.vectorSource.addFeature(feature);
+
+        this.map.getView().fit(feature.getGeometry(), {maxZoom: 7}); //to show new polygon
+      }
+    });
+    await this.initMap(this);
     console.log('after');
     
+  }
+  /**
+   * 
+   * @param 
+   * be aware of the outer square bracket!
+   * let source = [[[13.5131836, 45.6370871],[14.3591309, 45.5986657]]];
+   * let fliped = [fromLonLatToggle(source[0])] //notice the added square bracket to the function result
+   */
+  fromLonLatToggle(c:any[]): any[]  {
+    return c.map((v)=>{return fromLonLat(v)});
+  }
+  geometryLonLat(g: any): any {
+    if ((g.geometry.type.toUpperCase() === 'MULTIPOLYGON')) {
+      return [[this.fromLonLatToggle(g.geometry.coordinates[0][0])]];
+    } else {
+      return [this.fromLonLatToggle(g.geometry.coordinates[0])];
+    }
   }
 }

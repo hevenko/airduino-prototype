@@ -3,6 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { FilterModel } from 'src/app/model/filter-model';
 import { Region } from 'src/app/model/region';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
+import { TestData } from '../../map/testMapData';
 
 @Component({
   selector: 'app-location',
@@ -59,5 +60,11 @@ export class LocationComponent implements OnInit {
       this.locationForm.controls.selectedDevices.setValue(lastRadioBtnValue,{emitEvent: false});
     }
     this.dataStorageService.fetchData();
+  }
+  regionOnChange(): void {
+    let td: TestData = new TestData();
+    let f: any[] = td.countries.features as Array<any>;
+    let l = f.filter((v)=>{return v.id === this.locationForm.value.selectedRegion})[0];
+    this.dataStorageService.sendLocationData(l);
   }
 }

@@ -15,7 +15,7 @@ export class RawDataComponent implements OnInit {
   constructor(private dataStorageService: DataStorageService) { }
 
   ngOnInit(): void {
-    this.dataStorageService.dataBus.subscribe((d: RawData[]) => {
+    this.dataStorageService.mapDataBus.subscribe((d: RawData[]) => {
       this.dataSource = d;
     });
   }
