@@ -13,7 +13,14 @@ export class SensorComponent implements OnInit {
     {value: 'temp', desc: 'Temperature', label: '<sup>o</sup>C'},
     {value: 'humidity', desc: 'Humidity', label: 'H%'},
     {value: 'so2', desc: 'Sulfur dioxide', label: 'SO<sub>2</sub>'},
-    {value: 'o3', desc: 'Ozone', label: 'O<sub>3</sub>'}
+    {value: 'o3', desc: 'Ozone', label: 'O<sub>3</sub>'},
+    {value: 'hc', desc: 'hc', label: 'Hc'},
+    {value: 'voc', desc: 'voc', label: 'Voc'},
+    {value: 'pressure', desc: 'Pressure', label: 'Pa'},
+    {value: 'co', desc: 'Carbon monoxyde', label: 'CO'},
+    {value: 'pm10', desc: 'Pm10', label: 'pm10'},
+    {value: 'pm2_5', desc: 'Pm2.5', label: 'pm2.5'},
+    {value: 'pb', desc: 'Lead', label: 'Lead'}
   ];
   compForm: FormGroup = new FormGroup({});
   defaultLabel = 'Sensors (?)';
@@ -35,7 +42,7 @@ export class SensorComponent implements OnInit {
       this.filterModel.sensors = this.getComponentValue();
       this.dataStorageService.fetchData();
     });
-    this.compForm.patchValue({"sensors":[true,true,true,true]});
+    this.compForm.patchValue({"sensors":[true,true,true,true,true,true,true,true,true,true,true]});
   }
   getSensorControls() {
     return (this.compForm.get('sensors') as FormArray).controls;
