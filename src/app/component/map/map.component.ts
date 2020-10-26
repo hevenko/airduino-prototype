@@ -20,7 +20,6 @@ export class MapComponent implements OnInit {
   map: Map;
   tileLayer: TileLayer;
   vectorLayer: VectorLayer;
-  vectorSource: VectorSource;
   gJson = new GeoJSON();
 
   constructor(private dataStorageService: DataStorageService) { 
@@ -46,7 +45,7 @@ export class MapComponent implements OnInit {
                 })
               }),
               new VectorLayer({
-                source: ctx.vectorSource
+                source: new VectorSource()
               })
             ],
             target: 'map',
@@ -63,22 +62,20 @@ export class MapComponent implements OnInit {
       });
   }
    async ngOnInit() {
-    this.vectorSource = new VectorSource();
+    await this.initMap(this);
 
     //subscribing to device list
-    this.dataStorageService.locationDataBus.subscribe((d: any) => {
-      if (!!d) {
+    this.dataStorageService.locationDataBus.subscribe((geoJsonFeature: any) => {
+      if (!!geoJsonFeature && !!this.map) {
+        let d = JSON.parse(JSON.stringify(geoJsonFeature));
         this.map.getLayers().getArray()[1].getSource().clear(); //clear map
         d.geometry.coordinates = this.geometryLonLat(d);
         let feature = new GeoJSON().readFeature(d);
-        this.vectorSource.addFeature(feature);
+        this.map.getLayers().getArray()[1].getSource().addFeature(feature);
 
         this.map.getView().fit(feature.getGeometry(), {maxZoom: 7}); //to show new polygon
       }
     });
-    await this.initMap(this);
-    console.log('after');
-    
   }
   /**
    * 
