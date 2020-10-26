@@ -37,9 +37,15 @@ export class LocationComponent implements OnInit {
       selectedRegion:  new FormControl()
     })
     this.locationForm.valueChanges.subscribe(() => {
-      this.filterModel.locations = {name : this.locationForm.value.selectedRegion};
+      if(!!this.locationForm.value.selectedRegion) {
+        this.filterModel.locations = {name : this.locationForm.value.selectedRegion};
+      } else if (this.locationForm.controls.selectedDevices.value === '1'){
+        this.filterModel.locations = {devices : [1]}; //mock
+      } else {
+        this.filterModel.locations = null;
+      }
     });
-    this.locationForm.patchValue({selectedDevices: '4', selectedRegion: 'ZagrebCounty2'});
+    this.locationForm.controls.selectedDevices.setValue('1'); //mock My devices
   }
 
   getLabel(): string {
@@ -51,10 +57,10 @@ export class LocationComponent implements OnInit {
   locationOnChange(e:any) {
     if (!!e.source && !!e.source.radioGroup ) {
       if(e.source.radioGroup._radios.last != e.source.radioGroup.selected) {
-        this.locationForm.controls.selectedRegion.setValue('',{emitEvent: false});
+        this.locationForm.controls.selectedRegion.setValue('');
       }
     } else {
-      //last radio btn value
+      //region was selected so last radio btn is checked
       let radioBtnCount = e.currentTarget.childElementCount;
       let lastRadioBtnValue = e.currentTarget.children[radioBtnCount - 1].getElementsByTagName('input')[0].value;
       this.locationForm.controls.selectedDevices.setValue(lastRadioBtnValue,{emitEvent: false});
