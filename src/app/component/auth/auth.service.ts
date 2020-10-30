@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { catchError } from 'rxjs/operators';
 import { MessageService, MessageColor } from 'src/app/shared/service/message.service';
 import { Constants } from 'src/app/shared/constants';
-
+import {HttpParams} from "@angular/common/http";
 
 export interface AuthResponseData {
   kind: string;
@@ -26,9 +26,28 @@ export class AuthService {
 
   constructor(private http: HttpClient, private router: Router, private messageService: MessageService) { }
 
-  login(email: string, password: string) {
+  FireBaseLogin(email: string, password: string) {
     return this.http.post<AuthResponseData>(
       'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCFXALbVVczntBF7Sfhyq2DnUFTYVkB97s',
+      {
+        email: email,
+        password: password,
+        returnSecureToken: true
+      }).pipe(
+        catchError(this.handleError),
+        tap(resData => {
+          this.handleAuthentication(
+            resData.email,
+            resData.localId,
+            resData.idToken,
+            +resData.expiresIn
+          );
+        })
+      );
+  }
+  login(email: string, password: string) {
+    return this.http.post<AuthResponseData>(
+      'http://localhost:5000/api/v1/auth/local',
       {
         email: email,
         password: password,
@@ -64,12 +83,27 @@ export class AuthService {
         } ) */
       );
   }
+  loginWithGoogle() {
+    return this.http.get('http://localhost:5000/api/v1/auth/google');
+  }
+  loginWithFacebook() {
+    return this.http.get('http://localhost:5000/api/v1/auth/facebook');
+  }
+  loginWithTwitter() {
+    return this.http.get('http://localhost:5000/api/v1/auth/twitter');
+  }
+  logout() {
+    // cleanup
+    this.firebaseLogout();
+    return this.http.delete('http://localhost:5000/api/v1/auth');
+  }
   private handleAuthentication(
     email: string,
     userId: string,
     token: string,
     expiresIn: number
   ) {
+    console.log("login user with email:", email);
     const expirationDate = new Date(new Date().getTime() + expiresIn * 1000);
     const user = new User(email, userId, token, expirationDate);
     this.user.next(user);
@@ -108,7 +142,7 @@ export class AuthService {
     }, expirationDuration);
   }
 
-  logout() {
+  firebaseLogout() {
     localStorage.removeItem('userData');
     this.user.next(null);
     this.messageService.showMessage(Constants.MSG_LOGGED_OUT, MessageColor.Green);
