@@ -17,10 +17,12 @@
       </div>
 
       <div mat-dialog-actions>
-        <a href="http://localhost:5000/api/v1/auth/google" ><button type="button" mat-button mat-stroked-button style="margin-right:5px;">Log in with Google 1</button></a>
-        <button type="button" mat-button mat-stroked-button style="margin-right:5px;" (click)="loginWithGoogle()">Log in with Google 2</button>
-        <button type="button" mat-button mat-stroked-button style="margin-right:5px;" (click)="router.navigate(['/auth/facebook'])">Log in with Facebook</button>
-        <button type="button" mat-button mat-stroked-button style="margin-right:5px;" (click)="router.navigate(['/auth/twitter'])">Log in with Twitter</button>
+        <a [href]="constants.SERVER_URL + 'auth/google'">
+          <button type="button" mat-button mat-stroked-button style="margin-right:5px;">Log in with Google</button>
+        </a>
+        <a href="constants.SERVER_URL + 'auth/facebook'">
+          <button type="button" mat-button mat-stroked-button style="margin-right:5px;"><i class="material-icons">facebook</i>Log in with Facebook</button>
+        </a>
       </div>
     </form>
   </div>

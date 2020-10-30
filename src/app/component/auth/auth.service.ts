@@ -7,15 +7,15 @@ import { Router } from '@angular/router';
 import { catchError } from 'rxjs/operators';
 import { MessageService, MessageColor } from 'src/app/shared/service/message.service';
 import { Constants } from 'src/app/shared/constants';
-import {HttpParams} from "@angular/common/http";
 
 export interface AuthResponseData {
-  kind: string;
-  idToken: string;
-  email: string;
-  refreshToken: string;
-  expiresIn: string;
-  localId: string;
+  kind?: string;
+  idToken?: string;
+  name?: string;
+  email?: string;
+  refreshToken?: string;
+  expiresIn?: string;
+  localId?: string;
   registered?: boolean;
 }
 
@@ -23,6 +23,7 @@ export interface AuthResponseData {
 export class AuthService {
   user = new BehaviorSubject<User>(null);
   private tokenExpirationTimer: any;
+  server = Constants.SERVER_URL;
 
   constructor(private http: HttpClient, private router: Router, private messageService: MessageService) { }
 
@@ -47,12 +48,8 @@ export class AuthService {
   }
   login(email: string, password: string) {
     return this.http.post<AuthResponseData>(
-      'http://localhost:5000/api/v1/auth/local',
-      {
-        email: email,
-        password: password,
-        returnSecureToken: true
-      }).pipe(
+      this.server + 'auth/local', { email, password })
+      .pipe(
         catchError(this.handleError),
         tap(resData => {
           this.handleAuthentication(
@@ -64,7 +61,7 @@ export class AuthService {
         })
       );
   }
-  signup(email: string, password: string) {
+  FireBaseSignup(email: string, password: string) {
     return this.http.post<AuthResponseData>(
       'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCFXALbVVczntBF7Sfhyq2DnUFTYVkB97s',
       {
@@ -83,19 +80,32 @@ export class AuthService {
         } ) */
       );
   }
+  signup(name: string, email: string, password: string) {
+    return this.http.post(this.server + 'owners/id', { name, email, password }).pipe(
+        catchError(this.handleError)/* ,
+        tap(resData => {
+          this.handleAuthentication(
+            resData.email,
+            resData.localId,
+            resData.idToken,
+            +resData.expiresIn
+          );
+        } ) */
+      );
+  }
   loginWithGoogle() {
-    return this.http.get('http://localhost:5000/api/v1/auth/google');
+    return this.http.get(this.server + 'auth/google');
   }
   loginWithFacebook() {
-    return this.http.get('http://localhost:5000/api/v1/auth/facebook');
+    return this.http.get(this.server + 'auth/facebook');
   }
   loginWithTwitter() {
-    return this.http.get('http://localhost:5000/api/v1/auth/twitter');
+    return this.http.get(this.server + 'auth/twitter');
   }
   logout() {
     // cleanup
     this.firebaseLogout();
-    return this.http.delete('http://localhost:5000/api/v1/auth');
+    return this.http.delete(this.server + 'auth');
   }
   private handleAuthentication(
     email: string,
