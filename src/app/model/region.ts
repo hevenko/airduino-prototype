@@ -3,5 +3,5 @@ export interface Region {
   type: string;
   name: string;
   gtype: string;
-  area: string;
+  coordinates: [][][];
 }

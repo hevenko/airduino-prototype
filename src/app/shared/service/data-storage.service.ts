@@ -28,7 +28,7 @@ export class DataStorageService {
   sendMapData(data: RawData[]): void {
     this.mapDataBus.next(data);
   }
-  sendLocationData(data: RawData[]): void {
+  sendLocationData(data: any): void {
     this.locationDataBus.next(data);
   }
   handleError = (err: HttpErrorResponse) => {

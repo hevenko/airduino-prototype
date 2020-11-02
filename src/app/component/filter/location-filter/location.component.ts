@@ -68,9 +68,11 @@ export class LocationComponent implements OnInit {
     this.dataStorageService.fetchData();
   }
   regionOnChange(): void {
-    let td: TestData = new TestData();
-    let f: any[] = td.countries.features as Array<any>;
-    let l = f.filter((v)=>{return v.id === this.locationForm.value.selectedRegion})[0];
+    let l = this.regionList.filter((v)=>{return v.id === this.locationForm.value.selectedRegion})
+    .map((r:Region) =>{
+      let f = {"type":"Feature","id":r.id,"geometry":{"type":r.gtype,"coordinates":r.coordinates}};
+      return f;
+    })[0];
     this.dataStorageService.sendLocationData(l);
   }
 }

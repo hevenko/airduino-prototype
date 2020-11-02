@@ -67,10 +67,11 @@ export class MapComponent implements OnInit {
         let d = JSON.parse(JSON.stringify(geoJsonFeature));
         this.map.getLayers().getArray()[1].getSource().clear(); //clear map
         d.geometry.coordinates = this.geometryLonLat(d);
-        let feature = new GeoJSON().readFeature(d);
+        let gs = new GeoJSON();
+        let feature = gs.readFeature(d);
         this.map.getLayers().getArray()[1].getSource().addFeature(feature);
 
-        this.map.getView().fit(feature.getGeometry(), {maxZoom: 7}); //to show new polygon
+        this.map.getView().fit(feature.getGeometry(), {maxZoom: 10}); //to show new polygon
       }
     });
   }
