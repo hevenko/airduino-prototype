@@ -51,12 +51,9 @@ export class MapComponent implements OnInit {
             target: 'map',
             view: new View({
               center: fromLonLat([0, 0]),
-              zoom: 6
+              zoom: 0
             })
           });
-          console.log('before')
-          let td = new TestData()
-
           resolve();
         }, 1);
       });
