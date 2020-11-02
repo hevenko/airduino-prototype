@@ -9,8 +9,8 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import GeoJSON from 'ol/format/GeoJSON';
 import {fromLonLat} from 'ol/proj';
-import { TestData } from './testMapData';
 import { Region } from 'src/app/model/region';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-map',
@@ -18,16 +18,27 @@ import { Region } from 'src/app/model/region';
   styleUrls: ['./map.component.css']
 })
 export class MapComponent implements OnInit {
+  private static deleteMapService: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   map: Map;
   tileLayer: TileLayer;
   vectorLayer: VectorLayer;
   gJson = new GeoJSON();
 
   constructor(private dataStorageService: DataStorageService) { 
-    
+    MapComponent.deleteMapService.subscribe((v: boolean) => {
+      if (!!this.map) {
+        this.map.getLayers().getArray()[1].getSource().clear(); //clear map
+        this.map.getView().setZoom(0);
+      }
+    });
   }
-
-
+  /**
+   * usage example:
+   * MapComponent.deleteMap()
+   */
+  static deleteMap(): void {
+    this.deleteMapService.next(true);
+  }
   initMap(ctx) {
     return new Promise(function (resolve) {
         setTimeout(() => { // without setTimeout map is empty
@@ -70,9 +81,9 @@ export class MapComponent implements OnInit {
   draw(r:Region[]) {
     r?.forEach((r: Region) => {
       if (!!r && !!this.map) {
-        let geoJsonFeature = {"type":"Feature","id":r.id,"geometry":{"type":r.gtype,"coordinates":r.coordinates}}
+        //let geoJsonFeature = {"type":"Feature","id":r.id,"geometry":{"type":r.gtype,"coordinates":r.coordinates}}
+        let geoJsonFeature = {"type":"Feature","id":r.id,"geometry":{"type":"Point","coordinates":[4e6, -5e6]}}
         let d = JSON.parse(JSON.stringify(geoJsonFeature));
-        this.map.getLayers().getArray()[1].getSource().clear(); //clear map
         d.geometry.coordinates = this.geometryLonLat(d);
         let gs = new GeoJSON();
         let feature = gs.readFeature(d);
@@ -95,8 +106,10 @@ export class MapComponent implements OnInit {
   geometryLonLat(g: any): any {
     if ((g.geometry.type.toUpperCase() === 'MULTIPOLYGON')) {
       return [[this.fromLonLatToggle(g.geometry.coordinates[0][0])]];
-    } else {
+    } else if ((g.geometry.type.toUpperCase() === 'POLYGON')) {
       return [this.fromLonLatToggle(g.geometry.coordinates[0])];
+    } else {
+      return this.fromLonLatToggle(g.geometry.coordinates);
     }
   }
 }

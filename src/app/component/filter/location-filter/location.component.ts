@@ -3,6 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { FilterModel } from 'src/app/model/filter-model';
 import { Region } from 'src/app/model/region';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
+import { MapComponent } from '../../map/map.component';
 
 @Component({
   selector: 'app-location',
@@ -57,6 +58,7 @@ export class LocationComponent implements OnInit {
     if (!!e.source && !!e.source.radioGroup ) {
       if(e.source.radioGroup._radios.last != e.source.radioGroup.selected) {
         this.locationForm.controls.selectedRegion.setValue('');
+        MapComponent.deleteMap();
       }
     } else {
       //region was selected so last radio btn is checked
