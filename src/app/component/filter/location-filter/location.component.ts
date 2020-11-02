@@ -3,7 +3,6 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { FilterModel } from 'src/app/model/filter-model';
 import { Region } from 'src/app/model/region';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
-import { TestData } from '../../map/testMapData';
 
 @Component({
   selector: 'app-location',
@@ -68,11 +67,7 @@ export class LocationComponent implements OnInit {
     this.dataStorageService.fetchData();
   }
   regionOnChange(): void {
-    let l = this.regionList.filter((v)=>{return v.id === this.locationForm.value.selectedRegion})
-    .map((r:Region) =>{
-      let f = {"type":"Feature","id":r.id,"geometry":{"type":r.gtype,"coordinates":r.coordinates}};
-      return f;
-    })[0];
+    let l = this.regionList.filter((v)=>{return v.id === this.locationForm.value.selectedRegion});
     this.dataStorageService.sendLocationData(l);
   }
 }

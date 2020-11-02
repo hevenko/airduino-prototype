@@ -18,7 +18,7 @@ export class DataStorageService {
   //noAccessControlAllowOriginProxy = 'https://thingproxy.freeboard.io/fetch/'; //fix thanks to: https://stackoverflow.com/questions/43871637/no-access-control-allow-origin-header-is-present-on-the-requested-resource-whe/43881141#43881141
   noAccessControlAllowOriginProxy = ''; //no need to use proxy - ili treba se dobro posrati
   mapDataBus: BehaviorSubject<RawData[]> = new BehaviorSubject<RawData[]>(null);
-  locationDataBus: BehaviorSubject<any[]> = new BehaviorSubject<any[]>(null);
+  drawDataBus: BehaviorSubject<Region[]> = new BehaviorSubject<Region[]>(null);
 
   constructor(private http: HttpClient,private messageService: MessageService, private filterModel: FilterModel) {
     console.log('DataStorageService' + (++DataStorageService.i));
@@ -28,8 +28,8 @@ export class DataStorageService {
   sendMapData(data: RawData[]): void {
     this.mapDataBus.next(data);
   }
-  sendLocationData(data: any): void {
-    this.locationDataBus.next(data);
+  sendLocationData(data: Region[]): void {
+    this.drawDataBus.next(data);
   }
   handleError = (err: HttpErrorResponse) => {
     if (!!err.message) {

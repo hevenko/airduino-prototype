@@ -10,6 +10,7 @@ import VectorSource from 'ol/source/Vector';
 import GeoJSON from 'ol/format/GeoJSON';
 import {fromLonLat} from 'ol/proj';
 import { TestData } from './testMapData';
+import { Region } from 'src/app/model/region';
 
 @Component({
   selector: 'app-map',
@@ -62,19 +63,25 @@ export class MapComponent implements OnInit {
     await this.initMap(this);
 
     //subscribing to device list
-    this.dataStorageService.locationDataBus.subscribe((geoJsonFeature: any) => {
-      if (!!geoJsonFeature && !!this.map) {
+    this.dataStorageService.drawDataBus.subscribe((geoJsonFeature: Region[]) => {
+      this.draw(geoJsonFeature);
+    });
+  }
+  draw(r:Region[]) {
+    r?.forEach((r: Region) => {
+      if (!!r && !!this.map) {
+        let geoJsonFeature = {"type":"Feature","id":r.id,"geometry":{"type":r.gtype,"coordinates":r.coordinates}}
         let d = JSON.parse(JSON.stringify(geoJsonFeature));
         this.map.getLayers().getArray()[1].getSource().clear(); //clear map
         d.geometry.coordinates = this.geometryLonLat(d);
         let gs = new GeoJSON();
         let feature = gs.readFeature(d);
         this.map.getLayers().getArray()[1].getSource().addFeature(feature);
-
+  
         this.map.getView().fit(feature.getGeometry(), {maxZoom: 10}); //to show new polygon
-      }
+      }  
     });
-  }
+}
   /**
    * 
    * @param 
