@@ -13,6 +13,16 @@
       <div mat-dialog-actions>
         <button type="button" mat-button mat-stroked-button style="margin-right:5px;" (click)="router.navigate(['/map'])">Cancel</button>
         <button mat-button mat-stroked-button [disabled]="!authForm.valid">Login</button>
+        <button mat-button mat-stroked-button (click)="logout()">Logout</button>
+      </div>
+
+      <div mat-dialog-actions>
+        <a [href]="constants.SERVER_URL + 'auth/google'">
+          <button type="button" mat-button mat-stroked-button style="margin-right:5px;">Log in with Google</button>
+        </a>
+        <a href="constants.SERVER_URL + 'auth/facebook'">
+          <button type="button" mat-button mat-stroked-button style="margin-right:5px;"><i class="material-icons">facebook</i>Log in with Facebook</button>
+        </a>
       </div>
     </form>
   </div>

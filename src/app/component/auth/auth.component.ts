@@ -1,9 +1,10 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {NgForm} from '@angular/forms';
-import {AuthResponseData, AuthService} from './auth.service';
+import {AuthResponseData, AuthService } from './auth.service';
 import {Observable} from 'rxjs';
 import {Router} from '@angular/router';
-import { MessageService, MessageColor } from 'src/app/shared/service/message.service';
+import {MessageService, MessageColor} from 'src/app/shared/service/message.service';
+import { Constants } from '../../shared/constants';
 
 @Component({
   selector: 'app-auth',
@@ -11,10 +12,11 @@ import { MessageService, MessageColor } from 'src/app/shared/service/message.ser
   styleUrls: ['./auth.component.css']
 })
 export class AuthComponent implements OnInit {
-  email = 'aaa@aa.aa';
-  password = 'aaaaaa';
+  email = 'dd@dd.com';
+  password = 'dddddd';
   isLoginMode = true;
   isLoading = false;
+  constants = Constants;
 
   constructor(private auth: AuthService, public router: Router, private messageService: MessageService) { }
 
@@ -28,7 +30,7 @@ export class AuthComponent implements OnInit {
     if (this.isLoginMode) {
       authObs = this.auth.login(form.value.email, form.value.password);
     } else {
-      authObs = this.auth.signup(form.value.email, form.value.password);
+      authObs = this.auth.signup(form.value.name, form.value.email, form.value.password);
     }
     authObs.subscribe(
       resData => {
@@ -45,4 +47,17 @@ export class AuthComponent implements OnInit {
   }
   onSwitchMode() {
     this.isLoginMode = !this.isLoginMode;
-  }}
+  }
+
+  loginWithGoogle() {
+    console.log('before google auth');
+    this.auth.loginWithGoogle().subscribe( (data: any) => console.log( "auth with google result:", data));
+  }
+
+  logout() {
+    console.log('before logout');
+    this.auth.logout().subscribe( (data: any) => console.log( "logged out:", data));
+  }
+
+}
+

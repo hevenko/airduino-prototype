@@ -8,14 +8,14 @@ import { catchError } from 'rxjs/operators';
 import { MessageService, MessageColor } from 'src/app/shared/service/message.service';
 import { Constants } from 'src/app/shared/constants';
 
-
 export interface AuthResponseData {
-  kind: string;
-  idToken: string;
-  email: string;
-  refreshToken: string;
-  expiresIn: string;
-  localId: string;
+  kind?: string;
+  idToken?: string;
+  name?: string;
+  email?: string;
+  refreshToken?: string;
+  expiresIn?: string;
+  localId?: string;
   registered?: boolean;
 }
 
@@ -23,10 +23,11 @@ export interface AuthResponseData {
 export class AuthService {
   user = new BehaviorSubject<User>(null);
   private tokenExpirationTimer: any;
+  server = Constants.SERVER_URL;
 
   constructor(private http: HttpClient, private router: Router, private messageService: MessageService) { }
 
-  login(email: string, password: string) {
+  FireBaseLogin(email: string, password: string) {
     return this.http.post<AuthResponseData>(
       'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCFXALbVVczntBF7Sfhyq2DnUFTYVkB97s',
       {
@@ -45,7 +46,22 @@ export class AuthService {
         })
       );
   }
-  signup(email: string, password: string) {
+  login(email: string, password: string) {
+    return this.http.post<AuthResponseData>(
+      this.server + 'auth/local', { email, password })
+      .pipe(
+        catchError(this.handleError),
+        tap(resData => {
+          this.handleAuthentication(
+            resData.email,
+            resData.localId,
+            resData.idToken,
+            +resData.expiresIn
+          );
+        })
+      );
+  }
+  FireBaseSignup(email: string, password: string) {
     return this.http.post<AuthResponseData>(
       'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCFXALbVVczntBF7Sfhyq2DnUFTYVkB97s',
       {
@@ -64,12 +80,40 @@ export class AuthService {
         } ) */
       );
   }
+  signup(name: string, email: string, password: string) {
+    return this.http.post(this.server + 'owners/id', { name, email, password }).pipe(
+        catchError(this.handleError)/* ,
+        tap(resData => {
+          this.handleAuthentication(
+            resData.email,
+            resData.localId,
+            resData.idToken,
+            +resData.expiresIn
+          );
+        } ) */
+      );
+  }
+  loginWithGoogle() {
+    return this.http.get(this.server + 'auth/google');
+  }
+  loginWithFacebook() {
+    return this.http.get(this.server + 'auth/facebook');
+  }
+  loginWithTwitter() {
+    return this.http.get(this.server + 'auth/twitter');
+  }
+  logout() {
+    // cleanup
+    this.firebaseLogout();
+    return this.http.delete(this.server + 'auth');
+  }
   private handleAuthentication(
     email: string,
     userId: string,
     token: string,
     expiresIn: number
   ) {
+    console.log("login user with email:", email);
     const expirationDate = new Date(new Date().getTime() + expiresIn * 1000);
     const user = new User(email, userId, token, expirationDate);
     this.user.next(user);
@@ -108,7 +152,7 @@ export class AuthService {
     }, expirationDuration);
   }
 
-  logout() {
+  firebaseLogout() {
     localStorage.removeItem('userData');
     this.user.next(null);
     this.messageService.showMessage(Constants.MSG_LOGGED_OUT, MessageColor.Green);

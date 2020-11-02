@@ -21,7 +21,7 @@ export const passwordsMismatch: any = (control: FormGroup): ValidationErrors | n
 })
 export class NewUserComponent implements OnInit {
   _userName = 'dddd';
-  _email = 'dd@dd.dd';
+  _email = 'dd@dd.com';
   _password = 'dddddd';
   _repeatPassword = 'dddddd';
   userForm: FormGroup;
@@ -50,7 +50,7 @@ export class NewUserComponent implements OnInit {
   }
 
   onSubmit() {
-    this.authService.signup(this.email.value, this.password.value).subscribe(
+    this.authService.signup(this.userName.value, this.email.value, this.password.value).subscribe(
       resData => {
         console.log(resData);
         this.messageService.showMessage(Constants.MSG_REGISTRATION_SUCCESS, MessageColor.Green);

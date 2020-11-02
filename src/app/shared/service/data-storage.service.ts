@@ -9,17 +9,22 @@ import { Region } from 'src/app/model/region';
 import { FilterModel } from 'src/app/model/filter-model';
 import { RawData } from 'src/app/model/raw-data';
 import { Data } from '@angular/router';
+import { Constants } from '../../shared/constants';
 
 @Injectable({ providedIn: 'root' })
 export class DataStorageService {
+  serverURL = Constants.SERVER_URL;
   static i = 0;
-  noAccessControlAllowOriginProxy = 'https://thingproxy.freeboard.io/fetch/'; //fix thanks to: https://stackoverflow.com/questions/43871637/no-access-control-allow-origin-header-is-present-on-the-requested-resource-whe/43881141#43881141
+  //noAccessControlAllowOriginProxy = 'https://thingproxy.freeboard.io/fetch/'; //fix thanks to: https://stackoverflow.com/questions/43871637/no-access-control-allow-origin-header-is-present-on-the-requested-resource-whe/43881141#43881141
+  noAccessControlAllowOriginProxy = ''; //no need to use proxy - ili treba se dobro posrati
   mapDataBus: BehaviorSubject<RawData[]> = new BehaviorSubject<RawData[]>(null);
   locationDataBus: BehaviorSubject<any[]> = new BehaviorSubject<any[]>(null);
 
   constructor(private http: HttpClient,private messageService: MessageService, private filterModel: FilterModel) {
     console.log('DataStorageService' + (++DataStorageService.i));
   }
+  getURL = (resource: string): string => this.noAccessControlAllowOriginProxy + this.serverURL + resource;
+
   sendMapData(data: RawData[]): void {
     this.mapDataBus.next(data);
   }
@@ -34,7 +39,7 @@ export class DataStorageService {
     return throwError(err);
   }
   fetchOwners(): Observable<Owner[]> {
-    return this.http.get<Data>(this.noAccessControlAllowOriginProxy + 'http://airduino-server.herokuapp.com/api/v1/owners')
+    return this.http.get<Data>(this.getURL('owners'))
       .pipe(
         catchError(this.handleError),
         map(res => {
@@ -43,7 +48,7 @@ export class DataStorageService {
     );
   }
   fetchDevices(ownerId: string): Observable<Device[]> {
-    return this.http.get<Data>(this.noAccessControlAllowOriginProxy + 'http://airduino-server.herokuapp.com/api/v1/devices/' + ownerId)
+    return this.http.get<Data>(this.getURL('devices/' + ownerId))
       .pipe(
         catchError(this.handleError),
         map(res => {
@@ -52,7 +57,7 @@ export class DataStorageService {
     );
   }
   fetchSensors(deviceId: string): Observable<Device[]> {
-    return this.http.get<Data>(this.noAccessControlAllowOriginProxy + 'http://airduino-server.herokuapp.com/api/v1/sensors/' + deviceId)
+    return this.http.get<Data>(this.getURL('sensors/' + deviceId))
       .pipe(
         catchError(this.handleError),
         map(res => {
@@ -61,7 +66,7 @@ export class DataStorageService {
     );
   }
   fetchRegions(): Observable<Region[]> {
-    return this.http.get<Data>(this.noAccessControlAllowOriginProxy + 'http://airduino-server.herokuapp.com/api/v1/regions')
+    return this.http.get<Data>(this.getURL('regions'))
       .pipe(
         catchError(this.handleError),
         map(res => {
@@ -76,7 +81,7 @@ export class DataStorageService {
     filter.locations = this.filterModel.locations;
     console.log(JSON.stringify(filter));
     if (!!filter.sensors && !!filter.sensors.length && !!filter.time && !!filter.locations) {
-      this.http.post<Data>(this.noAccessControlAllowOriginProxy + 'http://airduino-server.herokuapp.com/api/v1/data', filter)
+      this.http.post<Data>(this.getURL('data'), filter)
       .pipe(
         catchError(this.handleError),
         map(res => {
