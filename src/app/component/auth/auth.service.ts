@@ -161,29 +161,33 @@ export class AuthService {
 
   private handleError(errorRes: HttpErrorResponse) {
     let errorMessage = 'An unknown error occurred!';
-    if (!errorRes.error || !errorRes.error.error) {
-      return throwError(errorMessage);
-    }
-    let msg: string = errorRes.error.error.message;
-    let msgParts: string[] = msg.split(':').map(p => p.trim());
-
-
-    switch (msgParts[0]) {
-      case 'EMAIL_EXISTS':
-        errorMessage = Constants.MSG_DUPLICATE_MAIL;
-        break;
-      case 'EMAIL_NOT_FOUND':
-        errorMessage = Constants.MSG_UNKNOWN_MAIL;
-        break;
-      case 'INVALID_PASSWORD':
-        errorMessage = Constants.MSG_BAD_PASSWORD;
-        break;
-      case 'WEAK_PASSWORD':
-        errorMessage = msgParts[1];
-        break;
-      case 'INVALID_EMAIL':
-        errorMessage = Constants.MSG_BAD_EMAIL;
-        break;
+    console.log(errorRes);    
+    if (!!errorRes.error) {
+      if(!!errorRes.error.error) {
+        let msg: string = errorRes.error.error.message;
+        let msgParts: string[] = msg.split(':').map(p => p.trim());
+    
+    
+        switch (msgParts[0]) {
+          case 'EMAIL_EXISTS':
+            errorMessage = Constants.MSG_DUPLICATE_MAIL;
+            break;
+          case 'EMAIL_NOT_FOUND':
+            errorMessage = Constants.MSG_UNKNOWN_MAIL;
+            break;
+          case 'INVALID_PASSWORD':
+            errorMessage = Constants.MSG_BAD_PASSWORD;
+            break;
+          case 'WEAK_PASSWORD':
+            errorMessage = msgParts[1];
+            break;
+          case 'INVALID_EMAIL':
+            errorMessage = Constants.MSG_BAD_EMAIL;
+            break;
+        }
+      } else {
+        errorMessage = errorRes.error;
+      }
     }
     return throwError(errorMessage);
   }
