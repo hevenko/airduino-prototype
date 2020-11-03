@@ -8,7 +8,7 @@ import { DataStorageService } from 'src/app/shared/service/data-storage.service'
   styleUrls: ['./raw-data.component.css']
 })
 export class RawDataComponent implements OnInit {
-  displayedColumns: string[] = ['pm10', 'pm25', 'so2', 'co', 'o3','pb','hc','voc','temp','humidity','pressure','gps','battery','measured','aqi'];
+  displayedColumns: string[] = ['pm10', 'pm2_5', 'so2', 'co', 'o3','pb','hc','voc','temp','humidity','pressure','gps','battery','measured','aqi'];
   dataSource: RawData[] = [
   ];
 

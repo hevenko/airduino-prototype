@@ -1,6 +1,6 @@
 export interface RawData {
   pm10: string;
-  pm25: string;
+  pm2_5: string;
   tso2: string;
   co: string;
   o3: string;
@@ -10,7 +10,7 @@ export interface RawData {
   temp: string;
   humidity: string;
   pressure: string;
-  gps: string;
+  gps: Array<string>;
   battery: string;
   measured: string;
   aqi: string;
