@@ -1,13 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import Map from 'ol/Map';
 import View from 'ol/View';
+import {Draw, Modify, Select, Snap} from 'ol/interaction';
+import {OSM, Vector as VectorSource} from 'ol/source';
 import { defaults as defaultInteractions, DragRotateAndZoom } from 'ol/interaction';
-import TileLayer from 'ol/layer/Tile';
-import {Style, Stroke, Fill, Circle} from 'ol/style';
+import {Circle as CircleStyle, Fill, Stroke, Style} from 'ol/style';
+//import TileLayer from 'ol/layer/Tile';
+//import {Style, Stroke, Fill, Circle} from 'ol/style';
 import XYZSource from 'ol/source/XYZ';
+import Polygon from 'ol/geom/Polygon';
+import LineString from 'ol/geom/LineString';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
-import VectorLayer from 'ol/layer/Vector';
-import VectorSource from 'ol/source/Vector';
+//import VectorLayer from 'ol/layer/Vector';
+import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer';
+//import VectorSource from 'ol/source/Vector';
 import GeoJSON from 'ol/format/GeoJSON';
 import {fromLonLat} from 'ol/proj';
 import { Region } from 'src/app/model/region';
@@ -31,7 +37,7 @@ export class MapComponent implements OnInit {
   gJson = new GeoJSON();
   styles = {
     'Point': new Style({
-      image: new Circle({
+      image: new CircleStyle({
         radius: 5,
         fill: new Fill({
           color: 'rgba(255, 0, 0, 0.1)',
@@ -42,7 +48,7 @@ export class MapComponent implements OnInit {
       }),
     }),
     'SelectedPoint': new Style({
-      image: new Circle({
+      image: new CircleStyle({
         radius: 5,
         fill: new Fill({
           color: 'rgba(0, 0, 255, 0.1)',
@@ -108,17 +114,72 @@ export class MapComponent implements OnInit {
     return this.styles[feature.get("selected") ? "SelectedPoint" : feature.getGeometry().getType()];
   };
 
+  raster = new TileLayer({
+    source: new OSM(),
+  });
+  source = new VectorSource();
+  vector = new VectorLayer({
+    source: this.source,
+    style: new Style({
+      fill: new Fill({
+        color: 'rgba(255, 255, 255, 0.2)',
+      }),
+      stroke: new Stroke({
+        color: '#ffcc33',
+        width: 2,
+      }),
+      image: new CircleStyle({
+        radius: 7,
+        fill: new Fill({
+          color: '#ffcc33',
+        }),
+      }),
+    }),
+  });
+
+  ExampleDraw = {
+    activeType: undefined,
+    init: function (map) {
+      this.Polygon.setActive(false);
+    },
+    Polygon: new Draw({
+      source: this.vector.getSource(),
+      type: 'Polygon',
+    }),
+    Circle: new Draw({
+      source: this.vector.getSource(),
+      type: 'Circle',
+    }),
+    getActive: function() {
+      return this.activeType ? this[this.activeType].getActive() : false;
+    },
+    setActive: function(active) {
+      var type = "Polygon";// optionsForm.elements['draw-type'].value;
+      if (active) {
+        this.activeType && this[this.activeType].setActive(false);
+        this[type].setActive(true);
+        this.activeType = type;
+      } else {
+        this.activeType && this[this.activeType].setActive(false);
+        this.activeType = null;
+      }
+    },
+  };
+
   initMap(ctx) {
     return new Promise((resolve) => {
         setTimeout(() => { // without setTimeout map is empty
-          var customCondition = function (mapBrowserEvent) {
+          const customCondition = function (mapBrowserEvent) {
             console.log(mapBrowserEvent);
             return false; // TODO
           };
+
           ctx.map = new Map({
             interactions: defaultInteractions().extend([
               new DragRotateAndZoom({ condition: customCondition })
-            ]),            
+            ]),      
+            layers: [this.raster, this.vector],      
+            /*
             layers: [
               new TileLayer({
                 source: new XYZSource({
@@ -130,6 +191,7 @@ export class MapComponent implements OnInit {
                 style: this.styleFunction,
               })
             ],
+            */
             target: 'map',
             view: new View({
               center: fromLonLat([0, 0]),
@@ -140,8 +202,24 @@ export class MapComponent implements OnInit {
         }, 1);
       });
   }
-   async ngOnInit() {
+
+  drawPolygon = new Draw({
+    source: this.source,
+    type: "Polygon",
+  });
+  drawCircle = new Draw({
+    source: this.source,
+    type: "Circle",
+  });
+  snap = new Snap({source: this.source});
+
+  async ngOnInit() {
     await this.initMap(this);
+    const modify = new Modify({source: this.source});
+    this.map.addInteraction(modify);
+    this.drawPolygon.setActive(true);
+    this.map.addInteraction(this.drawPolygon);
+    this.map.addInteraction(this.snap);
 
     //subscribing to device list
     this.dataStorageService.drawDataBus.subscribe((geoJsonFeature: GeoJSONFeature[]) => {
