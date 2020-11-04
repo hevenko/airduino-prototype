@@ -117,54 +117,11 @@ export class MapComponent implements OnInit {
   raster = new TileLayer({
     source: new OSM(),
   });
-  source = new VectorSource();
+  source = new VectorSource({wrapX: false});
   vector = new VectorLayer({
     source: this.source,
-    style: new Style({
-      fill: new Fill({
-        color: 'rgba(255, 255, 255, 0.2)',
-      }),
-      stroke: new Stroke({
-        color: '#ffcc33',
-        width: 2,
-      }),
-      image: new CircleStyle({
-        radius: 7,
-        fill: new Fill({
-          color: '#ffcc33',
-        }),
-      }),
-    }),
+    style: this.styleFunction,
   });
-
-  ExampleDraw = {
-    activeType: undefined,
-    init: function (map) {
-      this.Polygon.setActive(false);
-    },
-    Polygon: new Draw({
-      source: this.vector.getSource(),
-      type: 'Polygon',
-    }),
-    Circle: new Draw({
-      source: this.vector.getSource(),
-      type: 'Circle',
-    }),
-    getActive: function() {
-      return this.activeType ? this[this.activeType].getActive() : false;
-    },
-    setActive: function(active) {
-      var type = "Polygon";// optionsForm.elements['draw-type'].value;
-      if (active) {
-        this.activeType && this[this.activeType].setActive(false);
-        this[type].setActive(true);
-        this.activeType = type;
-      } else {
-        this.activeType && this[this.activeType].setActive(false);
-        this.activeType = null;
-      }
-    },
-  };
 
   initMap(ctx) {
     return new Promise((resolve) => {
@@ -219,6 +176,11 @@ export class MapComponent implements OnInit {
     this.map.addInteraction(modify);
     this.drawPolygon.setActive(true);
     this.map.addInteraction(this.drawPolygon);
+    this.drawPolygon.on('drawend', (evt) => {
+      this.drawPolygon.setActive(false);
+      this.map.removeInteraction(this.drawPolygon);
+    }, this);
+
     this.map.addInteraction(this.snap);
 
     //subscribing to device list
