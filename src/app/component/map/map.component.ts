@@ -3,6 +3,7 @@ import Map from 'ol/Map';
 import View from 'ol/View';
 import { defaults as defaultInteractions, DragRotateAndZoom } from 'ol/interaction';
 import TileLayer from 'ol/layer/Tile';
+import {Style, Stroke, Fill, Circle} from 'ol/style';
 import XYZSource from 'ol/source/XYZ';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
 import VectorLayer from 'ol/layer/Vector';
@@ -28,6 +29,50 @@ export class MapComponent implements OnInit {
   tileLayer: TileLayer;
   vectorLayer: VectorLayer;
   gJson = new GeoJSON();
+  styles = {
+    'Point': new Style({
+      image: new Circle({
+        radius: 5,
+        fill: new Fill({
+          color: 'rgba(255, 0, 0, 0.1)',
+        }),
+        stroke: new Stroke({
+          color: 'rgba(0, 0, 255, 0.4)',
+        }),
+      }),
+    }),
+    'SelectedPoint': new Style({
+      image: new Circle({
+        radius: 5,
+        fill: new Fill({
+          color: 'rgba(0, 0, 255, 0.1)',
+        }),
+        stroke: new Stroke({
+          color: 'rgba(255, 0, 0, 0.4)',
+          width: 2,
+        }),
+      }),
+    }),
+    'Polygon': new Style({
+      stroke: new Stroke({
+        color: 'rgba(0, 0, 255, 0.5)',
+        //lineDash: [4],
+        width: 1,
+      }),
+      fill: new Fill({
+        color: 'rgba(0, 0, 255, 0.1)',
+      }),
+    }),
+    'Circle': new Style({
+      stroke: new Stroke({
+        color: 'red',
+        width: 2,
+      }),
+      fill: new Fill({
+        color: 'rgba(255, 0, 0, 0.2)',
+      }),
+    }),
+  };
 
   constructor(private dataStorageService: DataStorageService) { 
     MapComponent.deleteMapService.subscribe((v: boolean) => {
@@ -46,22 +91,25 @@ export class MapComponent implements OnInit {
   }
   static regionToGeoJSON(r: Region[]): GeoJSONFeature[] {
     return r.map((v: Region) => {
-      let feature = {type:"Feature", id:v.id, geometry:{type:v.gtype, coordinates:v.coordinates}};
+      const feature = {type:"Feature", id:v.id, geometry:{type:v.gtype, coordinates:v.coordinates}};
       feature.geometry.coordinates = this.geometryLonLat(feature);
       return feature;
     });
   }
   static rawDataToGeoJSON(r: RawData[]): GeoJSONFeature[] {
     return r.map((v: RawData) => {
-      let e = 450000;
       MapComponent.pointId++
-      let feature = {type:"Feature", id:(MapComponent.pointId + ''), geometry:{type:"Point", coordinates:v.gps}};
+      const feature = {type:"Feature", id:(MapComponent.pointId + ''), geometry:{type:"Point", coordinates:v.gps}};
       feature.geometry.coordinates = this.geometryLonLat(feature);
       return feature;
     });
   }
+  styleFunction = (feature) => {
+    return this.styles[feature.get("selected") ? "SelectedPoint" : feature.getGeometry().getType()];
+  };
+
   initMap(ctx) {
-    return new Promise(function (resolve) {
+    return new Promise((resolve) => {
         setTimeout(() => { // without setTimeout map is empty
           var customCondition = function (mapBrowserEvent) {
             console.log(mapBrowserEvent);
@@ -78,7 +126,8 @@ export class MapComponent implements OnInit {
                 })
               }),
               new VectorLayer({
-                source: new VectorSource()
+                source: new VectorSource(),
+                style: this.styleFunction,
               })
             ],
             target: 'map',
@@ -103,16 +152,17 @@ export class MapComponent implements OnInit {
       this.draw(MapComponent.rawDataToGeoJSON(data));
     });
   }
+
   draw(r:GeoJSONFeature[]) {
-    r?.forEach((r: GeoJSONFeature) => {
+    r?.forEach((r: GeoJSONFeature, index: number) => {
       if (!!r && !!this.map) {
-        let d = JSON.parse(JSON.stringify(r));
-        let gs = new GeoJSON();
-        let feature = gs.readFeature(d);
+        const gs = new GeoJSON();
+        const feature = gs.readFeature(r);
+        feature.set('selected', index == 2); // TODO: replace this with selected row in rawData
         this.map.getLayers().getArray()[1].getSource().addFeature(feature);
         console.log(this.map.getLayers().getArray()[1].getSource().getFeatures().toString());
   
-        this.map.getView().fit(this.map.getLayers().getArray()[1].getSource().getExtent(), {maxZoom: 10}); //to show new polygon
+        this.map.getView().fit(this.map.getLayers().getArray()[1].getSource().getExtent(), {maxZoom: 13.5}); //to show new polygon
       }  
     });
 }
@@ -126,12 +176,13 @@ export class MapComponent implements OnInit {
   static fromLonLatToggle(c:any[]): any[]  {
     return c.map((v)=>{return fromLonLat(v)});
   }
+
   static geometryLonLat(g: any): any {
     if ((g.geometry.type.toUpperCase() === 'MULTIPOLYGON')) {
       return [[this.fromLonLatToggle(g.geometry.coordinates[0][0])]];
     } else if ((g.geometry.type.toUpperCase() === 'POLYGON')) {
       return [this.fromLonLatToggle(g.geometry.coordinates[0])];
-    } else {
+    } else { // POINT
       return this.fromLonLatToggle([g.geometry.coordinates])[0];
     }
   }

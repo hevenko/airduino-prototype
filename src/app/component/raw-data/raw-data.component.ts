@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RawData } from 'src/app/model/raw-data';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
+import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
   selector: 'app-raw-data',
@@ -9,8 +10,8 @@ import { DataStorageService } from 'src/app/shared/service/data-storage.service'
 })
 export class RawDataComponent implements OnInit {
   displayedColumns: string[] = ['pm10', 'pm2_5', 'so2', 'co', 'o3','pb','hc','voc','temp','humidity','pressure','gps','battery','measured','aqi'];
-  dataSource: RawData[] = [
-  ];
+  dataSource: RawData[] = [];
+  selection = new SelectionModel(false, []);
 
   constructor(private dataStorageService: DataStorageService) { }
 
@@ -20,4 +21,7 @@ export class RawDataComponent implements OnInit {
     });
   }
 
+  onClick(element) {
+    this.selection.toggle(element)
+  }
 }
