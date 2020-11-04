@@ -11,6 +11,7 @@ import { RawData } from 'src/app/model/raw-data';
 import { Data } from '@angular/router';
 import { Constants } from '../../shared/constants';
 import { GeoJSONFeature } from 'src/app/model/geo-json-feature';
+import { format } from 'date-fns';
 
 @Injectable({ providedIn: 'root' })
 export class DataStorageService {
@@ -95,6 +96,10 @@ export class DataStorageService {
         })
       ).subscribe((d: RawData[]) => {
         console.log(d);
+        d.map((data: RawData) => {
+          data.measured = format(new Date(data.measured), 'dd.MM.yyyy HH:mm:ss'); // TODO: date/time format should be specified according app localization
+          return data;
+        });
         this.sendMapData(d);
       });
     } else {

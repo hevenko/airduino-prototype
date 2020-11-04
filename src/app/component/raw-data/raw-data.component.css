@@ -1,3 +1,13 @@
+mat-row,
+mat-header-row,
+mat-footer-row {
+  min-height: 24px;
+}
+
+.mat-cell {
+  font-size: 1rem;
+}
+
 .mat-row {
   border: 1px solid transparent;
 }

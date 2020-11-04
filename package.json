@@ -23,6 +23,7 @@
     "@angular/router": "~9.1.4",
     "bootstrap": "^3.4.1",
     "chart.js": "^2.9.3",
+    "date-fns": "^2.16.1",
     "jquery": "^3.5.1",
     "ol": "6.4.3",
     "rxjs": "~6.5.4",

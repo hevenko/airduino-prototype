@@ -9,7 +9,7 @@ import { SelectionModel } from '@angular/cdk/collections';
   styleUrls: ['./raw-data.component.css']
 })
 export class RawDataComponent implements OnInit {
-  displayedColumns: string[] = ['pm10', 'pm2_5', 'so2', 'co', 'o3','pb','hc','voc','temp','humidity','pressure','gps','battery','measured','aqi'];
+  displayedColumns: string[] = ['pm10', 'pm2_5', 'so2', 'co', 'o3', 'pb', 'hc', 'voc', 'temp', 'humidity', 'pressure', 'gps', 'battery', 'measured', 'aqi'];
   dataSource: RawData[] = [];
   selection = new SelectionModel(false, []);
 
