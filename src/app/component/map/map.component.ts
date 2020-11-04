@@ -56,6 +56,7 @@ export class MapComponent implements OnInit {
       let e = 450000;
       MapComponent.pointId++
       let feature = {type:"Feature", id:(MapComponent.pointId + ''), geometry:{type:"Point", coordinates:v.gps}};
+      feature.geometry.coordinates = this.geometryLonLat(feature);
       return feature;
     });
   }
@@ -131,7 +132,7 @@ export class MapComponent implements OnInit {
     } else if ((g.geometry.type.toUpperCase() === 'POLYGON')) {
       return [this.fromLonLatToggle(g.geometry.coordinates[0])];
     } else {
-      return this.fromLonLatToggle(g.geometry.coordinates);
+      return this.fromLonLatToggle([g.geometry.coordinates])[0];
     }
   }
 }
