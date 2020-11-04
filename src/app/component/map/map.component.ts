@@ -11,6 +11,10 @@ import GeoJSON from 'ol/format/GeoJSON';
 import {fromLonLat} from 'ol/proj';
 import { Region } from 'src/app/model/region';
 import { BehaviorSubject } from 'rxjs';
+import { GeoJSONFeature } from 'src/app/model/geo-json-feature';
+import { GeoJSONGeometry } from 'src/app/model/geo-json-geometry';
+import { RawData } from 'src/app/model/raw-data';
+import { features } from 'process';
 
 @Component({
   selector: 'app-map',
@@ -18,6 +22,7 @@ import { BehaviorSubject } from 'rxjs';
   styleUrls: ['./map.component.css']
 })
 export class MapComponent implements OnInit {
+  private static pointId = 0;
   private static deleteMapService: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   map: Map;
   tileLayer: TileLayer;
@@ -37,7 +42,22 @@ export class MapComponent implements OnInit {
    * MapComponent.deleteMap()
    */
   static deleteMap(): void {
-    this.deleteMapService.next(true);
+    return this.deleteMapService.next(true);
+  }
+  static regionToGeoJSON(r: Region[]): GeoJSONFeature[] {
+    return r.map((v: Region) => {
+      let feature = {type:"Feature", id:v.id, geometry:{type:v.gtype, coordinates:v.coordinates}};
+      feature.geometry.coordinates = this.geometryLonLat(feature);
+      return feature;
+    });
+  }
+  static rawDataToGeoJSON(r: RawData[]): GeoJSONFeature[] {
+    return r.map((v: RawData) => {
+      let e = 450000;
+      MapComponent.pointId++
+      let feature = {type:"Feature", id:(MapComponent.pointId + ''), geometry:{type:"Point", coordinates:v.gps}};
+      return feature;
+    });
   }
   initMap(ctx) {
     return new Promise(function (resolve) {
@@ -74,22 +94,24 @@ export class MapComponent implements OnInit {
     await this.initMap(this);
 
     //subscribing to device list
-    this.dataStorageService.drawDataBus.subscribe((geoJsonFeature: Region[]) => {
+    this.dataStorageService.drawDataBus.subscribe((geoJsonFeature: GeoJSONFeature[]) => {
       this.draw(geoJsonFeature);
     });
+    this.dataStorageService.mapDataBus.subscribe((data: RawData[]) => {
+      //MapComponent.deleteMap();
+      this.draw(MapComponent.rawDataToGeoJSON(data));
+    });
   }
-  draw(r:Region[]) {
-    r?.forEach((r: Region) => {
+  draw(r:GeoJSONFeature[]) {
+    r?.forEach((r: GeoJSONFeature) => {
       if (!!r && !!this.map) {
-        //let geoJsonFeature = {"type":"Feature","id":r.id,"geometry":{"type":r.gtype,"coordinates":r.coordinates}}
-        let geoJsonFeature = {"type":"Feature","id":r.id,"geometry":{"type":"Point","coordinates":[4e6, -5e6]}}
-        let d = JSON.parse(JSON.stringify(geoJsonFeature));
-        d.geometry.coordinates = this.geometryLonLat(d);
+        let d = JSON.parse(JSON.stringify(r));
         let gs = new GeoJSON();
         let feature = gs.readFeature(d);
         this.map.getLayers().getArray()[1].getSource().addFeature(feature);
+        console.log(this.map.getLayers().getArray()[1].getSource().getFeatures().toString());
   
-        this.map.getView().fit(feature.getGeometry(), {maxZoom: 10}); //to show new polygon
+        this.map.getView().fit(this.map.getLayers().getArray()[1].getSource().getExtent(), {maxZoom: 10}); //to show new polygon
       }  
     });
 }
@@ -100,10 +122,10 @@ export class MapComponent implements OnInit {
    * let source = [[[13.5131836, 45.6370871],[14.3591309, 45.5986657]]];
    * let fliped = [fromLonLatToggle(source[0])] //notice the added square bracket to the function result
    */
-  fromLonLatToggle(c:any[]): any[]  {
+  static fromLonLatToggle(c:any[]): any[]  {
     return c.map((v)=>{return fromLonLat(v)});
   }
-  geometryLonLat(g: any): any {
+  static geometryLonLat(g: any): any {
     if ((g.geometry.type.toUpperCase() === 'MULTIPOLYGON')) {
       return [[this.fromLonLatToggle(g.geometry.coordinates[0][0])]];
     } else if ((g.geometry.type.toUpperCase() === 'POLYGON')) {

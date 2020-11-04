@@ -58,7 +58,6 @@ export class LocationComponent implements OnInit {
     if (!!e.source && !!e.source.radioGroup ) {
       if(e.source.radioGroup._radios.last != e.source.radioGroup.selected) {
         this.locationForm.controls.selectedRegion.setValue('');
-        MapComponent.deleteMap();
       }
     } else {
       //region was selected so last radio btn is checked
@@ -70,6 +69,7 @@ export class LocationComponent implements OnInit {
   }
   regionOnChange(): void {
     let l = this.regionList.filter((v)=>{return v.id === this.locationForm.value.selectedRegion});
-    this.dataStorageService.sendLocationData(l);
+    //MapComponent.deleteMap();
+    this.dataStorageService.sendLocationData(MapComponent.regionToGeoJSON(l));
   }
 }
