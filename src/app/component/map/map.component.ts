@@ -53,7 +53,6 @@ export class MapComponent implements OnInit {
   }
   static rawDataToGeoJSON(r: RawData[]): GeoJSONFeature[] {
     return r.map((v: RawData) => {
-      let e = 450000;
       MapComponent.pointId++
       let feature = {type:"Feature", id:(MapComponent.pointId + ''), geometry:{type:"Point", coordinates:v.gps}};
       feature.geometry.coordinates = this.geometryLonLat(feature);
@@ -120,8 +119,8 @@ export class MapComponent implements OnInit {
    * 
    * @param 
    * be aware of the outer square bracket!
-   * let source = [[[13.5131836, 45.6370871],[14.3591309, 45.5986657]]];
-   * let fliped = [fromLonLatToggle(source[0])] //notice the added square bracket to the function result
+   * let source = [[13.5131836, 45.6370871],[14.3591309, 45.5986657]];
+   * let fliped = [fromLonLatToggle(source)] //notice the added square bracket to the function result
    */
   static fromLonLatToggle(c:any[]): any[]  {
     return c.map((v)=>{return fromLonLat(v)});
