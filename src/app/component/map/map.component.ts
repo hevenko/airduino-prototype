@@ -48,7 +48,7 @@ export class MapComponent implements OnInit {
           color: 'rgba(0, 0, 255, 0.1)',
         }),
         stroke: new Stroke({
-          color: 'rgba(255, 0, 0, 0.4)',
+          color: '#17920e',
           width: 2,
         }),
       }),
@@ -160,9 +160,9 @@ export class MapComponent implements OnInit {
         const feature = gs.readFeature(r);
         feature.set('selected', index == 2); // TODO: replace this with selected row in rawData
         this.map.getLayers().getArray()[1].getSource().addFeature(feature);
-        console.log(this.map.getLayers().getArray()[1].getSource().getFeatures().toString());
+        //console.log(this.map.getLayers().getArray()[1].getSource().getFeatures().toString());
   
-        this.map.getView().fit(this.map.getLayers().getArray()[1].getSource().getExtent(), {maxZoom: 13.5}); //to show new polygon
+        this.map.getView().fit(this.map.getLayers().getArray()[1].getSource().getExtent(), {maxZoom: 13}); //to show new polygon
       }  
     });
 }
