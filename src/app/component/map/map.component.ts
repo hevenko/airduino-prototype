@@ -22,6 +22,7 @@ import { GeoJSONFeature } from 'src/app/model/geo-json-feature';
 import { GeoJSONGeometry } from 'src/app/model/geo-json-geometry';
 import { RawData } from 'src/app/model/raw-data';
 import { features } from 'process';
+import { FilterModel } from 'src/app/model/filter-model';
 
 @Component({
   selector: 'app-map',
@@ -62,7 +63,6 @@ export class MapComponent implements OnInit {
     'Polygon': new Style({
       stroke: new Stroke({
         color: 'rgba(0, 0, 255, 0.5)',
-        //lineDash: [4],
         width: 1,
       }),
       fill: new Fill({
@@ -71,16 +71,16 @@ export class MapComponent implements OnInit {
     }),
     'Circle': new Style({
       stroke: new Stroke({
-        color: 'red',
-        width: 2,
+        color: 'rgba(0, 0, 255, 0.5)',
+        width: 1,
       }),
       fill: new Fill({
-        color: 'rgba(255, 0, 0, 0.2)',
+        color: 'rgba(0, 0, 255, 0.1)',
       }),
     }),
   };
 
-  constructor(private dataStorageService: DataStorageService) { 
+  constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { 
     MapComponent.deleteMapService.subscribe((v: boolean) => {
       if (!!this.map) {
         this.map.getLayers().getArray()[1].getSource().clear(); //clear map
@@ -169,18 +169,61 @@ export class MapComponent implements OnInit {
     type: "Circle",
   });
   snap = new Snap({source: this.source});
+  lastFeature;
+
+  changeInteraction(type: string) {
+    this.drawPolygon.setActive(false);
+    this.drawCircle.setActive(false);
+    if (type === "Polygon") {
+      this.drawPolygon.setActive(true);
+    }
+    if (type === "Circle") {
+      this.drawCircle.setActive(true);
+    }
+  }
+
+  removeLastFeature() {
+    if(this.lastFeature) {
+      this.vector.getSource().removeFeature(this.lastFeature);
+      this.lastFeature = null;
+    }
+  }
 
   async ngOnInit() {
+    this.filterModel.locationsSubject.subscribe(value => {
+      console.log("filterModel changed to:", value);
+      this.removeLastFeature();
+      this.changeInteraction(value);
+    });
     await this.initMap(this);
     const modify = new Modify({source: this.source});
     this.map.addInteraction(modify);
-    this.drawPolygon.setActive(true);
+    this.drawPolygon.setActive(false);
+    this.drawCircle.setActive(false);
     this.map.addInteraction(this.drawPolygon);
-    this.drawPolygon.on('drawend', (evt) => {
-      this.drawPolygon.setActive(false);
-      this.map.removeInteraction(this.drawPolygon);
+    this.map.addInteraction(this.drawCircle);
+    this.drawPolygon.on('drawstart', (event) => {
+      console.log('drawstart:', event);
+      this.removeLastFeature();
     }, this);
-
+    this.drawPolygon.on('drawend', (event) => {
+      console.log('drawend:', event);
+      this.lastFeature = event.feature;
+    }, this);
+    this.drawCircle.on('drawstart', (event) => {
+      console.log('drawstart:', event);
+      this.removeLastFeature();
+    }, this);
+    this.drawCircle.on('drawend', (event) => {
+      console.log('drawend:', event);
+      this.lastFeature = event.feature;
+    }, this);
+    this.vector.getSource().on('addfeature', function(event){
+      console.log('addfeature:', event);
+    });
+    this.vector.getSource().on('changefeature', (event) => {
+      console.log('changefeature:', event);
+    });
     this.map.addInteraction(this.snap);
 
     //subscribing to device list

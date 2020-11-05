@@ -37,12 +37,22 @@ export class LocationComponent implements OnInit {
       selectedRegion:  new FormControl()
     })
     this.locationForm.valueChanges.subscribe(() => {
+      console.log("this.locationForm.value:", this.locationForm.value);
       if(!!this.locationForm.value.selectedRegion) {
-        this.filterModel.locations = {name : this.locationForm.value.selectedRegion};
+        this.filterModel.setLocations({name : this.locationForm.value.selectedRegion});
+        //this.filterModel.locations = {name : this.locationForm.value.selectedRegion};
       } else if (this.locationForm.controls.selectedDevices.value === '1'){
-        this.filterModel.locations = {devices : [1]}; //mock
+        this.filterModel.setLocations({devices : [1]}); //mock
+        //this.filterModel.locations = {devices : [1]}; //mock
+      } else if (this.locationForm.controls.selectedDevices.value === '2'){
+        this.filterModel.setLocations("Polygon"); //mock
+        //this.filterModel.locations = "Polygon"; //mock
+      } else if (this.locationForm.controls.selectedDevices.value === '3'){
+        this.filterModel.setLocations("Circle"); //mock
+        //this.filterModel.locations = "Circle"; //mock
       } else {
-        this.filterModel.locations = null;
+        this.filterModel.setLocations(null);
+        //this.filterModel.locations = null;
       }
     });
     this.locationForm.controls.selectedDevices.setValue('1'); //mock My devices
