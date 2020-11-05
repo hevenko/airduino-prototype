@@ -195,6 +195,9 @@ export class MapComponent implements OnInit {
     if (this.filterModel.locations && this.filterModel.locations.circle) {
       this.filterModel.locations = { circle: { "center": [16.3519478,46.3187183], "radius": 400 }}; // mock TODO: create object with real coordinates
     }
+    if (this.filterModel.locations && (this.filterModel.locations.polygon || this.filterModel.locations.circle)) {
+      this.dataStorageService.fetchData();
+    }
   }
 
   async ngOnInit() {

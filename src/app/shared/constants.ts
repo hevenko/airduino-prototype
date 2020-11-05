@@ -11,6 +11,6 @@ export class Constants {
   static MSG_FILTER_OVERWRITTEN = 'Filter was overwritten.';
   static MSG_SELECT_FILTER = 'Select a preset filter.';
   static MSG_FILTER_ADDED = 'New filter saved.';
-  static SERVER_URL = 'http://localhost:5000/api/v1/';
-  static SERVER_URL0 = 'http://airduino-server.herokuapp.com/api/v1/';
+  static SERVER_URL0 = 'http://localhost:5000/api/v1/';
+  static SERVER_URL = 'http://airduino-server.herokuapp.com/api/v1/';
 }

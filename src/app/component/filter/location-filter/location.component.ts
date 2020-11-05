@@ -37,7 +37,6 @@ export class LocationComponent implements OnInit {
       selectedRegion:  new FormControl()
     })
     this.locationForm.valueChanges.subscribe(() => {
-      console.log("this.locationForm.value:", this.locationForm.value);
       if(!!this.locationForm.value.selectedRegion) {
         this.filterModel.setLocations({name : this.locationForm.value.selectedRegion});
         //this.filterModel.locations = {name : this.locationForm.value.selectedRegion};
@@ -75,7 +74,9 @@ export class LocationComponent implements OnInit {
       let lastRadioBtnValue = e.currentTarget.children[radioBtnCount - 1].getElementsByTagName('input')[0].value;
       this.locationForm.controls.selectedDevices.setValue(lastRadioBtnValue,{emitEvent: false});
     }
-    this.dataStorageService.fetchData();
+    if (!(this.locationForm.value == "2" || this.locationForm.value == "3")) {
+      this.dataStorageService.fetchData();
+    }
   }
   regionOnChange(): void {
     let l = this.regionList.filter((v)=>{return v.id === this.locationForm.value.selectedRegion});
