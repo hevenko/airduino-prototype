@@ -1,15 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import Map from 'ol/Map';
 import View from 'ol/View';
-import {Draw, Modify, Select, Snap} from 'ol/interaction';
-import {OSM, Vector as VectorSource} from 'ol/source';
+import { Draw, Modify, Select, Snap } from 'ol/interaction';
+//import {OSM, Vector as VectorSource} from 'ol/source';
+import {OSM} from 'ol/source';
+import VectorSource from 'ol/source/Vector';
 import { defaults as defaultInteractions, DragRotateAndZoom } from 'ol/interaction';
 import {Circle as CircleStyle, Fill, Stroke, Style} from 'ol/style';
 //import TileLayer from 'ol/layer/Tile';
 //import {Style, Stroke, Fill, Circle} from 'ol/style';
 import XYZSource from 'ol/source/XYZ';
 import Polygon from 'ol/geom/Polygon';
-import LineString from 'ol/geom/LineString';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
 //import VectorLayer from 'ol/layer/Vector';
 import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer';
@@ -30,6 +31,8 @@ import { FilterModel } from 'src/app/model/filter-model';
 export class MapComponent implements OnInit {
   private static pointId = 0;
   private static deleteMapService: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+  projection = "EPSG:3857";
+  subscription;
   map: Map;
   tileLayer: TileLayer;
   vectorLayer: VectorLayer;
@@ -85,22 +88,27 @@ export class MapComponent implements OnInit {
   styleFunction = (feature) => {
     return this.styles[feature.get("selected") ? "SelectedPoint" : feature.getGeometry().getType()];
   };
-  source = new VectorSource({wrapX: false});
-  vector = new VectorLayer({
-    source: this.source,
+  sourceFeatures = new VectorSource({wrapX: false});
+  sourcePoints = new VectorSource({wrapX: false});
+  vectorFeatures = new VectorLayer({
+    source: this.sourceFeatures,
+    style: this.styleFunction,
+  });
+  vectorPoints = new VectorLayer({
+    source: this.sourcePoints,
     style: this.styleFunction,
   });
 
   drawPolygon = new Draw({
-    source: this.source,
+    source: this.sourceFeatures,
     type: "Polygon",
   });
   drawCircle = new Draw({
-    source: this.source,
+    source: this.sourceFeatures,
     type: "Circle",
   });
-  modify = new Modify({source: this.source});
-  snap = new Snap({source: this.source});
+  modify = new Modify({source: this.sourceFeatures});
+  snap = new Snap({source: this.sourceFeatures});
 
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { 
     MapComponent.deleteMapService.subscribe((v: boolean) => {
@@ -114,8 +122,15 @@ export class MapComponent implements OnInit {
    * usage example:
    * MapComponent.deleteMap()
    */
+  clearPoints() {
+    this.vectorPoints.getSource().clear();
+  }
+  clearFeatures() {
+    this.vectorFeatures.getSource().clear();
+  }
   clearMap() {
-    this.map.getLayers().getArray()[1].getSource().clear(); //clear map
+    this.clearPoints();
+    this.clearFeatures()
   }
   static deleteMap(): void {
     return this.deleteMapService.next(true);
@@ -147,7 +162,7 @@ export class MapComponent implements OnInit {
             interactions: defaultInteractions().extend([
               new DragRotateAndZoom({ condition: customCondition })
             ]),      
-            layers: [this.raster, this.vector],      
+            layers: [this.raster, this.vectorFeatures, this.vectorPoints],      
             /*
             layers: [
               new TileLayer({
@@ -163,6 +178,7 @@ export class MapComponent implements OnInit {
             */
             target: 'map',
             view: new View({
+              projection: this.projection,
               center: fromLonLat([0, 0]),
               zoom: 0
             })
@@ -185,7 +201,7 @@ export class MapComponent implements OnInit {
 
   removeLastFeature() {
     if(this.lastFeature) {
-      this.vector.getSource().removeFeature(this.lastFeature);
+      this.vectorFeatures.getSource().removeFeature(this.lastFeature);
       this.lastFeature = null;
     }
   }
@@ -202,12 +218,12 @@ export class MapComponent implements OnInit {
     if (this.filterModel.locations && this.filterModel.locations.circle) {
       const gCircle = event.feature.getGeometry();
       const center = toLonLat(gCircle.getCenter());
-      const radius = gCircle.getRadius()
+      const radius = gCircle.getRadius() * 0.68681318;
       const circle = { circle: { center, radius }}; 
       this.filterModel.locations = circle;
     }
     if (this.filterModel.locations && (this.filterModel.locations.polygon || this.filterModel.locations.circle)) {
-      this.dataStorageService.fetchData();
+      this.fetchData();
     }
   }
 
@@ -239,19 +255,38 @@ export class MapComponent implements OnInit {
     this.vector.getSource().on('addfeature', function(event){
       console.log('addfeature:', event);
     });
-   */
-   this.vector.getSource().on('changefeature', (event) => {
+     */
+    this.vectorFeatures.getSource().on('changefeature', (event) => {
+      //this.clearPoints();
       this.drawEnd(event);
     });
     this.map.addInteraction(this.snap);
 
     //subscribing to device list
     this.dataStorageService.drawDataBus.subscribe((geoJsonFeature: GeoJSONFeature[]) => {
+      console.log("drawDataBus");
       this.draw(geoJsonFeature);
     });
-    this.dataStorageService.mapDataBus.subscribe((data: RawData[]) => {
-      //MapComponent.deleteMap();
-      // TODO: remove all previously drawed points
+    this.fetchData();
+  }
+
+  fetchData() {
+    this.subscribeData();
+    this.dataStorageService.fetchData();
+  }
+
+  unsubscribeData() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+      this.subscription = null;
+    }
+  }
+
+  subscribeData() {
+    this.unsubscribeData();
+    this.subscription = this.dataStorageService.mapDataBus
+      .subscribe((data: RawData[]) => {
+      this.clearPoints();
       this.draw(MapComponent.rawDataToGeoJSON(data));
     });
   }
@@ -262,10 +297,12 @@ export class MapComponent implements OnInit {
         const gs = new GeoJSON();
         const feature = gs.readFeature(r);
         feature.set('selected', index == 2); // TODO: replace this with selected row in rawData
-        this.map.getLayers().getArray()[1].getSource().addFeature(feature);
+        //this.map.getLayers().getArray()[1].getSource().addFeature(feature);
+        this.vectorPoints.getSource().addFeature(feature);
         //console.log(this.map.getLayers().getArray()[1].getSource().getFeatures().toString());
   
-        this.map.getView().fit(this.map.getLayers().getArray()[1].getSource().getExtent(), {maxZoom: 13}); //to show new polygon
+        //this.map.getView().fit(this.map.getLayers().getArray()[1].getSource().getExtent(), {maxZoom: 13}); //to show new polygon
+        //this.map.getView().fit(this.vectorPoints.getSource().getExtent(), {maxZoom: 13}); //to show new polygon
       }  
     });
 }

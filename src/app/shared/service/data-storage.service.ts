@@ -81,7 +81,7 @@ export class DataStorageService {
     filter.sensors = this.filterModel.sensors
     filter.time = this.filterModel.time;
     filter.locations = this.filterModel.locations;
-    console.log(JSON.stringify(filter));
+    //console.log(JSON.stringify(filter));
     if (!!filter.sensors && !!filter.sensors.length && !!filter.time && !!filter.locations && 
         ((filter.locations.circle && filter.locations.circle.radius) || 
         (filter.locations.polygon && filter.locations.polygon.length) || 
@@ -99,7 +99,10 @@ export class DataStorageService {
           return res.data;
         })
       ).subscribe((d: RawData[]) => {
-        console.log(d);
+        //console.log(d);
+        if (!d) {
+          return;
+        }
         d.map((data: RawData) => {
           data.measured = format(new Date(data.measured), 'dd.MM.yyyy HH:mm:ss'); // TODO: date/time format should be specified according app localization
           return data;
