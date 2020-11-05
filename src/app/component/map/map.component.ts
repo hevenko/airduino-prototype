@@ -189,10 +189,10 @@ export class MapComponent implements OnInit {
   drawStart = () => this.removeLastFeature();
   drawEnd = (event) => {
     this.lastFeature = event.feature;
-    if (this.filterModel.locations && this.filterModel.locations.type === "Polygon") {
+    if (this.filterModel.locations && this.filterModel.locations.polygon) {
       this.filterModel.locations = { polygon: [[16.3519478,46.3187183],[16.3418198,46.3245273],[16.3176155,46.3222749],[16.3097191,46.2952389],[16.3376999,46.2891895],[16.3706589,46.3103],[16.3519478,46.3187183]]}; // mock TODO: create object with real coordinates
     }
-    if (this.filterModel.locations && this.filterModel.locations.type === "Circle") {
+    if (this.filterModel.locations && this.filterModel.locations.circle) {
       this.filterModel.locations = { circle: { "center": [16.3519478,46.3187183], "radius": 400 }}; // mock TODO: create object with real coordinates
     }
   }
