@@ -171,10 +171,10 @@ export class MapComponent implements OnInit {
   changeInteraction(locations: any) {
     this.drawPolygon.setActive(false);
     this.drawCircle.setActive(false);
-    if (locations && locations.type === "Polygon") {
+    if (locations && locations.polygon) {
       this.drawPolygon.setActive(true);
     }
-    if (locations && locations.type === "Circle") {
+    if (locations && locations.circle) {
       this.drawCircle.setActive(true);
     }
   }

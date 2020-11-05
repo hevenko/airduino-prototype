@@ -81,9 +81,11 @@ export class DataStorageService {
     filter.sensors = this.filterModel.sensors
     filter.time = this.filterModel.time;
     filter.locations = this.filterModel.locations;
+    /*
     if (filter && filter.locations && filter.locations.type) {
       delete filter.locations.type; // TODO: create object in location.component
     }
+    */
     console.log(JSON.stringify(filter));
     if (!!filter.sensors && !!filter.sensors.length && !!filter.time && !!filter.locations) {
       this.http.post<Data>(this.getURL('data'), filter)
