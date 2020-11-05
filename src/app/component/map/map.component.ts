@@ -19,9 +19,7 @@ import {fromLonLat} from 'ol/proj';
 import { Region } from 'src/app/model/region';
 import { BehaviorSubject } from 'rxjs';
 import { GeoJSONFeature } from 'src/app/model/geo-json-feature';
-import { GeoJSONGeometry } from 'src/app/model/geo-json-geometry';
 import { RawData } from 'src/app/model/raw-data';
-import { features } from 'process';
 import { FilterModel } from 'src/app/model/filter-model';
 
 @Component({
@@ -35,7 +33,11 @@ export class MapComponent implements OnInit {
   map: Map;
   tileLayer: TileLayer;
   vectorLayer: VectorLayer;
+  lastFeature;
   gJson = new GeoJSON();
+  raster = new TileLayer({
+    source: new OSM(),
+  });
   styles = {
     'Point': new Style({
       image: new CircleStyle({
@@ -80,6 +82,25 @@ export class MapComponent implements OnInit {
     }),
   };
 
+  styleFunction = (feature) => {
+    return this.styles[feature.get("selected") ? "SelectedPoint" : feature.getGeometry().getType()];
+  };
+  source = new VectorSource({wrapX: false});
+  vector = new VectorLayer({
+    source: this.source,
+    style: this.styleFunction,
+  });
+
+  drawPolygon = new Draw({
+    source: this.source,
+    type: "Polygon",
+  });
+  drawCircle = new Draw({
+    source: this.source,
+    type: "Circle",
+  });
+  snap = new Snap({source: this.source});
+
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { 
     MapComponent.deleteMapService.subscribe((v: boolean) => {
       if (!!this.map) {
@@ -110,19 +131,6 @@ export class MapComponent implements OnInit {
       return feature;
     });
   }
-  styleFunction = (feature) => {
-    return this.styles[feature.get("selected") ? "SelectedPoint" : feature.getGeometry().getType()];
-  };
-
-  raster = new TileLayer({
-    source: new OSM(),
-  });
-  source = new VectorSource({wrapX: false});
-  vector = new VectorLayer({
-    source: this.source,
-    style: this.styleFunction,
-  });
-
   initMap(ctx) {
     return new Promise((resolve) => {
         setTimeout(() => { // without setTimeout map is empty
@@ -160,24 +168,13 @@ export class MapComponent implements OnInit {
       });
   }
 
-  drawPolygon = new Draw({
-    source: this.source,
-    type: "Polygon",
-  });
-  drawCircle = new Draw({
-    source: this.source,
-    type: "Circle",
-  });
-  snap = new Snap({source: this.source});
-  lastFeature;
-
-  changeInteraction(type: string) {
+  changeInteraction(locations: any) {
     this.drawPolygon.setActive(false);
     this.drawCircle.setActive(false);
-    if (type === "Polygon") {
+    if (locations && locations.type === "Polygon") {
       this.drawPolygon.setActive(true);
     }
-    if (type === "Circle") {
+    if (locations && locations.type === "Circle") {
       this.drawCircle.setActive(true);
     }
   }
@@ -188,6 +185,9 @@ export class MapComponent implements OnInit {
       this.lastFeature = null;
     }
   }
+
+  drawStart = () => this.removeLastFeature();
+  drawEnd = (event) => this.lastFeature = event.feature;
 
   async ngOnInit() {
     this.filterModel.locationsSubject.subscribe(value => {
@@ -202,6 +202,11 @@ export class MapComponent implements OnInit {
     this.drawCircle.setActive(false);
     this.map.addInteraction(this.drawPolygon);
     this.map.addInteraction(this.drawCircle);
+    this.drawPolygon.on('drawstart', this.drawStart);
+    this.drawPolygon.on('drawend', this.drawEnd);
+    this.drawCircle.on('drawstart', this.drawStart);
+    this.drawCircle.on('drawend', this.drawEnd);
+    /*
     this.drawPolygon.on('drawstart', (event) => {
       console.log('drawstart:', event);
       this.removeLastFeature();
@@ -210,18 +215,11 @@ export class MapComponent implements OnInit {
       console.log('drawend:', event);
       this.lastFeature = event.feature;
     }, this);
-    this.drawCircle.on('drawstart', (event) => {
-      console.log('drawstart:', event);
-      this.removeLastFeature();
-    }, this);
-    this.drawCircle.on('drawend', (event) => {
-      console.log('drawend:', event);
-      this.lastFeature = event.feature;
-    }, this);
     this.vector.getSource().on('addfeature', function(event){
       console.log('addfeature:', event);
     });
-    this.vector.getSource().on('changefeature', (event) => {
+   */
+   this.vector.getSource().on('changefeature', (event) => {
       console.log('changefeature:', event);
     });
     this.map.addInteraction(this.snap);

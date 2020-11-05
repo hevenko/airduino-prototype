@@ -45,10 +45,10 @@ export class LocationComponent implements OnInit {
         this.filterModel.setLocations({devices : [1]}); //mock
         //this.filterModel.locations = {devices : [1]}; //mock
       } else if (this.locationForm.controls.selectedDevices.value === '2'){
-        this.filterModel.setLocations("Polygon"); //mock
+        this.filterModel.setLocations({ type: "Polygon" }); //mock
         //this.filterModel.locations = "Polygon"; //mock
       } else if (this.locationForm.controls.selectedDevices.value === '3'){
-        this.filterModel.setLocations("Circle"); //mock
+        this.filterModel.setLocations({ type: "Circle" }); //mock
         //this.filterModel.locations = "Circle"; //mock
       } else {
         this.filterModel.setLocations(null);
