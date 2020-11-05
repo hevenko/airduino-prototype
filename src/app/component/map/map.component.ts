@@ -36,7 +36,7 @@ export class MapComponent implements OnInit {
   map: Map;
   tileLayer: TileLayer;
   vectorLayer: VectorLayer;
-  lastFeature;
+  //lastFeature;
   gJson = new GeoJSON();
   raster = new TileLayer({
     source: new OSM(),
@@ -198,18 +198,16 @@ export class MapComponent implements OnInit {
       this.drawCircle.setActive(true);
     }
   }
-
+  /*
   removeLastFeature() {
-    this.clearFeatures();
-    /*
     if(this.lastFeature) {
       this.vectorFeatures.getSource().removeFeature(this.lastFeature);
       this.lastFeature = null;
     }
-    */
   }
-
-  drawStart = () => this.removeLastFeature();
+  */
+  //drawStart = () => this.removeLastFeature();
+  drawStart = () => this.clearFeatures();
   drawEnd = (event) => {
     //this.lastFeature = event.feature;
     if (this.filterModel.locations && this.filterModel.locations.polygon) {
@@ -233,7 +231,7 @@ export class MapComponent implements OnInit {
   async ngOnInit() {
     this.filterModel.locationsSubject.subscribe(value => {
       console.log("filterModel changed to:", value);
-      this.removeLastFeature();
+      //this.removeLastFeature();
       this.clearFeatures();
       this.changeInteraction(value);
       this.modify.setActive(value.polygon || value.circle);
