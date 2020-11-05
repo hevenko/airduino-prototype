@@ -200,15 +200,18 @@ export class MapComponent implements OnInit {
   }
 
   removeLastFeature() {
+    this.clearFeatures();
+    /*
     if(this.lastFeature) {
       this.vectorFeatures.getSource().removeFeature(this.lastFeature);
       this.lastFeature = null;
     }
+    */
   }
 
   drawStart = () => this.removeLastFeature();
   drawEnd = (event) => {
-    this.lastFeature = event.feature;
+    //this.lastFeature = event.feature;
     if (this.filterModel.locations && this.filterModel.locations.polygon) {
       const gPolygon = event.feature.getGeometry();
       const coordinates = gPolygon.getCoordinates()[0].map(p => toLonLat(p));
@@ -231,10 +234,13 @@ export class MapComponent implements OnInit {
     this.filterModel.locationsSubject.subscribe(value => {
       console.log("filterModel changed to:", value);
       this.removeLastFeature();
+      this.clearFeatures();
       this.changeInteraction(value);
+      this.modify.setActive(value.polygon || value.circle);
     });
     await this.initMap(this);
     this.map.addInteraction(this.modify);
+    this.modify.setActive(false);
     this.drawPolygon.setActive(false);
     this.drawCircle.setActive(false);
     this.map.addInteraction(this.drawPolygon);
@@ -265,7 +271,8 @@ export class MapComponent implements OnInit {
     //subscribing to device list
     this.dataStorageService.drawDataBus.subscribe((geoJsonFeature: GeoJSONFeature[]) => {
       console.log("drawDataBus");
-      this.draw(geoJsonFeature);
+      this.clearFeatures();
+      this.draw(this.vectorFeatures, geoJsonFeature);
     });
     this.fetchData();
   }
@@ -287,18 +294,20 @@ export class MapComponent implements OnInit {
     this.subscription = this.dataStorageService.mapDataBus
       .subscribe((data: RawData[]) => {
       this.clearPoints();
-      this.draw(MapComponent.rawDataToGeoJSON(data));
+      this.draw(this.vectorPoints, MapComponent.rawDataToGeoJSON(data));
     });
   }
 
-  draw(r:GeoJSONFeature[]) {
+  draw(vector: any, r: GeoJSONFeature[]) {
     r?.forEach((r: GeoJSONFeature, index: number) => {
       if (!!r && !!this.map) {
         const gs = new GeoJSON();
         const feature = gs.readFeature(r);
-        feature.set('selected', index == 2); // TODO: replace this with selected row in rawData
+        if (vector === this.vectorPoints) {
+          feature.set('selected', index == 2); // TODO: replace this with selected row in rawData
+        }
         //this.map.getLayers().getArray()[1].getSource().addFeature(feature);
-        this.vectorPoints.getSource().addFeature(feature);
+        vector.getSource().addFeature(feature);
         //console.log(this.map.getLayers().getArray()[1].getSource().getFeatures().toString());
   
         //this.map.getView().fit(this.map.getLayers().getArray()[1].getSource().getExtent(), {maxZoom: 13}); //to show new polygon
