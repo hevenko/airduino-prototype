@@ -82,7 +82,11 @@ export class DataStorageService {
     filter.time = this.filterModel.time;
     filter.locations = this.filterModel.locations;
     console.log(JSON.stringify(filter));
-    if (!!filter.sensors && !!filter.sensors.length && !!filter.time && !!filter.locations) {
+    if (!!filter.sensors && !!filter.sensors.length && !!filter.time && !!filter.locations && 
+        ((filter.locations.circle && filter.locations.circle.radius) || 
+        (filter.locations.polygon && filter.locations.polygon.length) || 
+        (filter.locations.devices && filter.locations.devices.length) ||
+        (filter.locations.name))) {
       this.http.post<Data>(this.getURL('data'), filter)
       .pipe(
         catchError(this.handleError),

@@ -105,7 +105,7 @@ export class MapComponent implements OnInit {
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { 
     MapComponent.deleteMapService.subscribe((v: boolean) => {
       if (!!this.map) {
-        this.map.getLayers().getArray()[1].getSource().clear(); //clear map
+        this.clearMap();
         this.map.getView().setZoom(0);
       }
     });
@@ -114,6 +114,9 @@ export class MapComponent implements OnInit {
    * usage example:
    * MapComponent.deleteMap()
    */
+  clearMap() {
+    this.map.getLayers().getArray()[1].getSource().clear(); //clear map
+  }
   static deleteMap(): void {
     return this.deleteMapService.next(true);
   }
@@ -238,7 +241,7 @@ export class MapComponent implements OnInit {
     });
    */
    this.vector.getSource().on('changefeature', (event) => {
-      console.log('changefeature:', event);
+      this.drawEnd(event);
     });
     this.map.addInteraction(this.snap);
 
@@ -248,6 +251,7 @@ export class MapComponent implements OnInit {
     });
     this.dataStorageService.mapDataBus.subscribe((data: RawData[]) => {
       //MapComponent.deleteMap();
+      // TODO: remove all previously drawed points
       this.draw(MapComponent.rawDataToGeoJSON(data));
     });
   }
