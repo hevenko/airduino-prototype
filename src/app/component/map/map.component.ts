@@ -15,7 +15,7 @@ import { DataStorageService } from 'src/app/shared/service/data-storage.service'
 import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer';
 //import VectorSource from 'ol/source/Vector';
 import GeoJSON from 'ol/format/GeoJSON';
-import {fromLonLat} from 'ol/proj';
+import { fromLonLat, toLonLat } from 'ol/proj';
 import { Region } from 'src/app/model/region';
 import { BehaviorSubject } from 'rxjs';
 import { GeoJSONFeature } from 'src/app/model/geo-json-feature';
@@ -99,6 +99,7 @@ export class MapComponent implements OnInit {
     source: this.source,
     type: "Circle",
   });
+  modify = new Modify({source: this.source});
   snap = new Snap({source: this.source});
 
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { 
@@ -190,10 +191,17 @@ export class MapComponent implements OnInit {
   drawEnd = (event) => {
     this.lastFeature = event.feature;
     if (this.filterModel.locations && this.filterModel.locations.polygon) {
-      this.filterModel.locations = { polygon: [[16.3519478,46.3187183],[16.3418198,46.3245273],[16.3176155,46.3222749],[16.3097191,46.2952389],[16.3376999,46.2891895],[16.3706589,46.3103],[16.3519478,46.3187183]]}; // mock TODO: create object with real coordinates
+      const gPolygon = event.feature.getGeometry();
+      const coordinates = gPolygon.getCoordinates()[0].map(p => toLonLat(p));
+      const polygon = { polygon: coordinates };
+      this.filterModel.locations = polygon;
     }
     if (this.filterModel.locations && this.filterModel.locations.circle) {
-      this.filterModel.locations = { circle: { "center": [16.3519478,46.3187183], "radius": 400 }}; // mock TODO: create object with real coordinates
+      const gCircle = event.feature.getGeometry();
+      const center = toLonLat(gCircle.getCenter());
+      const radius = gCircle.getRadius()
+      const circle = { circle: { center, radius }}; 
+      this.filterModel.locations = circle;
     }
     if (this.filterModel.locations && (this.filterModel.locations.polygon || this.filterModel.locations.circle)) {
       this.dataStorageService.fetchData();
@@ -207,8 +215,7 @@ export class MapComponent implements OnInit {
       this.changeInteraction(value);
     });
     await this.initMap(this);
-    const modify = new Modify({source: this.source});
-    this.map.addInteraction(modify);
+    this.map.addInteraction(this.modify);
     this.drawPolygon.setActive(false);
     this.drawCircle.setActive(false);
     this.map.addInteraction(this.drawPolygon);

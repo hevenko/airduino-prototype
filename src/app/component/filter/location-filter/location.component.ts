@@ -74,7 +74,7 @@ export class LocationComponent implements OnInit {
       let lastRadioBtnValue = e.currentTarget.children[radioBtnCount - 1].getElementsByTagName('input')[0].value;
       this.locationForm.controls.selectedDevices.setValue(lastRadioBtnValue,{emitEvent: false});
     }
-    if (!(this.locationForm.value == "2" || this.locationForm.value == "3")) {
+    if (!((this.locationForm.value == "2") || (this.locationForm.value == "3"))) {
       this.dataStorageService.fetchData();
     }
   }
