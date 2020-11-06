@@ -1,8 +1,8 @@
-<div class="table-container">
   <div class="loading-shade" *ngIf="isLoadingResults">
     <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
   </div> 
-  <mat-table [dataSource]="dataSource">
+  <div class="table-container">
+    <mat-table [dataSource]="dataSource">
 
     <ng-container matColumnDef="{{column}}" *ngFor="let column of displayedColumns">
       <ng-container>
