@@ -104,6 +104,7 @@ export class DataStorageService {
          return data;
        });
        this.sendMapData(allData);
+       this.sendLoadingStatus(false);
       }
     })
   }
