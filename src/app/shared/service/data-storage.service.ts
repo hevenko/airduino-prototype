@@ -1,8 +1,8 @@
-import {HttpClient, HttpErrorResponse} from '@angular/common/http';
-import {Injectable} from '@angular/core';
-import {catchError, map} from 'rxjs/operators';
-import {MessageColor, MessageService} from './message.service';
-import {BehaviorSubject, Observable, throwError} from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { catchError, map } from 'rxjs/operators';
+import { MessageService } from './message.service';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { Owner } from 'src/app/model/owner';
 import { Device } from 'src/app/model/device';
 import { Region } from 'src/app/model/region';
@@ -18,7 +18,7 @@ export class DataStorageService {
   serverURL = Constants.SERVER_URL;
   static i = 0;
   //noAccessControlAllowOriginProxy = 'https://thingproxy.freeboard.io/fetch/'; //fix thanks to: https://stackoverflow.com/questions/43871637/no-access-control-allow-origin-header-is-present-on-the-requested-resource-whe/43881141#43881141
-  noAccessControlAllowOriginProxy = ''; //no need to use proxy - ili treba se dobro posrati
+  noAccessControlAllowOriginProxy = ''; //no need to use proxy
   mapDataBus: BehaviorSubject<RawData[]> = new BehaviorSubject<RawData[]>(null);
   drawDataBus: BehaviorSubject<GeoJSONFeature[]> = new BehaviorSubject<GeoJSONFeature[]>(null);
   loadingStatusBus: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
