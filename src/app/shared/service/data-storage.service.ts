@@ -1,8 +1,8 @@
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {catchError, map} from 'rxjs/operators';
+import {catchError, map, expand, reduce} from 'rxjs/operators';
 import {MessageColor, MessageService} from './message.service';
-import {BehaviorSubject, Observable, throwError} from 'rxjs';
+import {BehaviorSubject, EMPTY, Observable, throwError} from 'rxjs';
 import { Owner } from 'src/app/model/owner';
 import { Device } from 'src/app/model/device';
 import { Region } from 'src/app/model/region';
@@ -11,6 +11,7 @@ import { RawData } from 'src/app/model/raw-data';
 import { Data } from '@angular/router';
 import { Constants } from '../../shared/constants';
 import { GeoJSONFeature } from 'src/app/model/geo-json-feature';
+import { RawDataComponent } from 'src/app/component/raw-data/raw-data.component';
 
 @Injectable({ providedIn: 'root' })
 export class DataStorageService {
@@ -75,28 +76,35 @@ export class DataStorageService {
         })
     );
   }
+  fetchPages(filter: any, start: number, allData: RawData[]): void {
+    this.http.post<Data>(this.getURL('data')+'/'+start, filter)
+    .pipe(catchError(this.handleError), 
+      map(res => {
+        if (!!res.error) {
+          this.messageService.showMessage(res.error, MessageColor.Red);
+        } else if (!res.success) {
+          this.messageService.showMessage('Data request failed with no message', MessageColor.Red);
+        }
+        return res.data;
+      })
+    ).subscribe((p: RawData[]) => {
+      allData = allData.concat(p);
+      if (p?.length != 0) {
+        this.fetchPages(filter, ++start, allData);
+      } else {
+        this.sendMapData(allData);
+      }
+    })
+  }
   fetchData(): void {
+    let allData: RawData[] = [];
     let filter:any = {};
     filter.sensors = this.filterModel.sensors
     filter.time = this.filterModel.time;
     filter.locations = this.filterModel.locations;
     console.log(JSON.stringify(filter));
     if (!!filter.sensors && !!filter.sensors.length && !!filter.time && !!filter.locations) {
-      this.http.post<Data>(this.getURL('data'), filter)
-      .pipe(
-        catchError(this.handleError),
-        map(res => {
-          if (!!res.error) {
-            this.messageService.showMessage(res.error, MessageColor.Red);
-          } else if (!res.success) {
-            this.messageService.showMessage('Data request failed with no message', MessageColor.Red);
-          }
-          return res.data;
-        })
-      ).subscribe((d: RawData[]) => {
-        console.log(d);
-        this.sendMapData(d);
-      });
+      this.fetchPages(filter, 1, allData);
     } else {
       this.sendMapData([]);
     }
