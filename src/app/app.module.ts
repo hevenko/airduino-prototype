@@ -50,6 +50,7 @@ import { ConfirmComponent } from './component/dialog/confirm/confirm.component';
 import { AirduinoComponent } from './component/airduino/airduino.component';
 import { MessageComponent } from './component/dialog/message/message.component';
 import { FilterModel } from './model/filter-model';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -103,7 +104,8 @@ import { FilterModel } from './model/filter-model';
     MatSlideToggleModule,
     MatTableModule,
     HttpClientModule,
-    MatDialogModule
+    MatDialogModule,
+    MatProgressSpinnerModule
   ],
   providers: [RemoteLoDService, AuthGuardService, FilterModel],
   bootstrap: [AppComponent]

@@ -12,12 +12,16 @@ export class RawDataComponent implements OnInit {
   displayedColumns: string[] = ['pm10', 'pm2_5', 'so2', 'co', 'o3', 'pb', 'hc', 'voc', 'temp', 'humidity', 'pressure', 'gps', 'battery', 'measured', 'aqi'];
   dataSource: RawData[] = [];
   selection = new SelectionModel(false, []);
-
+  isLoadingResults = true;
   constructor(private dataStorageService: DataStorageService) { }
 
   ngOnInit(): void {
     this.dataStorageService.mapDataBus.subscribe((d: RawData[]) => {
       this.dataSource = d;
+      this.isLoadingResults = false;
+    });
+    this.dataStorageService.loadingStatusBus.subscribe((s: boolean) =>{
+      this.isLoadingResults = s;
     });
   }
 

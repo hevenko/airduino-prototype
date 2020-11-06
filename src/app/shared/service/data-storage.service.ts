@@ -21,6 +21,7 @@ export class DataStorageService {
   noAccessControlAllowOriginProxy = ''; //no need to use proxy - ili treba se dobro posrati
   mapDataBus: BehaviorSubject<RawData[]> = new BehaviorSubject<RawData[]>(null);
   drawDataBus: BehaviorSubject<GeoJSONFeature[]> = new BehaviorSubject<GeoJSONFeature[]>(null);
+  loadingStatusBus: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   constructor(private http: HttpClient,private messageService: MessageService, private filterModel: FilterModel) {
     console.log('DataStorageService' + (++DataStorageService.i));
@@ -32,6 +33,9 @@ export class DataStorageService {
   }
   sendLocationData(data: GeoJSONFeature[]): void {
     this.drawDataBus.next(data);
+  }
+  sendLoadingStatus(loading: boolean): void {
+    this.loadingStatusBus.next(loading);
   }
   handleError = (err: HttpErrorResponse) => {
     if (!!err.message) {
@@ -91,8 +95,8 @@ export class DataStorageService {
       allData = allData.concat(p);
       if (p?.length != 0) {
         this.fetchPages(filter, ++start, allData);
-      } else if (allData?.length > 0){
-       allData.map((data: RawData) => {
+      } else {
+       allData?.map((data: RawData) => {
          data.measured = format(new Date(data.measured), 'dd.MM.yyyy HH:mm:ss'); // TODO: date/time format should be specified according app localization
          return data;
        });
@@ -113,6 +117,7 @@ export class DataStorageService {
         (filter.locations.devices && filter.locations.devices.length) ||
         (filter.locations.name))) {
       if (!!filter.sensors && !!filter.sensors.length && !!filter.time && !!filter.locations) {
+        this.sendLoadingStatus(true);
         this.fetchPages(filter, 1, allData);
       } else {
         this.sendMapData([]);
