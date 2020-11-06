@@ -26,17 +26,21 @@ export class DataStorageService {
   constructor(private http: HttpClient,private messageService: MessageService, private filterModel: FilterModel) {
     console.log('DataStorageService' + (++DataStorageService.i));
   }
+
   getURL = (resource: string): string => this.noAccessControlAllowOriginProxy + this.serverURL + resource;
 
   sendMapData(data: RawData[]): void {
     this.mapDataBus.next(data);
   }
+
   sendLocationData(data: GeoJSONFeature[]): void {
     this.drawDataBus.next(data);
   }
+
   sendLoadingStatus(loading: boolean): void {
     this.loadingStatusBus.next(loading);
   }
+
   handleError = (err: HttpErrorResponse) => {
     if (!!err.message) {
       this.messageService.showMessage(err.message, MessageColor.Red);
@@ -44,45 +48,43 @@ export class DataStorageService {
     }
     return throwError(err);
   }
+
   fetchOwners(): Observable<Owner[]> {
     return this.http.get<Data>(this.getURL('owners'))
       .pipe(
         catchError(this.handleError),
-        map(res => {
-          return res.data;
-        })
+        map(res => res.data)
     );
   }
+
   fetchDevices(ownerId: string): Observable<Device[]> {
     return this.http.get<Data>(this.getURL('devices/' + ownerId))
       .pipe(
         catchError(this.handleError),
-        map(res => {
-          return res.data;
-        })
+        map(res => res.data)
     );
   }
+
   fetchSensors(deviceId: string): Observable<Device[]> {
     return this.http.get<Data>(this.getURL('sensors/' + deviceId))
       .pipe(
         catchError(this.handleError),
-        map(res => {
-          return res.data;
-        })
+        map(res => res.data)
     );
   }
+
   fetchRegions(): Observable<Region[]> {
     return this.http.get<Data>(this.getURL('regions'))
       .pipe(
         catchError(this.handleError),
-        map(res => {
-          return res.data;
-        })
+        map(res => res.data)
     );
   }
-  fetchPages(filter: any, start: number, allData: RawData[]): void {
-    this.http.post<Data>(this.getURL('data')+'/'+start, filter)
-    .pipe(catchError(this.handleError),
+
+  fetchPages(filter: any, page: number, allData: RawData[]): void {
+    this.http.post<Data>(this.getURL('data/') + page, filter)
+    .pipe(
+      catchError(this.handleError),
       map(res => {
         if (!!res.error) {
           this.messageService.showMessage(res.error, MessageColor.Red);
@@ -91,10 +93,11 @@ export class DataStorageService {
         }
         return res.data;
       })
-    ).subscribe((p: RawData[]) => {
+    )
+    .subscribe((p: RawData[]) => {
       allData = allData.concat(p);
       if (p?.length != 0) {
-        this.fetchPages(filter, ++start, allData);
+        this.fetchPages(filter, ++page, allData);
       } else {
        allData?.map((data: RawData) => {
          data.measured = format(new Date(data.measured), 'dd.MM.yyyy HH:mm:ss'); // TODO: date/time format should be specified according app localization
@@ -106,7 +109,7 @@ export class DataStorageService {
   }
   fetchData(): void {
     let allData: RawData[] = [];
-    let filter:any = {};
+    let filter: any = {};
     filter.sensors = this.filterModel.sensors
     filter.time = this.filterModel.time;
     filter.locations = this.filterModel.locations;
