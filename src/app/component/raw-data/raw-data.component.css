@@ -5,8 +5,7 @@
 }
 
 .table-container {
-  height: 100vh;
-  overflow: auto;
+  width: 100%;
 }
 
 mat-row,
