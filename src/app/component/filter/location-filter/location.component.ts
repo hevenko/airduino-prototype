@@ -38,11 +38,20 @@ export class LocationComponent implements OnInit {
     })
     this.locationForm.valueChanges.subscribe(() => {
       if(!!this.locationForm.value.selectedRegion) {
-        this.filterModel.locations = {name : this.locationForm.value.selectedRegion};
+        this.filterModel.setLocations({name : this.locationForm.value.selectedRegion});
+        //this.filterModel.locations = {name : this.locationForm.value.selectedRegion};
       } else if (this.locationForm.controls.selectedDevices.value === '1'){
-        this.filterModel.locations = {devices : [1]}; //mock
+        this.filterModel.setLocations({devices : [1]}); //mock
+        //this.filterModel.locations = {devices : [1]}; //mock
+      } else if (this.locationForm.controls.selectedDevices.value === '2'){
+        this.filterModel.setLocations({ polygon: [] }); //mock
+        //this.filterModel.locations = "Polygon"; //mock
+      } else if (this.locationForm.controls.selectedDevices.value === '3'){
+        this.filterModel.setLocations({ circle: {} }); //mock
+        //this.filterModel.locations = "Circle"; //mock
       } else {
-        this.filterModel.locations = null;
+        this.filterModel.setLocations(null);
+        //this.filterModel.locations = null;
       }
     });
     this.locationForm.controls.selectedDevices.setValue('1'); //mock My devices
@@ -65,7 +74,9 @@ export class LocationComponent implements OnInit {
       let lastRadioBtnValue = e.currentTarget.children[radioBtnCount - 1].getElementsByTagName('input')[0].value;
       this.locationForm.controls.selectedDevices.setValue(lastRadioBtnValue,{emitEvent: false});
     }
-    this.dataStorageService.fetchData();
+    if (!((this.locationForm.value == "2") || (this.locationForm.value == "3"))) {
+      this.dataStorageService.fetchData();
+    }
   }
   regionOnChange(): void {
     let l = this.regionList.filter((v)=>{return v.id === this.locationForm.value.selectedRegion});

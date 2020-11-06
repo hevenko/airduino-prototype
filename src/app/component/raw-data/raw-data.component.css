@@ -2,3 +2,25 @@
   height: 1000px;
   overflow: auto;
 }
+
+mat-row,
+mat-header-row,
+mat-footer-row {
+  min-height: 24px;
+}
+
+.mat-cell {
+  font-size: 1rem;
+}
+
+.mat-row {
+  border: 1px solid transparent;
+}
+
+.mat-row.hovered {
+  background: #eee;
+}
+
+.mat-row.highlighted {
+  border: 1px solid #17920e;
+}

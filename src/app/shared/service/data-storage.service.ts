@@ -1,8 +1,8 @@
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {catchError, map, expand, reduce} from 'rxjs/operators';
+import {catchError, map} from 'rxjs/operators';
 import {MessageColor, MessageService} from './message.service';
-import {BehaviorSubject, EMPTY, Observable, throwError} from 'rxjs';
+import {BehaviorSubject, Observable, throwError} from 'rxjs';
 import { Owner } from 'src/app/model/owner';
 import { Device } from 'src/app/model/device';
 import { Region } from 'src/app/model/region';
@@ -11,7 +11,7 @@ import { RawData } from 'src/app/model/raw-data';
 import { Data } from '@angular/router';
 import { Constants } from '../../shared/constants';
 import { GeoJSONFeature } from 'src/app/model/geo-json-feature';
-import { RawDataComponent } from 'src/app/component/raw-data/raw-data.component';
+import { format } from 'date-fns';
 
 @Injectable({ providedIn: 'root' })
 export class DataStorageService {
@@ -78,7 +78,7 @@ export class DataStorageService {
   }
   fetchPages(filter: any, start: number, allData: RawData[]): void {
     this.http.post<Data>(this.getURL('data')+'/'+start, filter)
-    .pipe(catchError(this.handleError), 
+    .pipe(catchError(this.handleError),
       map(res => {
         if (!!res.error) {
           this.messageService.showMessage(res.error, MessageColor.Red);
@@ -91,8 +91,12 @@ export class DataStorageService {
       allData = allData.concat(p);
       if (p?.length != 0) {
         this.fetchPages(filter, ++start, allData);
-      } else {
-        this.sendMapData(allData);
+      } else if (allData?.length > 0){
+       allData.map((data: RawData) => {
+         data.measured = format(new Date(data.measured), 'dd.MM.yyyy HH:mm:ss'); // TODO: date/time format should be specified according app localization
+         return data;
+       });
+       this.sendMapData(allData);
       }
     })
   }
@@ -102,11 +106,17 @@ export class DataStorageService {
     filter.sensors = this.filterModel.sensors
     filter.time = this.filterModel.time;
     filter.locations = this.filterModel.locations;
-    console.log(JSON.stringify(filter));
-    if (!!filter.sensors && !!filter.sensors.length && !!filter.time && !!filter.locations) {
-      this.fetchPages(filter, 1, allData);
-    } else {
-      this.sendMapData([]);
+    //console.log(JSON.stringify(filter));
+    if (!!filter.sensors && !!filter.sensors.length && !!filter.time && !!filter.locations &&
+        ((filter.locations.circle && filter.locations.circle.radius) ||
+        (filter.locations.polygon && filter.locations.polygon.length) ||
+        (filter.locations.devices && filter.locations.devices.length) ||
+        (filter.locations.name))) {
+      if (!!filter.sensors && !!filter.sensors.length && !!filter.time && !!filter.locations) {
+        this.fetchPages(filter, 1, allData);
+      } else {
+        this.sendMapData([]);
+      }
     }
   }
 }
