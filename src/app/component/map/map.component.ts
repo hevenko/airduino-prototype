@@ -277,7 +277,7 @@ export class MapComponent implements OnInit {
 
   fetchData() {
     this.subscribeData();
-    this.dataStorageService.fetchData();
+    this.subscription = this.dataStorageService.fetchData();
   }
 
   unsubscribeData() {
@@ -289,7 +289,7 @@ export class MapComponent implements OnInit {
 
   subscribeData() {
     this.unsubscribeData();
-    this.subscription = this.dataStorageService.mapDataBus
+    this.dataStorageService.mapDataBus
       .subscribe((data: RawData[]) => {
       this.clearPoints();
       this.draw(this.vectorPoints, MapComponent.rawDataToGeoJSON(data));

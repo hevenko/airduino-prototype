@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, map } from 'rxjs/operators';
 import { MessageService } from './message.service';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, throwError } from 'rxjs';
 import { Owner } from 'src/app/model/owner';
 import { Device } from 'src/app/model/device';
 import { Region } from 'src/app/model/region';
@@ -81,8 +81,8 @@ export class DataStorageService {
     );
   }
 
-  fetchPages(filter: any, page: number, allData: RawData[]): void {
-    this.http.post<Data>(this.getURL('data/') + page, filter)
+  fetchPages(filter: any, page: number, allData: RawData[]): Subscription {
+    return this.http.post<Data>(this.getURL('data/') + page, filter)
     .pipe(
       catchError(this.handleError),
       map(res => {
@@ -108,7 +108,7 @@ export class DataStorageService {
       }
     })
   }
-  fetchData(): void {
+  fetchData(): Subscription {
     let allData: RawData[] = [];
     let filter: any = {};
     filter.sensors = this.filterModel.sensors
@@ -121,7 +121,7 @@ export class DataStorageService {
         (filter.locations.devices && filter.locations.devices.length) ||
         (filter.locations.name))) {
         this.sendLoadingStatus(true);
-        this.fetchPages(filter, 1, allData);
+        return this.fetchPages(filter, 1, allData);
     }
   }
 }
