@@ -19,7 +19,20 @@ export class MessageService {
   constructor() {
     console.log('MessageService created');
   }
+
   showMessage(msg: string, msgColor: MessageColor) {
     this.messageBus.next([{message: msg, messageColor: msgColor}]);
+  }
+
+  showErrorMessage(msg: string) {
+    this.showMessage(msg, MessageColor.Red);
+  }
+
+  showInfoMessage(msg: string) {
+    this.showMessage(msg, MessageColor.Green);
+  }
+
+  showWarningMessage(msg: string) {
+    this.showMessage(msg, MessageColor.Yellow);
   }
 }

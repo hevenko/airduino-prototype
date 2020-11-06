@@ -43,7 +43,7 @@ export class DataStorageService {
 
   handleError = (err: HttpErrorResponse) => {
     if (!!err.message) {
-      this.messageService.showMessage(err.message, MessageColor.Red);
+      this.messageService.showErrorMessage(err.message);
       return throwError(err.message);
     }
     return throwError(err);
@@ -87,9 +87,9 @@ export class DataStorageService {
       catchError(this.handleError),
       map(res => {
         if (!!res.error) {
-          this.messageService.showMessage(res.error, MessageColor.Red);
+          this.messageService.showErrorMessage(res.error);
         } else if (!res.success) {
-          this.messageService.showMessage('Data request failed with no message', MessageColor.Red);
+          this.messageService.showErrorMessage('Data request failed with no message');
         }
         return res.data;
       })
