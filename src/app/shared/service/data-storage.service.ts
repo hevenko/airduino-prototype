@@ -119,12 +119,8 @@ export class DataStorageService {
         (filter.locations.polygon && filter.locations.polygon.length) ||
         (filter.locations.devices && filter.locations.devices.length) ||
         (filter.locations.name))) {
-      if (!!filter.sensors && !!filter.sensors.length && !!filter.time && !!filter.locations) {
         this.sendLoadingStatus(true);
         this.fetchPages(filter, 1, allData);
-      } else {
-        this.sendMapData([]);
-      }
     }
   }
 }
