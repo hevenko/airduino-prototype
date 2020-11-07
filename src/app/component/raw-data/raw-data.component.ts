@@ -12,7 +12,7 @@ import { CustomNoRowsOverlay } from '../map/ag-grid.ts/custom-no-rows-overlay.co
 })
 export class RawDataComponent implements OnInit {
   displayedColumns = [
-    {field: 'pm10', sortable: true, minWidth:80},
+    {field: 'pm10', sortable: true, minWidth:100},
     {field: 'pm2_5', sortable: true, minWidth:80},
     {field: 'so2', sortable: true, minWidth:60},
     {field: 'co', sortable: true, minWidth:80},
@@ -74,7 +74,7 @@ export class RawDataComponent implements OnInit {
     params.api.sizeColumnsToFit();
     window.addEventListener('resize', function () {
       setTimeout(function () {
-        this.gridApi.sizeColumnsToFit();
+        this.gridApi?.sizeColumnsToFit();
       });
     });
   
