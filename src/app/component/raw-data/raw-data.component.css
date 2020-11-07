@@ -1,36 +1,13 @@
 :host {
   overflow: auto;
-}
-
-.table-container {
-  width: 100%;
-}
-
-mat-row,
-mat-header-row,
-mat-footer-row {
-  min-height: 24px;
-}
-
-.mat-cell {
-  font-size: 1rem;
-}
-
-.mat-row {
-  border: 1px solid transparent;
-}
-
-.mat-row.hovered {
-  background: #eee;
-}
-
-.mat-row.highlighted {
-  border: 1px solid #17920e;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
 }
 
 .loading-shade {
   position: absolute;
-  top: 50px;
+  top: 40px;
   left: 0;
   bottom: 0px;
   right: 0;

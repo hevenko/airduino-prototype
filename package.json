@@ -21,6 +21,8 @@
     "@angular/platform-browser": "~9.1.4",
     "@angular/platform-browser-dynamic": "~9.1.4",
     "@angular/router": "~9.1.4",
+    "ag-grid-angular": "^24.1.0",
+    "ag-grid-community": "^24.1.0",
     "bootstrap": "^3.4.1",
     "chart.js": "^2.9.3",
     "date-fns": "^2.16.1",

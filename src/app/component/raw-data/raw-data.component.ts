@@ -9,7 +9,23 @@ import { SelectionModel } from '@angular/cdk/collections';
   styleUrls: ['./raw-data.component.css']
 })
 export class RawDataComponent implements OnInit {
-  displayedColumns: string[] = ['pm10', 'pm2_5', 'so2', 'co', 'o3', 'pb', 'hc', 'voc', 'temp', 'humidity', 'pressure', 'gps', 'battery', 'measured', 'aqi'];
+  displayedColumns = [
+    {field: 'pm10', sortable: true},
+    {field: 'pm2_5', sortable: true},
+    {field: 'so2', sortable: true},
+    {field: 'co', sortable: true},
+    {field: 'o3', sortable: true},
+    {field: 'pb', sortable: true},
+    {field: 'hc', sortable: true},
+    {field: 'voc', sortable: true},
+    {field: 'temp', sortable: true},
+    {field: 'humidity', sortable: true},
+    {field: 'pressure', sortable: true},
+    {field: 'gps', sortable: true},
+    {field: 'battery', sortable: true},
+    {field: 'measured', sortable: true},
+    {field: 'aqi', sortable: true}
+  ];
   dataSource: RawData[] = [];
   selection = new SelectionModel(false, []);
   isLoadingResults = true;

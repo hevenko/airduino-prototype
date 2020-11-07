@@ -51,6 +51,7 @@ import { AirduinoComponent } from './component/airduino/airduino.component';
 import { MessageComponent } from './component/dialog/message/message.component';
 import { FilterModel } from './model/filter-model';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { AgGridModule } from 'ag-grid-angular';
 
 @NgModule({
   declarations: [
@@ -105,7 +106,8 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
     MatTableModule,
     HttpClientModule,
     MatDialogModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    AgGridModule.withComponents([])
   ],
   providers: [RemoteLoDService, AuthGuardService, FilterModel],
   bootstrap: [AppComponent]

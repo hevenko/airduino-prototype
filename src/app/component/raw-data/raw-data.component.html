@@ -1,23 +1,10 @@
 <div class="loading-shade" *ngIf="isLoadingResults">
   <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
 </div> 
-<div class="table-container">
-  <mat-table [dataSource]="dataSource">
-
-    <ng-container matColumnDef="{{column}}" *ngFor="let column of displayedColumns">
-      <ng-container>
-        <mat-header-cell *matHeaderCellDef> {{column}} </mat-header-cell>
-        <mat-cell mat-cell *matCellDef="let element"> {{element[column]}} </mat-cell>
-      </ng-container>
-    </ng-container>
-
-    <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
-
-    <mat-row *matRowDef="let element; columns: displayedColumns;"
-      (click)="onClick(element)"
-      [ngClass]="{hovered: element.hovered, highlighted: selection.isSelected(element)}"
-      (mouseover)="element.hovered = true" (mouseout)="element.hovered = false">
-    </mat-row>
-
-  </mat-table>
-</div>
+<ag-grid-angular
+  style="width: 100%; height: 100vh; overflow: auto;"
+  class="ag-theme-alpine"
+  [rowData]="dataSource"
+  [columnDefs]="displayedColumns"
+>
+</ag-grid-angular>
