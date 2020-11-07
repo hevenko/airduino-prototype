@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { RawData } from 'src/app/model/raw-data';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
 import { SelectionModel } from '@angular/cdk/collections';
+import { CustomLoadingOverlay } from '../map/ag-grid.ts/custom-loading-overlay.component';
+import { CustomNoRowsOverlay } from '../map/ag-grid.ts/custom-no-rows-overlay.component';
 
 @Component({
   selector: 'app-raw-data',
@@ -10,26 +12,47 @@ import { SelectionModel } from '@angular/cdk/collections';
 })
 export class RawDataComponent implements OnInit {
   displayedColumns = [
-    {field: 'pm10', sortable: true},
-    {field: 'pm2_5', sortable: true},
-    {field: 'so2', sortable: true},
-    {field: 'co', sortable: true},
-    {field: 'o3', sortable: true},
-    {field: 'pb', sortable: true},
-    {field: 'hc', sortable: true},
-    {field: 'voc', sortable: true},
-    {field: 'temp', sortable: true},
-    {field: 'humidity', sortable: true},
-    {field: 'pressure', sortable: true},
-    {field: 'gps', sortable: true},
-    {field: 'battery', sortable: true},
-    {field: 'measured', sortable: true},
-    {field: 'aqi', sortable: true}
+    {field: 'pm10', sortable: true, minWidth:80},
+    {field: 'pm2_5', sortable: true, minWidth:80},
+    {field: 'so2', sortable: true, minWidth:60},
+    {field: 'co', sortable: true, minWidth:80},
+    {field: 'o3', sortable: true, minWidth:80},
+    {field: 'pb', sortable: true, minWidth:80},
+    {field: 'hc', sortable: true, minWidth:80},
+    {field: 'voc', sortable: true, minWidth:80},
+    {field: 'temp', sortable: true, minWidth:80},
+    {field: 'humidity', sortable: true, minWidth:120},
+    {field: 'pressure', sortable: true, minWidth:120},
+    {field: 'gps', sortable: true, minWidth:200},
+    {field: 'battery', sortable: true, minWidth:120},
+    {field: 'measured', sortable: true, minWidth:200},
+    {field: 'aqi', sortable: true, minWidth:80}
   ];
   dataSource: RawData[] = [];
-  selection = new SelectionModel(false, []);
+  frameworkComponents;
+  loadingOverlayComponent;
+  loadingOverlayComponentParams;
+  noRowsOverlayComponent;
+  noRowsOverlayComponentParams;
   isLoadingResults = true;
-  constructor(private dataStorageService: DataStorageService) { }
+  gridApi;
+
+  constructor(private dataStorageService: DataStorageService) { 
+    this.frameworkComponents = {
+      customLoadingOverlay: CustomLoadingOverlay,
+      customNoRowsOverlay: CustomNoRowsOverlay,
+    };
+    this.loadingOverlayComponent = 'customLoadingOverlay';
+    this.loadingOverlayComponentParams = {
+      loadingMessage: 'Loading...',
+    };
+    this.noRowsOverlayComponent = 'customNoRowsOverlay';
+    this.noRowsOverlayComponentParams = {
+      noRowsMessageFunc: function () {
+        return 'Sorry - no rows! at: ' + new Date();
+      },
+    };    
+  }
 
   ngOnInit(): void {
     this.dataStorageService.mapDataBus.subscribe((d: RawData[]) => {
@@ -38,10 +61,22 @@ export class RawDataComponent implements OnInit {
     });
     this.dataStorageService.loadingStatusBus.subscribe((s: boolean) =>{
       this.isLoadingResults = s;
+      if(this.isLoadingResults) {
+        this.gridApi?.showLoadingOverlay();
+      } else {
+        this.gridApi?.hideOverlay();
+      }
     });
   }
-
-  onClick(element) {
-    this.selection.toggle(element)
+  onGridReady(params) {
+    this.gridApi = params.api;
+    this.gridApi.hideOverlay();
+    params.api.sizeColumnsToFit();
+    window.addEventListener('resize', function () {
+      setTimeout(function () {
+        this.gridApi.sizeColumnsToFit();
+      });
+    });
+  
   }
 }
