@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import Map from 'ol/Map';
 import View from 'ol/View';
 import { Draw, Modify, Select, Snap } from 'ol/interaction';
@@ -28,7 +28,7 @@ import { FilterModel } from 'src/app/model/filter-model';
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.css']
 })
-export class MapComponent implements OnInit {
+export class MapComponent implements OnInit, OnDestroy {
   private static pointId = 0;
   private static clearMapService: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   projection = "EPSG:3857";
@@ -111,6 +111,9 @@ export class MapComponent implements OnInit {
   snap = new Snap({source: this.sourceFeatures});
 
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { 
+  }
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
   }
   /**
    * usage example:
@@ -262,7 +265,7 @@ export class MapComponent implements OnInit {
         this.clearPoints();
       }
     });
-    this.fetchData();
+    this.subscribeData();
   }
 
   fetchData() {
