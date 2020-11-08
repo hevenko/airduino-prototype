@@ -21,6 +21,7 @@ export class DataStorageService {
   //noAccessControlAllowOriginProxy = 'https://thingproxy.freeboard.io/fetch/'; //fix thanks to: https://stackoverflow.com/questions/43871637/no-access-control-allow-origin-header-is-present-on-the-requested-resource-whe/43881141#43881141
   noAccessControlAllowOriginProxy = ''; //no need to use proxy
   pageOfDataBus: BehaviorSubject<RawData[]> = new BehaviorSubject<RawData[]>(null);
+  availaleDataBus: BehaviorSubject<RawData[]> = new BehaviorSubject<RawData[]>(null);
   drawDataBus: BehaviorSubject<GeoJSONFeature[]> = new BehaviorSubject<GeoJSONFeature[]>(null);
   loadingStatusBus: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
@@ -32,6 +33,9 @@ export class DataStorageService {
 
   sendPageOfData(data: RawData[]): void {
     this.pageOfDataBus.next(data);
+  }
+  sendAvailableData(data: RawData[]): void {
+    this.availaleDataBus.next(data);
   }
 
   sendLocationData(data: GeoJSONFeature[]): void {
@@ -82,7 +86,7 @@ export class DataStorageService {
     );
   }
 
-  fetchPages(filter: any, page: number): Subscription {
+  fetchPages(filter: any, page: number, availableData: RawData[]): Subscription {
     return this.http.post<Data>(this.getURL('data/') + page, filter)
     .pipe(
       catchError(this.handleError),
@@ -96,25 +100,29 @@ export class DataStorageService {
       })
     )
     .subscribe((p: RawData[]) => {
+      this.sendPageOfData(p);
+      availableData = availableData.concat(p);
+      this.sendAvailableData(availableData);
       if (p?.length != 0) {
         p?.map((data: RawData) => {
           data.measured = format(new Date(data.measured), 'dd.MM.yyyy HH:mm:ss'); // TODO: date/time format should be specified according app localization
           return data;
         });
-        this.sendPageOfData(p);
-        this.fetchPages(filter, ++page);
+        this.fetchPages(filter, ++page, availableData);
       } else {
        this.sendLoadingStatus(false);
       }
     })
   }
   fetchData(): Subscription {
-    let allData: RawData[] = [];
+    let availableData: RawData[] = [];
     let filter: any = {};
     filter.sensors = this.filterModel.sensors
     filter.time = this.filterModel.time;
     filter.locations = this.filterModel.locations;
     //console.log(JSON.stringify(filter));
+    this.sendPageOfData([]);
+    this.sendAvailableData([]);     
     if (!!filter.sensors && !!filter.sensors.length && !!filter.time && !!filter.locations &&
         ((filter.locations.circle && filter.locations.circle.radius) ||
         (filter.locations.polygon && filter.locations.polygon.length) ||
@@ -122,7 +130,7 @@ export class DataStorageService {
         (filter.locations.name))) {
           //RawDataComponent.clearRawData();
         this.sendLoadingStatus(true);
-        return this.fetchPages(filter, 1);
+        return this.fetchPages(filter, 1, availableData);
     }
   }
 }
