@@ -85,7 +85,7 @@ export class RawDataComponent implements OnInit {
   }
 
   onBtnExport() {
-    var params = this.gridApi;
+    const params = this.gridApi;
     params.suppressQuotes = false;
     params.columnSeparator = ";";
     this.gridApi.exportDataAsCsv(params);
