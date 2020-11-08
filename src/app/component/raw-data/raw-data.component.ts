@@ -4,6 +4,7 @@ import { DataStorageService } from 'src/app/shared/service/data-storage.service'
 import { SelectionModel } from '@angular/cdk/collections';
 import { CustomLoadingOverlay } from '../map/ag-grid.ts/custom-loading-overlay.component';
 import { CustomNoRowsOverlay } from '../map/ag-grid.ts/custom-no-rows-overlay.component';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-raw-data',
@@ -28,7 +29,9 @@ export class RawDataComponent implements OnInit {
     {field: 'measured', sortable: true, minWidth:200, sort:'asc'},
     {field: 'aqi', sortable: true, minWidth:80}
   ];
-  dataSource: RawData[] = [];
+  dataSource: RawData[] = [];// grid expects all data at once
+  tempDataSource: RawData[] = [];
+  
   frameworkComponents;
   loadingOverlayComponent;
   loadingOverlayComponentParams;
@@ -51,24 +54,25 @@ export class RawDataComponent implements OnInit {
       noRowsMessageFunc: function () {
         return 'Sorry - no rows! at: ' + new Date();
       },
-    };    
+    };
   }
 
   ngOnInit(): void {
     this.dataStorageService.mapDataBus.subscribe((d: RawData[]) => {
-      this.dataSource = d;
-      this.isLoadingResults = false;
+      this.tempDataSource = this.tempDataSource.concat(d);
     });
     this.dataStorageService.loadingStatusBus.subscribe((s: boolean) =>{
       this.isLoadingResults = s;
       if(this.isLoadingResults) {
         this.gridApi?.showLoadingOverlay();
+        this.tempDataSource = [];
       } else {
+        this.dataSource = this.tempDataSource;
         this.gridApi?.hideOverlay();
       }
     });
-  }
-  onGridReady(params) {
+ }
+ onGridReady(params) {
     this.gridApi = params.api;
     this.gridApi.hideOverlay();
     params.api.sizeColumnsToFit();
