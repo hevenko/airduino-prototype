@@ -29,7 +29,7 @@ export class RawDataComponent implements OnInit, OnDestroy {
     {field: 'measured', sortable: true, minWidth:200, sort:'asc'},
     {field: 'aqi', sortable: true, minWidth:80}
   ];
-  defaultColDef = { resizable: true };
+  defaultColDef = { resizable: true, filter: true };
   dataSource: RawData[] = [];// grid expects all data at once
   tempDataSource: RawData[] = [];
   
