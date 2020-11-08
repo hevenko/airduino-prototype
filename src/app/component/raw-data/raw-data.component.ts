@@ -64,27 +64,8 @@ export class RawDataComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-<<<<<<< HEAD
-    this.dataStorageService.pageOfDataBus.subscribe((d: RawData[]) => {
-      this.tempDataSource = this.tempDataSource.concat(d);
-    });
-    this.dataStorageService.loadingStatusBus.subscribe((s: boolean) =>{
-      this.isLoadingResults = s;
-      if(this.isLoadingResults) {
-        this.gridApi?.showLoadingOverlay();
-        this.tempDataSource = [];
-      } else {
-        this.dataSource = this.tempDataSource;
-        this.gridApi?.hideOverlay();
-      }
-    });
- }
-
- onGridReady(params) {
-=======
   }
   onGridReady(params) {
->>>>>>> 210ba89c19d00d952a4cc9b440be886681476820
     this.gridApi = params.api;
     //this.gridApi.hideOverlay();
     params.api.sizeColumnsToFit();

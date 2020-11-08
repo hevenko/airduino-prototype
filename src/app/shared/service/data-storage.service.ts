@@ -116,12 +116,8 @@ export class DataStorageService {
   }
   
   fetchData(): Subscription {
-<<<<<<< HEAD
-    const filter: any = {};
-=======
     let availableData: RawData[] = [];
     let filter: any = {};
->>>>>>> 210ba89c19d00d952a4cc9b440be886681476820
     filter.sensors = this.filterModel.sensors
     filter.time = this.filterModel.time;
     filter.locations = this.filterModel.locations;
