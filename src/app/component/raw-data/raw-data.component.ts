@@ -58,7 +58,7 @@ export class RawDataComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.dataStorageService.pageOfMapDataBus.subscribe((d: RawData[]) => {
+    this.dataStorageService.pageOfDataBus.subscribe((d: RawData[]) => {
       this.tempDataSource = this.tempDataSource.concat(d);
     });
     this.dataStorageService.loadingStatusBus.subscribe((s: boolean) =>{

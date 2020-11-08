@@ -20,7 +20,7 @@ export class DataStorageService {
   static i = 0;
   //noAccessControlAllowOriginProxy = 'https://thingproxy.freeboard.io/fetch/'; //fix thanks to: https://stackoverflow.com/questions/43871637/no-access-control-allow-origin-header-is-present-on-the-requested-resource-whe/43881141#43881141
   noAccessControlAllowOriginProxy = ''; //no need to use proxy
-  pageOfMapDataBus: BehaviorSubject<RawData[]> = new BehaviorSubject<RawData[]>(null);
+  pageOfDataBus: BehaviorSubject<RawData[]> = new BehaviorSubject<RawData[]>(null);
   drawDataBus: BehaviorSubject<GeoJSONFeature[]> = new BehaviorSubject<GeoJSONFeature[]>(null);
   loadingStatusBus: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
@@ -30,8 +30,8 @@ export class DataStorageService {
 
   getURL = (resource: string): string => this.noAccessControlAllowOriginProxy + this.serverURL + resource;
 
-  sendPageOfMapData(data: RawData[]): void {
-    this.pageOfMapDataBus.next(data);
+  sendPageOfData(data: RawData[]): void {
+    this.pageOfDataBus.next(data);
   }
 
   sendLocationData(data: GeoJSONFeature[]): void {
@@ -101,7 +101,7 @@ export class DataStorageService {
           data.measured = format(new Date(data.measured), 'dd.MM.yyyy HH:mm:ss'); // TODO: date/time format should be specified according app localization
           return data;
         });
-        this.sendPageOfMapData(p);
+        this.sendPageOfData(p);
         this.fetchPages(filter, ++page);
       } else {
        this.sendLoadingStatus(false);
