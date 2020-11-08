@@ -108,9 +108,9 @@ export class DataStorageService {
       }
     })
   }
+  
   fetchData(): Subscription {
-    let allData: RawData[] = [];
-    let filter: any = {};
+    const filter: any = {};
     filter.sensors = this.filterModel.sensors
     filter.time = this.filterModel.time;
     filter.locations = this.filterModel.locations;

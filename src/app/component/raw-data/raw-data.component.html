@@ -14,11 +14,13 @@
   class="ag-theme-alpine"
   [rowData]="dataSource"
   [columnDefs]="displayedColumns"
+  [defaultColDef]="defaultColDef"
   [frameworkComponents]="frameworkComponents"
   [loadingOverlayComponent]="loadingOverlayComponent"
   [loadingOverlayComponentParams]="loadingOverlayComponentParams"
   [noRowsOverlayComponent]="noRowsOverlayComponent"
   [noRowsOverlayComponentParams]="noRowsOverlayComponentParams"
+  (firstDataRendered)="onFirstDataRendered($event)"
   [rowSelection]="'multiple'"
   (gridReady)="onGridReady($event)"
 >

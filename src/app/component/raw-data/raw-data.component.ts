@@ -29,6 +29,7 @@ export class RawDataComponent implements OnInit {
     {field: 'measured', sortable: true, minWidth:200, sort:'asc'},
     {field: 'aqi', sortable: true, minWidth:80}
   ];
+  defaultColDef = { resizable: true };
   dataSource: RawData[] = [];// grid expects all data at once
   tempDataSource: RawData[] = [];
   
@@ -72,6 +73,7 @@ export class RawDataComponent implements OnInit {
       }
     });
  }
+
  onGridReady(params) {
     this.gridApi = params.api;
     this.gridApi.hideOverlay();
