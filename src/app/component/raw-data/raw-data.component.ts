@@ -12,7 +12,7 @@ import { CustomNoRowsOverlay } from '../map/ag-grid.ts/custom-no-rows-overlay.co
 })
 export class RawDataComponent implements OnInit {
   displayedColumns = [
-    {field: 'pm10', sortable: true, minWidth:100},
+    {field: 'pm10', sortable: true, minWidth:110},
     {field: 'pm2_5', sortable: true, minWidth:80},
     {field: 'so2', sortable: true, minWidth:60},
     {field: 'co', sortable: true, minWidth:80},
@@ -25,7 +25,7 @@ export class RawDataComponent implements OnInit {
     {field: 'pressure', sortable: true, minWidth:120},
     {field: 'gps', sortable: true, minWidth:200},
     {field: 'battery', sortable: true, minWidth:120},
-    {field: 'measured', sortable: true, minWidth:200},
+    {field: 'measured', sortable: true, minWidth:200, sort:'asc'},
     {field: 'aqi', sortable: true, minWidth:80}
   ];
   dataSource: RawData[] = [];
