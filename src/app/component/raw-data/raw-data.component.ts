@@ -77,6 +77,7 @@ export class RawDataComponent implements OnInit, OnDestroy {
     this.subscriptions.add(this.dataStorageService.availaleDataBus.subscribe((d: RawData[]) => {
       this.tempDataSource = d;
       this.gridApi.applyTransaction({ add: d });
+      this.gridApi?.sizeColumnsToFit();
     }));
     this.subscriptions.add(this.dataStorageService.loadingStatusBus.subscribe((s: boolean) =>{
       this.gridApi?.showLoadingOverlay();
