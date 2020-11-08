@@ -96,16 +96,15 @@ export class RawDataComponent implements OnInit {
       const keys = Object.keys(node.data);
       keys.find(column => {
         if ((node.data[column] === undefined) || (node.data[column] === null)) {
-          return;
+          return false;
         }
-        let value: string;
         let selected: boolean;
         if (Array.isArray(node.data[column])) {
           const values = node.data[column];
           selected = !!values.find(value => ('' + value).includes(search));
           node.setSelected(selected);
         } else {
-          value = ('' + node.data[column]).toLowerCase();
+          const value = ('' + node.data[column]).toLowerCase();
           selected = value.includes(search);
           node.setSelected(selected);
         }
