@@ -30,7 +30,7 @@ import { FilterModel } from 'src/app/model/filter-model';
 })
 export class MapComponent implements OnInit {
   private static pointId = 0;
-  private static deleteMapService: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+  private static clearMapService: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   projection = "EPSG:3857";
   subscription;
   map: Map;
@@ -111,7 +111,7 @@ export class MapComponent implements OnInit {
   snap = new Snap({source: this.sourceFeatures});
 
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { 
-    MapComponent.deleteMapService.subscribe((v: boolean) => {
+    MapComponent.clearMapService.subscribe((v: boolean) => {
       if (!!this.map) {
         this.clearMap();
         this.map.getView().setZoom(0);
@@ -133,7 +133,7 @@ export class MapComponent implements OnInit {
     this.clearFeatures()
   }
   static deleteMap(): void {
-    return this.deleteMapService.next(true);
+    return this.clearMapService.next(true);
   }
   static regionToGeoJSON(r: Region[]): GeoJSONFeature[] {
     return r.map((v: Region) => {
