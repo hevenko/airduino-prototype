@@ -279,7 +279,7 @@ export class MapComponent implements OnInit {
 
   subscribeData() {
     this.unsubscribeData();
-    this.dataStorageService.mapDataBus
+    this.dataStorageService.pageOfMapDataBus
       .subscribe((data: RawData[]) => {
       this.draw(this.vectorPoints, MapComponent.rawDataToGeoJSON(data));
     });
