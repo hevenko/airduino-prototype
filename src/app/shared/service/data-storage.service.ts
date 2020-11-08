@@ -12,6 +12,7 @@ import { Data } from '@angular/router';
 import { Constants } from '../../shared/constants';
 import { GeoJSONFeature } from 'src/app/model/geo-json-feature';
 import { format } from 'date-fns';
+import { RawDataComponent } from 'src/app/component/raw-data/raw-data.component';
 
 @Injectable({ providedIn: 'root' })
 export class DataStorageService {
@@ -81,7 +82,7 @@ export class DataStorageService {
     );
   }
 
-  fetchPages(filter: any, page: number, allData: RawData[]): Subscription {
+  fetchPages(filter: any, page: number): Subscription {
     return this.http.post<Data>(this.getURL('data/') + page, filter)
     .pipe(
       catchError(this.handleError),
@@ -95,15 +96,14 @@ export class DataStorageService {
       })
     )
     .subscribe((p: RawData[]) => {
-      allData = allData.concat(p);
       if (p?.length != 0) {
-        this.fetchPages(filter, ++page, allData);
+        p?.map((data: RawData) => {
+          data.measured = format(new Date(data.measured), 'dd.MM.yyyy HH:mm:ss'); // TODO: date/time format should be specified according app localization
+          return data;
+        });
+        this.sendMapData(p);
+        this.fetchPages(filter, ++page);
       } else {
-       allData?.map((data: RawData) => {
-         data.measured = format(new Date(data.measured), 'dd.MM.yyyy HH:mm:ss'); // TODO: date/time format should be specified according app localization
-         return data;
-       });
-       this.sendMapData(allData);
        this.sendLoadingStatus(false);
       }
     })
@@ -120,8 +120,9 @@ export class DataStorageService {
         (filter.locations.polygon && filter.locations.polygon.length) ||
         (filter.locations.devices && filter.locations.devices.length) ||
         (filter.locations.name))) {
+          //RawDataComponent.clearRawData();
         this.sendLoadingStatus(true);
-        return this.fetchPages(filter, 1, allData);
+        return this.fetchPages(filter, 1);
     }
   }
 }

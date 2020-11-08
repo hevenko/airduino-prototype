@@ -111,12 +111,6 @@ export class MapComponent implements OnInit {
   snap = new Snap({source: this.sourceFeatures});
 
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { 
-    MapComponent.clearMapService.subscribe((v: boolean) => {
-      if (!!this.map) {
-        this.clearMap();
-        this.map.getView().setZoom(0);
-      }
-    });
   }
   /**
    * usage example:
@@ -131,9 +125,6 @@ export class MapComponent implements OnInit {
   clearMap() {
     this.clearPoints();
     this.clearFeatures()
-  }
-  static deleteMap(): void {
-    return this.clearMapService.next(true);
   }
   static regionToGeoJSON(r: Region[]): GeoJSONFeature[] {
     return r.map((v: Region) => {
@@ -266,11 +257,10 @@ export class MapComponent implements OnInit {
     });
     this.map.addInteraction(this.snap);
 
-    //subscribing to device list
-    this.dataStorageService.drawDataBus.subscribe((geoJsonFeature: GeoJSONFeature[]) => {
-      console.log("drawDataBus");
-      this.clearFeatures();
-      this.draw(this.vectorFeatures, geoJsonFeature);
+    this.dataStorageService.loadingStatusBus.subscribe((isLoading: boolean) =>{
+      if(isLoading) {
+        this.clearPoints();
+      }
     });
     this.fetchData();
   }
@@ -291,7 +281,6 @@ export class MapComponent implements OnInit {
     this.unsubscribeData();
     this.dataStorageService.mapDataBus
       .subscribe((data: RawData[]) => {
-      this.clearPoints();
       this.draw(this.vectorPoints, MapComponent.rawDataToGeoJSON(data));
     });
   }
