@@ -83,4 +83,34 @@ export class RawDataComponent implements OnInit {
     });
   
   }
+
+  onBtnExport() {
+    var params = this.gridApi;
+    params.suppressQuotes = false;
+    params.columnSeparator = ";";
+    this.gridApi.exportDataAsCsv(params);
+  }
+
+  selectBySearch(search: string) {
+    this.gridApi.forEachNode(node => {
+      const keys = Object.keys(node.data);
+      keys.find(column => {
+        if ((node.data[column] === undefined) || (node.data[column] === null)) {
+          return;
+        }
+        let value: string;
+        let selected: boolean;
+        if (Array.isArray(node.data[column])) {
+          const values = node.data[column];
+          selected = !!values.find(value => ('' + value).includes(search));
+          node.setSelected(selected);
+        } else {
+          value = ('' + node.data[column]).toLowerCase();
+          selected = value.includes(search);
+          node.setSelected(selected);
+        }
+        return selected;
+      });
+    });
+  }
 }

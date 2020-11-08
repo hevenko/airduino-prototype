@@ -1,3 +1,14 @@
+<div class="toolbar">
+  <div class="search">
+    <label class="label-search" for="search">Search data:</label>
+    <input class="input-search" #input id="search" name="search" matInput placeholder="search data in grid..." />
+    <button mat-raised-button (click)="selectBySearch(input.value)">Search</button>
+  </div>
+  <div>
+    <button mat-raised-button (click)="onBtnExport()">Export to excel</button>
+  </div>
+</div>
+
 <ag-grid-angular
   style="width: 100%; height: 100%;flex: '1 1 auto'"
   class="ag-theme-alpine"
@@ -8,6 +19,7 @@
   [loadingOverlayComponentParams]="loadingOverlayComponentParams"
   [noRowsOverlayComponent]="noRowsOverlayComponent"
   [noRowsOverlayComponentParams]="noRowsOverlayComponentParams"
+  [rowSelection]="'multiple'"
   (gridReady)="onGridReady($event)"
 >
 </ag-grid-angular>
