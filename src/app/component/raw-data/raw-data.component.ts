@@ -38,7 +38,7 @@ export class RawDataComponent implements OnInit, OnDestroy {
   noRowsOverlayComponent;
   noRowsOverlayComponentParams;
   isLoadingResults = true;  
-
+  gridApi;
   subscriptions = new Subscription(); //parent for all subscription
 
   constructor(private dataStorageService: DataStorageService) { 
@@ -59,12 +59,13 @@ export class RawDataComponent implements OnInit, OnDestroy {
   }
   ngOnDestroy(): void {
     this.subscriptions?.unsubscribe();
+    this.gridApi = null;
   }
 
   ngOnInit(): void {
   }
   onGridReady(params) {
-    let gridApi = params.api;
+    this.gridApi = params.api;
     //this.gridApi.hideOverlay();
     params.api.sizeColumnsToFit();
     window.addEventListener('resize', function () {
@@ -76,7 +77,7 @@ export class RawDataComponent implements OnInit, OnDestroy {
       this.tempDataSource = d;
     }));
     this.subscriptions.add(this.dataStorageService.loadingStatusBus.subscribe((s: boolean) =>{
-      gridApi?.showLoadingOverlay();
+      this.gridApi?.showLoadingOverlay();
       this.isLoadingResults = s;
       if(this.isLoadingResults) {
         this.tempDataSource = [];
