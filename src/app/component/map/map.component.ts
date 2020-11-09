@@ -24,6 +24,7 @@ import { BehaviorSubject } from 'rxjs';
 import { GeoJSONFeature } from 'src/app/model/geo-json-feature';
 import { RawData } from 'src/app/model/raw-data';
 import { FilterModel } from 'src/app/model/filter-model';
+import { easeIn, easeOut, inAndOut, linear, upAndDown } from 'ol/easing';
 
 @Component({
   selector: 'app-map',
@@ -39,11 +40,16 @@ export class MapComponent implements OnInit, OnDestroy {
   map: Map;
   tileLayer: TileLayer;
   vectorLayer: VectorLayer;
-  //lastFeature;
   gJson = new GeoJSON();
   raster = new TileLayer({
     source: new OSM(),
   });
+  raster0 = new TileLayer({
+    source: new XYZSource({
+      //url: 'http://tile.stamen.com/terrain/{z}/{x}/{y}.jpg'
+    })
+  });
+
   styles = {
     'Point': new Style({
       image: new CircleStyle({
@@ -106,32 +112,38 @@ export class MapComponent implements OnInit, OnDestroy {
     source: this.sourceFeatures,
     type: "Polygon",
   });
+
   drawCircle = new Draw({
     source: this.sourceFeatures,
     type: "Circle",
   });
+
   modify = new Modify({source: this.sourceFeatures});
   snap = new Snap({source: this.sourceFeatures});
 
-  constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { 
-  }
+  constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { }
+
   ngOnDestroy(): void {
-    this.subscription?.unsubscribe();
+    this.unsubscribeData();
+    const center = this.map.getView().getCenter();
+    localStorage.setItem('center0', center[0]);
+    localStorage.setItem('center1', center[1]);
+    localStorage.setItem('zoom', this.map.getView().getZoom());
   }
-  /**
-   * usage example:
-   * MapComponent.deleteMap()
-   */
+
   clearPoints() {
     this.vectorPoints.getSource().clear();
   }
+
   clearFeatures() {
     this.vectorFeatures.getSource().clear();
   }
+
   clearMap() {
     this.clearPoints();
     this.clearFeatures()
   }
+
   static regionToGeoJSON(r: Region[]): GeoJSONFeature[] {
     return r.map((v: Region) => {
       const feature = {type:"Feature", id:v.id, geometry:{type:v.gtype, coordinates:v.coordinates}};
@@ -139,6 +151,7 @@ export class MapComponent implements OnInit, OnDestroy {
       return feature;
     });
   }
+
   static rawDataToGeoJSON(r: RawData[]): GeoJSONFeature[] {
     return r?.map((v: RawData) => {
       MapComponent.pointId++
@@ -147,6 +160,7 @@ export class MapComponent implements OnInit, OnDestroy {
       return feature;
     });
   }
+
   initMap(ctx) {
     return new Promise((resolve) => {
         setTimeout(() => { // without setTimeout map is empty
@@ -176,8 +190,8 @@ export class MapComponent implements OnInit, OnDestroy {
             target: 'map',
             view: new View({
               projection: this.projection,
-              center: fromLonLat([0, 0]),
-              zoom: 0
+              center: [localStorage.getItem('center0'), localStorage.getItem('center1')] || fromLonLat([0, 0]),
+              zoom: localStorage.getItem('zoom') || 0
             })
           });
           resolve();
@@ -195,25 +209,18 @@ export class MapComponent implements OnInit, OnDestroy {
       this.drawCircle.setActive(true);
     }
   }
-  /*
-  removeLastFeature() {
-    if(this.lastFeature) {
-      this.vectorFeatures.getSource().removeFeature(this.lastFeature);
-      this.lastFeature = null;
-    }
-  }
-  */
-  //drawStart = () => this.removeLastFeature();
 
   createFeaturesFromLocation = ()  => {
     this.clearFeatures();
     console.log("location:", this.filterModel);
+
     if (this.filterModel.locations && this.filterModel.locations.polygon && this.filterModel.locations.polygon.length) {
       const polygonFeature = new Feature({
         geometry: new Polygon([this.filterModel.locations.polygon.map(p => fromLonLat(p))])
       });
       this.vectorFeatures.getSource().addFeature(polygonFeature);
     }
+
     if (this.filterModel.locations && this.filterModel.locations.circle && this.filterModel.locations.circle.radius) {
       const circle = this.filterModel.locations.circle;
       const circleFeature = new Feature({
@@ -240,8 +247,8 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   drawStart = () => this.clearFeatures();
+
   drawEnd = (event: any) => {
-    //this.lastFeature = event.feature;
     this.createLocationFromFeature(event.feature);
     if (this.filterModel.locations && (this.filterModel.locations.polygon || this.filterModel.locations.circle)) {
       this.fetchData();
@@ -252,11 +259,32 @@ export class MapComponent implements OnInit, OnDestroy {
     await this.initMap(this);
     this.filterModel.locationsSubject.subscribe(value => {
       console.log("filterModel changed to:", value);
-      //this.removeLastFeature();
       this.createFeaturesFromLocation();
 
       this.changeInteraction(value);
       this.modify.setActive(value.polygon || value.circle);
+    });
+    this.dataStorageService.drawDataBus.subscribe((region: any) => {
+      console.log("named location:", region);
+      if (!region) {
+        return;
+      }
+      let geometry;
+      if (region[0].gtype == "Polygon") {
+        const coords = region[0].coordinates[0].map(p => fromLonLat(p));
+        console.log("coords:", coords);
+        geometry = new Polygon([coords])
+        console.log("polygon created");
+      } else if (region[0].gtype == "Circle") {
+        geometry = new Circle(fromLonLat(region[0].center), region[0].radius / MapComponent.RADIUS_FACTOR)
+      }
+      const feature = new Feature({ geometry });
+      console.log("feature created");
+      this.vectorFeatures.getSource().addFeature(feature);
+      console.log("feature added");
+      //this.map.getView().fit(feature.getGeometry(), { padding: [100, 100, 100, 100], duration: 2000, easing: easeOut });
+      this.map.getView().fit(feature.getGeometry(), { padding: [100, 100, 100, 100], duration: 2000, easing: inAndOut });
+      //this.map.getView().fit(feature.getGeometry(), { padding: [100, 100, 100, 100], duration: 2000, easing: upAndDown });
     });
     this.map.addInteraction(this.modify);
     this.modify.setActive(false);
@@ -282,7 +310,6 @@ export class MapComponent implements OnInit, OnDestroy {
     });
      */
     this.vectorFeatures.getSource().on('changefeature', (event) => {
-      //this.clearPoints();
       this.drawEnd(event);
     });
     this.map.addInteraction(this.snap);
@@ -331,7 +358,7 @@ export class MapComponent implements OnInit, OnDestroy {
         //this.map.getView().fit(this.vectorPoints.getSource().getExtent(), {maxZoom: 13}); //to show new polygon
       }  
     });
-}
+  }
   /**
    * 
    * @param 
@@ -339,8 +366,8 @@ export class MapComponent implements OnInit, OnDestroy {
    * let source = [[13.5131836, 45.6370871],[14.3591309, 45.5986657]];
    * let fliped = [fromLonLatToggle(source)] //notice the added square bracket to the function result
    */
-  static fromLonLatToggle(c:any[]): any[]  {
-    return c.map((v)=>{return fromLonLat(v)});
+  static fromLonLatToggle(c: any[]): any[]  {
+    return c.map((v) => fromLonLat(v));
   }
 
   static geometryLonLat(g: any): any {

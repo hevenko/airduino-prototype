@@ -38,7 +38,11 @@ export class DataStorageService {
     this.availableDataBus.next(data);
   }
 
-  sendLocationData(data: GeoJSONFeature[]): void {
+  sendLocationData(data: any): void {
+    this.drawDataBus.next(data);
+  }
+
+  sendLocationData0(data: GeoJSONFeature[]): void {
     this.drawDataBus.next(data);
   }
 
