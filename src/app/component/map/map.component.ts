@@ -279,27 +279,18 @@ export class MapComponent implements OnInit, OnDestroy {
     this.drawCircle.on('drawstart', this.drawStart);
     this.drawCircle.on('drawend', this.drawEnd);
     /*
-    this.drawPolygon.on('drawstart', (event) => {
-      console.log('drawstart:', event);
-      this.removeLastFeature();
-    }, this);
-    this.drawPolygon.on('drawend', (event) => {
-      console.log('drawend:', event);
-      this.lastFeature = event.feature;
-    }, this);
     this.vector.getSource().on('addfeature', function(event){
       console.log('addfeature:', event);
     });
      */
     this.vectorFeatures.getSource().on('changefeature', (event) => {
-      console.log("features changed");
       this.drawEnd(event);
     });
     this.map.addInteraction(this.snap);
 
     this.dataStorageService.loadingStatusBus.subscribe((isLoading: boolean) => {
       if(isLoading) {
-        //this.clearPoints();
+        this.clearPoints();
       }
     });
     this.subscribeData();
