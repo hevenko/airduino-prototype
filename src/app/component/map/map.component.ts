@@ -122,6 +122,7 @@ export class MapComponent implements OnInit, OnDestroy {
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { }
 
   ngOnDestroy(): void {
+    this.clearMap();
     this.unsubscribeData();
     const center = this.map.getView().getCenter();
     localStorage.setItem('center0', center[0]);
@@ -146,7 +147,7 @@ export class MapComponent implements OnInit, OnDestroy {
     return new Promise((resolve) => {
         setTimeout(() => { // without setTimeout map is empty
           const customCondition = function (mapBrowserEvent) {
-            console.log(mapBrowserEvent);
+            //console.log(mapBrowserEvent);
             return false; // TODO
           };
 
@@ -262,11 +263,10 @@ export class MapComponent implements OnInit, OnDestroy {
       const feature = new Feature({ geometry });
       console.log("feature created");
       this.clearMap();
+      //this.fetchData();
       this.vectorFeatures.getSource().addFeature(feature);
       console.log("feature added");
-      //this.map.getView().fit(feature.getGeometry(), { padding: [100, 100, 100, 100], duration: 2000, easing: easeOut });
       this.map.getView().fit(feature.getGeometry(), { padding: [100, 100, 100, 100], duration: 2000, easing: inAndOut });
-      //this.map.getView().fit(feature.getGeometry(), { padding: [100, 100, 100, 100], duration: 2000, easing: upAndDown });
     });
     this.map.addInteraction(this.modify);
     this.modify.setActive(false);
@@ -292,19 +292,21 @@ export class MapComponent implements OnInit, OnDestroy {
     });
      */
     this.vectorFeatures.getSource().on('changefeature', (event) => {
+      console.log("features changed");
       this.drawEnd(event);
     });
     this.map.addInteraction(this.snap);
 
-    this.dataStorageService.loadingStatusBus.subscribe((isLoading: boolean) =>{
+    this.dataStorageService.loadingStatusBus.subscribe((isLoading: boolean) => {
       if(isLoading) {
-        this.clearPoints();
+        //this.clearPoints();
       }
     });
     this.subscribeData();
   }
 
   fetchData() {
+    this.clearPoints();
     this.subscribeData();
     this.subscription = this.dataStorageService.fetchData();
   }
