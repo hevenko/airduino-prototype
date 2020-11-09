@@ -38,6 +38,7 @@ export class RawDataComponent implements OnInit, OnDestroy {
   noRowsOverlayComponent;
   noRowsOverlayComponentParams;
   isLoadingData = true;
+  currentRowCount;
   gridApi;
   subscriptions = new Subscription(); //parent for all subscription
 
@@ -68,6 +69,7 @@ export class RawDataComponent implements OnInit, OnDestroy {
     this.gridApi = params.api;
     //this.gridApi.hideOverlay();
     params.api.sizeColumnsToFit();
+    this.refreshCurrentRowCount();
     window.addEventListener('resize', function () {
       setTimeout(function () {
         this.gridApi?.sizeColumnsToFit();
@@ -82,6 +84,7 @@ export class RawDataComponent implements OnInit, OnDestroy {
     }));
     this.subscriptions.add(this.dataStorageService.pageOfDataBus.subscribe((d: RawData[]) => {
       if(this.gridApi.getModel().getRowCount() != 0) {
+        this.refreshCurrentRowCount();
         this.gridApi.applyTransaction({ add: d });
         this.gridApi?.showLoadingOverlay();
       }
@@ -96,6 +99,10 @@ export class RawDataComponent implements OnInit, OnDestroy {
         console.log('grid count:'+this.gridApi?.getModel().getRowCount());
       }
     }));
+  }
+
+  refreshCurrentRowCount = () => {
+    this.currentRowCount = this.gridApi?.getModel().getRowCount();
   }
 
   onBtnExport() {

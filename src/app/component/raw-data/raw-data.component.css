@@ -44,3 +44,12 @@
   padding: 0.5rem;
   width: 24rem;
 }
+
+.loading {
+  display: flex;
+  align-items: center;
+}
+
+.loadingText {
+  padding: 0 1rem;
+}

@@ -4,6 +4,13 @@
     <input class="input-search" #input id="search" name="search" matInput placeholder="search data in grid..." />
     <button mat-raised-button (click)="selectBySearch(input.value)">Search</button>
   </div>
+  <div *ngIf="isLoadingData" class="loading">
+    <mat-progress-spinner diameter="20" mode="indeterminate" value="100">abc</mat-progress-spinner>
+    <span class="loadingText">loading data {{currentRowCount}}...</span>
+  </div>
+  <div *ngIf="!isLoadingData" class="loading">
+    <span class="loadingText">Total rows {{currentRowCount}}</span>
+  </div>
   <div>
     <button mat-raised-button (click)="onBtnExport()">Export to excel</button>
   </div>
