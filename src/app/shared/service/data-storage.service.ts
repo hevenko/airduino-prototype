@@ -13,6 +13,7 @@ import { Constants } from '../../shared/constants';
 import { GeoJSONFeature } from 'src/app/model/geo-json-feature';
 import { format } from 'date-fns';
 import { RawDataComponent } from 'src/app/component/raw-data/raw-data.component';
+import { GeoJSONGeometry } from 'src/app/model/geo-json-geometry';
 
 @Injectable({ providedIn: 'root' })
 export class DataStorageService {
@@ -24,6 +25,7 @@ export class DataStorageService {
   availableDataBus: BehaviorSubject<RawData[]> = new BehaviorSubject<RawData[]>(null);
   drawDataBus: BehaviorSubject<GeoJSONFeature[]> = new BehaviorSubject<GeoJSONFeature[]>(null);
   loadingStatusBus: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  highlightFeaturesBus: BehaviorSubject<GeoJSONGeometry[]> = new BehaviorSubject<GeoJSONGeometry[]>([]);
 
   constructor(private http: HttpClient,private messageService: MessageService, private filterModel: FilterModel) {
     console.log('DataStorageService' + (++DataStorageService.i));
@@ -49,7 +51,9 @@ export class DataStorageService {
   sendLoadingStatus(loading: boolean): void {
     this.loadingStatusBus.next(loading);
   }
-
+  highlightFeatures(features: GeoJSONGeometry[]): void {
+    this.highlightFeaturesBus.next(features);
+  }
   handleError = (err: HttpErrorResponse) => {
     if (!!err.message) {
       this.messageService.showErrorMessage(err.message);

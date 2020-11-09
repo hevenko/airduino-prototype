@@ -21,11 +21,12 @@ import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer';
 import GeoJSON from 'ol/format/GeoJSON';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { Region } from 'src/app/model/region';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { GeoJSONFeature } from 'src/app/model/geo-json-feature';
 import { RawData } from 'src/app/model/raw-data';
 import { FilterModel } from 'src/app/model/filter-model';
 import { easeIn, easeOut, inAndOut, linear, upAndDown } from 'ol/easing';
+import { GeoJSONGeometry } from 'src/app/model/geo-json-geometry';
 
 @Component({
   selector: 'app-map',
@@ -291,9 +292,43 @@ export class MapComponent implements OnInit, OnDestroy {
     this.dataStorageService.loadingStatusBus.subscribe((isLoading: boolean) => {
       if(isLoading) {
         this.clearPoints();
+      } else {
+        console.log('points:'+this.sourcePoints.getFeatures().length)
       }
     });
     this.subscribeData();
+    this.map.on('singleclick', (evt) => {
+      var pixel = this.map.getPixelFromCoordinate(evt.coordinate);
+      this.map.forEachFeatureAtPixel(pixel, function(feature) {
+          console.log(feature); // id of selected feature
+      });
+    });
+    this.highlightFeaturesSubscribe();
+  }
+  highlightFeaturesSubscribe(): Subscription {
+    return this.dataStorageService.highlightFeaturesBus.subscribe((coords: GeoJSONGeometry[]) => {
+      coords?.forEach((c: GeoJSONGeometry) => {
+          if (c.type === 'Point') {
+            if (c.coordinates.length) {
+              let cordFix = fromLonLat(c.coordinates);
+              let features:Feature[] = this.sourcePoints.getFeaturesAtCoordinate(cordFix);//this.map?.getFeaturesAtPixel(this.map?.getPixelFromCoordinate(cordFix));
+              features.forEach((f, i) => {
+                f.set('selected', true);
+                // if (i === 0) {
+                //   this.map.getView().fit(f.getGeometry(), { padding: [100, 100, 100, 100], duration: 2000, easing: inAndOut });
+                // }
+              });  
+            } else { // if no coords are given setting selected to false to all Point features
+              let features:Feature[] = this.sourcePoints.getFeatures();
+              features.forEach(f => {
+                f.set('selected', false);;
+              });
+            }
+          } else {
+            console.error('highlightFeaturesSubscribe() : only Point is supported');
+          }
+      });
+    });
   }
 
   fetchData() {
@@ -313,9 +348,19 @@ export class MapComponent implements OnInit, OnDestroy {
     this.unsubscribeData();
     this.dataStorageService.pageOfDataBus
       .subscribe((data: RawData[]) => {
+        if (this.sourcePoints.getFeatures().length != 0) {
+          const features = data.map(p => new Feature({ geometry: new Point(fromLonLat(p.gps)) }));
+          this.drawPoints(features);  
+        }
+    });
+    // delete this and there are no point features when returning back
+    this.dataStorageService.availableDataBus
+    .subscribe((data: RawData[]) => {
+      if (this.sourcePoints.getFeatures().length == 0) {
         const features = data.map(p => new Feature({ geometry: new Point(fromLonLat(p.gps)) }));
         this.drawPoints(features);
-    });
+      }
+  });
   }
 
   drawPoints(features: any[]) {

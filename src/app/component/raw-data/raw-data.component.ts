@@ -5,6 +5,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { CustomLoadingOverlay } from '../map/ag-grid.ts/custom-loading-overlay.component';
 import { CustomNoRowsOverlay } from '../map/ag-grid.ts/custom-no-rows-overlay.component';
 import { BehaviorSubject, Subscription } from 'rxjs';
+import { GeoJSONGeometry } from 'src/app/model/geo-json-geometry';
 
 @Component({
   selector: 'app-raw-data',
@@ -133,5 +134,13 @@ export class RawDataComponent implements OnInit, OnDestroy {
         return selected;
       });
     });
+  }
+  onSelectionChanged(e: any) {
+    var selectedRows = this.gridApi.getSelectedRows();
+    var coords: GeoJSONGeometry[] = [];
+    selectedRows.forEach(element => {
+      coords.push({type: 'Point', coordinates: element.gps});
+    });
+    this.dataStorageService.highlightFeatures(coords);
   }
 }

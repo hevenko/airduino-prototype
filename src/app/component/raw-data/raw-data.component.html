@@ -30,5 +30,6 @@
   [suppressDragLeaveHidesColumns]="true"
   [rowSelection]="'multiple'"
   (gridReady)="onGridReady($event)"
+  (selectionChanged)="onSelectionChanged($event)"
 >
 </ag-grid-angular>
