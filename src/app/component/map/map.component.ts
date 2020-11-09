@@ -7,10 +7,12 @@ import {OSM} from 'ol/source';
 import VectorSource from 'ol/source/Vector';
 import { defaults as defaultInteractions, DragRotateAndZoom } from 'ol/interaction';
 import {Circle as CircleStyle, Fill, Stroke, Style} from 'ol/style';
+import Feature from 'ol/Feature';
 //import TileLayer from 'ol/layer/Tile';
 //import {Style, Stroke, Fill, Circle} from 'ol/style';
 import XYZSource from 'ol/source/XYZ';
 import Polygon from 'ol/geom/Polygon';
+import Circle from 'ol/geom/Circle';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
 //import VectorLayer from 'ol/layer/Vector';
 import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer';
@@ -31,6 +33,7 @@ import { FilterModel } from 'src/app/model/filter-model';
 export class MapComponent implements OnInit, OnDestroy {
   private static pointId = 0;
   private static clearMapService: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+  static RADIUS_FACTOR: number = 0.68681318;
   projection = "EPSG:3857";
   subscription;
   map: Map;
@@ -88,7 +91,7 @@ export class MapComponent implements OnInit, OnDestroy {
   styleFunction = (feature) => {
     return this.styles[feature.get("selected") ? "SelectedPoint" : feature.getGeometry().getType()];
   };
-  sourceFeatures = new VectorSource({wrapX: false});
+  sourceFeatures = new VectorSource({ wrapX: false });
   sourcePoints = new VectorSource({wrapX: false});
   vectorFeatures = new VectorLayer({
     source: this.sourceFeatures,
@@ -201,36 +204,60 @@ export class MapComponent implements OnInit, OnDestroy {
   }
   */
   //drawStart = () => this.removeLastFeature();
-  drawStart = () => this.clearFeatures();
-  drawEnd = (event) => {
-    //this.lastFeature = event.feature;
+
+  createFeaturesFromLocation = ()  => {
+    this.clearFeatures();
+    console.log("location:", this.filterModel);
+    if (this.filterModel.locations && this.filterModel.locations.polygon && this.filterModel.locations.polygon.length) {
+      const polygonFeature = new Feature({
+        geometry: new Polygon([this.filterModel.locations.polygon.map(p => fromLonLat(p))])
+      });
+      this.vectorFeatures.getSource().addFeature(polygonFeature);
+    }
+    if (this.filterModel.locations && this.filterModel.locations.circle && this.filterModel.locations.circle.radius) {
+      const circle = this.filterModel.locations.circle;
+      const circleFeature = new Feature({
+        geometry: new Circle(fromLonLat(circle.center), circle.radius / MapComponent.RADIUS_FACTOR)
+      });
+      this.vectorFeatures.getSource().addFeature(circleFeature);
+    }
+  }
+
+  createLocationFromFeature = (feature: any) => {
     if (this.filterModel.locations && this.filterModel.locations.polygon) {
-      const gPolygon = event.feature.getGeometry();
+      const gPolygon = feature.getGeometry();
       const coordinates = gPolygon.getCoordinates()[0].map(p => toLonLat(p));
       const polygon = { polygon: coordinates };
       this.filterModel.locations = polygon;
     }
     if (this.filterModel.locations && this.filterModel.locations.circle) {
-      const gCircle = event.feature.getGeometry();
+      const gCircle = feature.getGeometry();
       const center = toLonLat(gCircle.getCenter());
-      const radius = gCircle.getRadius() * 0.68681318;
+      const radius = gCircle.getRadius() * MapComponent.RADIUS_FACTOR;
       const circle = { circle: { center, radius }}; 
       this.filterModel.locations = circle;
     }
+  }
+
+  drawStart = () => this.clearFeatures();
+  drawEnd = (event: any) => {
+    //this.lastFeature = event.feature;
+    this.createLocationFromFeature(event.feature);
     if (this.filterModel.locations && (this.filterModel.locations.polygon || this.filterModel.locations.circle)) {
       this.fetchData();
     }
   }
 
   async ngOnInit() {
+    await this.initMap(this);
     this.filterModel.locationsSubject.subscribe(value => {
       console.log("filterModel changed to:", value);
       //this.removeLastFeature();
-      this.clearFeatures();
+      this.createFeaturesFromLocation();
+
       this.changeInteraction(value);
       this.modify.setActive(value.polygon || value.circle);
     });
-    await this.initMap(this);
     this.map.addInteraction(this.modify);
     this.modify.setActive(false);
     this.drawPolygon.setActive(false);
