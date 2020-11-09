@@ -31,14 +31,13 @@ export class RawDataComponent implements OnInit, OnDestroy {
   ];
   defaultColDef = { resizable: true };
   dataSource: RawData[] = [];// grid expects all data at once
-  tempDataSource: RawData[] = [];
   
   frameworkComponents;
   loadingOverlayComponent;
   loadingOverlayComponentParams;
   noRowsOverlayComponent;
   noRowsOverlayComponentParams;
-  isLoadingResults = true;  
+  isLoadingData = true;  
   gridApi;
   subscriptions = new Subscription(); //parent for all subscription
 
@@ -49,7 +48,7 @@ export class RawDataComponent implements OnInit, OnDestroy {
     };
     this.loadingOverlayComponent = 'customLoadingOverlay';
     this.loadingOverlayComponentParams = {
-      loadingMessage: 'Loading...',
+      loadingMessage: 'Loading...('+this.gridApi?.getModel().getRowCount()+')',
     };
     this.noRowsOverlayComponent = 'customNoRowsOverlay';
     this.noRowsOverlayComponentParams = {
@@ -74,20 +73,28 @@ export class RawDataComponent implements OnInit, OnDestroy {
         this.gridApi?.sizeColumnsToFit();
       });
     });
-    this.subscriptions.add(this.dataStorageService.availaleDataBus.subscribe((d: RawData[]) => {
-      this.tempDataSource = d;
-      this.gridApi.applyTransaction({ add: d });
+    this.subscriptions.add(this.dataStorageService.availableDataBus.subscribe((d: RawData[]) => {
+      if(this.gridApi.getModel().getRowCount() == 0) {
+        this.gridApi.applyTransaction({ add: d });
+        this.gridApi?.showLoadingOverlay();
+      }
+    }));
+    this.subscriptions.add(this.dataStorageService.pageOfDataBus.subscribe((d: RawData[]) => {
+      if(this.gridApi.getModel().getRowCount() != 0) {
+        this.gridApi.applyTransaction({ add: d });
+        this.gridApi?.showLoadingOverlay();
+      }
     }));
     this.subscriptions.add(this.dataStorageService.loadingStatusBus.subscribe((s: boolean) =>{
       this.gridApi?.showLoadingOverlay();
-      this.isLoadingResults = s;
-      if(this.isLoadingResults) {
-        this.tempDataSource = [];
+      this.isLoadingData = s;
+      if(this.isLoadingData) {
+        this.gridApi?.setRowData([]);
       } else {
-        setTimeout(()=> {this.dataSource = this.tempDataSource}, 2000);
+        this.gridApi?.hideOverlay();
+        console.log('grid count:'+this.gridApi?.getModel().getRowCount());
       }
     }));
-  
   }
 
   onBtnExport() {

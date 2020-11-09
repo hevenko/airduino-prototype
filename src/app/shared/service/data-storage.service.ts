@@ -21,7 +21,7 @@ export class DataStorageService {
   //noAccessControlAllowOriginProxy = 'https://thingproxy.freeboard.io/fetch/'; //fix thanks to: https://stackoverflow.com/questions/43871637/no-access-control-allow-origin-header-is-present-on-the-requested-resource-whe/43881141#43881141
   noAccessControlAllowOriginProxy = ''; //no need to use proxy
   pageOfDataBus: BehaviorSubject<RawData[]> = new BehaviorSubject<RawData[]>(null);
-  availaleDataBus: BehaviorSubject<RawData[]> = new BehaviorSubject<RawData[]>(null);
+  availableDataBus: BehaviorSubject<RawData[]> = new BehaviorSubject<RawData[]>(null);
   drawDataBus: BehaviorSubject<GeoJSONFeature[]> = new BehaviorSubject<GeoJSONFeature[]>(null);
   loadingStatusBus: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
@@ -35,7 +35,7 @@ export class DataStorageService {
     this.pageOfDataBus.next(data);
   }
   sendAvailableData(data: RawData[]): void {
-    this.availaleDataBus.next(data);
+    this.availableDataBus.next(data);
   }
 
   sendLocationData(data: GeoJSONFeature[]): void {
