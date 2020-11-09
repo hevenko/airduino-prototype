@@ -13,35 +13,35 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 })
 export class RawDataComponent implements OnInit, OnDestroy {
   displayedColumns = [
-    {field: 'pm10', sortable: true, minWidth:110},
-    {field: 'pm2_5', sortable: true, minWidth:80},
-    {field: 'so2', sortable: true, minWidth:60},
-    {field: 'co', sortable: true, minWidth:80},
-    {field: 'o3', sortable: true, minWidth:80},
-    {field: 'pb', sortable: true, minWidth:80},
-    {field: 'hc', sortable: true, minWidth:80},
-    {field: 'voc', sortable: true, minWidth:80},
-    {field: 'temp', sortable: true, minWidth:80},
-    {field: 'humidity', sortable: true, minWidth:120},
-    {field: 'pressure', sortable: true, minWidth:120},
-    {field: 'gps', sortable: true, minWidth:200},
-    {field: 'battery', sortable: true, minWidth:120},
-    {field: 'measured', sortable: true, minWidth:200, sort:'asc'},
-    {field: 'aqi', sortable: true, minWidth:80}
+    {field: 'pm10', minWidth:110},
+    {field: 'pm2_5', minWidth:80},
+    {field: 'so2', minWidth:60},
+    {field: 'co', minWidth:80},
+    {field: 'o3', minWidth:80},
+    {field: 'pb', minWidth:80},
+    {field: 'hc', minWidth:80},
+    {field: 'voc', minWidth:80},
+    {field: 'temp', minWidth:80},
+    {field: 'humidity', minWidth:120},
+    {field: 'pressure', minWidth:120},
+    {field: 'gps', minWidth:200},
+    {field: 'battery', minWidth:120},
+    {field: 'measured', minWidth:200, sort:'asc'},
+    {field: 'aqi', minWidth:80}
   ];
-  defaultColDef = { resizable: true };
+  defaultColDef = { resizable: true, filter: true, sortable: true };
   dataSource: RawData[] = [];// grid expects all data at once
-  
+
   frameworkComponents;
   loadingOverlayComponent;
   loadingOverlayComponentParams;
   noRowsOverlayComponent;
   noRowsOverlayComponentParams;
-  isLoadingData = true;  
+  isLoadingData = true;
   gridApi;
   subscriptions = new Subscription(); //parent for all subscription
 
-  constructor(private dataStorageService: DataStorageService) { 
+  constructor(private dataStorageService: DataStorageService) {
     this.frameworkComponents = {
       customLoadingOverlay: CustomLoadingOverlay,
       customNoRowsOverlay: CustomNoRowsOverlay,
@@ -77,6 +77,7 @@ export class RawDataComponent implements OnInit, OnDestroy {
       if(this.gridApi.getModel().getRowCount() == 0) {
         this.gridApi.applyTransaction({ add: d });
         this.gridApi?.showLoadingOverlay();
+        this.gridApi?.sizeColumnsToFit();
       }
     }));
     this.subscriptions.add(this.dataStorageService.pageOfDataBus.subscribe((d: RawData[]) => {
