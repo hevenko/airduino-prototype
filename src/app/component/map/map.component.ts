@@ -11,6 +11,7 @@ import Feature from 'ol/Feature';
 //import TileLayer from 'ol/layer/Tile';
 //import {Style, Stroke, Fill, Circle} from 'ol/style';
 import XYZSource from 'ol/source/XYZ';
+import Point from 'ol/geom/Point';
 import Polygon from 'ol/geom/Polygon';
 import Circle from 'ol/geom/Circle';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
@@ -32,15 +33,12 @@ import { easeIn, easeOut, inAndOut, linear, upAndDown } from 'ol/easing';
   styleUrls: ['./map.component.css']
 })
 export class MapComponent implements OnInit, OnDestroy {
-  private static pointId = 0;
-  private static clearMapService: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   static RADIUS_FACTOR: number = 0.68681318;
   projection = "EPSG:3857";
   subscription;
   map: Map;
   tileLayer: TileLayer;
   vectorLayer: VectorLayer;
-  gJson = new GeoJSON();
   raster = new TileLayer({
     source: new OSM(),
   });
@@ -118,8 +116,8 @@ export class MapComponent implements OnInit, OnDestroy {
     type: "Circle",
   });
 
-  modify = new Modify({source: this.sourceFeatures});
-  snap = new Snap({source: this.sourceFeatures});
+  modify = new Modify({ source: this.sourceFeatures });
+  snap = new Snap({ source: this.sourceFeatures });
 
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { }
 
@@ -142,23 +140,6 @@ export class MapComponent implements OnInit, OnDestroy {
   clearMap() {
     this.clearPoints();
     this.clearFeatures()
-  }
-
-  static regionToGeoJSON(r: Region[]): GeoJSONFeature[] {
-    return r.map((v: Region) => {
-      const feature = {type:"Feature", id:v.id, geometry:{type:v.gtype, coordinates:v.coordinates}};
-      feature.geometry.coordinates = this.geometryLonLat(feature);
-      return feature;
-    });
-  }
-
-  static rawDataToGeoJSON(r: RawData[]): GeoJSONFeature[] {
-    return r?.map((v: RawData) => {
-      MapComponent.pointId++
-      const feature = {type:"Feature", id:(MapComponent.pointId + ''), geometry:{type:"Point", coordinates:v.gps}};
-      feature.geometry.coordinates = this.geometryLonLat(feature);
-      return feature;
-    });
   }
 
   initMap(ctx) {
@@ -280,6 +261,7 @@ export class MapComponent implements OnInit, OnDestroy {
       }
       const feature = new Feature({ geometry });
       console.log("feature created");
+      this.clearMap();
       this.vectorFeatures.getSource().addFeature(feature);
       console.log("feature added");
       //this.map.getView().fit(feature.getGeometry(), { padding: [100, 100, 100, 100], duration: 2000, easing: easeOut });
@@ -338,45 +320,15 @@ export class MapComponent implements OnInit, OnDestroy {
     this.unsubscribeData();
     this.dataStorageService.pageOfDataBus
       .subscribe((data: RawData[]) => {
-      this.draw(this.vectorPoints, MapComponent.rawDataToGeoJSON(data));
+        const features = data.map(p => new Feature({ geometry: new Point(fromLonLat(p.gps)) }));
+        this.drawPoints(features);
     });
   }
 
-  draw(vector: any, r: GeoJSONFeature[]) {
-    r?.forEach((r: GeoJSONFeature, index: number) => {
-      if (!!r && !!this.map) {
-        const gs = new GeoJSON();
-        const feature = gs.readFeature(r);
-        if (vector === this.vectorPoints) {
-          feature.set('selected', index == 2); // TODO: replace this with selected row in rawData
-        }
-        //this.map.getLayers().getArray()[1].getSource().addFeature(feature);
-        vector.getSource().addFeature(feature);
-        //console.log(this.map.getLayers().getArray()[1].getSource().getFeatures().toString());
-  
-        //this.map.getView().fit(this.map.getLayers().getArray()[1].getSource().getExtent(), {maxZoom: 13}); //to show new polygon
-        //this.map.getView().fit(this.vectorPoints.getSource().getExtent(), {maxZoom: 13}); //to show new polygon
-      }  
+  drawPoints(features: any[]) {
+    features.forEach((feature: any, index: number) => {
+        //feature.set('selected', index == 2); // TODO: replace this with selected row in rawData
+        this.vectorPoints.getSource().addFeature(feature);
     });
-  }
-  /**
-   * 
-   * @param 
-   * be aware of the outer square bracket!
-   * let source = [[13.5131836, 45.6370871],[14.3591309, 45.5986657]];
-   * let fliped = [fromLonLatToggle(source)] //notice the added square bracket to the function result
-   */
-  static fromLonLatToggle(c: any[]): any[]  {
-    return c.map((v) => fromLonLat(v));
-  }
-
-  static geometryLonLat(g: any): any {
-    if ((g.geometry.type.toUpperCase() === 'MULTIPOLYGON')) {
-      return [[this.fromLonLatToggle(g.geometry.coordinates[0][0])]];
-    } else if ((g.geometry.type.toUpperCase() === 'POLYGON')) {
-      return [this.fromLonLatToggle(g.geometry.coordinates[0])];
-    } else { // POINT
-      return this.fromLonLatToggle([g.geometry.coordinates])[0];
-    }
   }
 }
