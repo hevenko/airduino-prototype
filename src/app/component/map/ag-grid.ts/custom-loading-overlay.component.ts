@@ -15,8 +15,8 @@ export class CustomLoadingOverlay implements ILoadingOverlayAngularComp {
   constructor(private dataStorage: DataStorageService) {}
 
   agInit(params): void {
-    this.dataStorage.availaleDataBus.subscribe(d => {
-      this.rowCount = d ? d.length : 0;
+    this.dataStorage.availableDataBus.subscribe(d => {
+      this.rowCount = d?.length;
       this.loadingMessage = 'Loading...(' + this.rowCount + ')';
     });
     this.dataStorage.loadingStatusBus.subscribe(v => {
