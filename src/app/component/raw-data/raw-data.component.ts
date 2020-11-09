@@ -77,16 +77,17 @@ export class RawDataComponent implements OnInit, OnDestroy {
     });
     this.subscriptions.add(this.dataStorageService.availableDataBus.subscribe((d: RawData[]) => {
       if(this.gridApi.getModel().getRowCount() == 0) {
-        this.gridApi.applyTransaction({ add: d });
         this.gridApi?.showLoadingOverlay();
+        this.gridApi.applyTransaction({ add: d });
         this.gridApi?.sizeColumnsToFit();
       }
     }));
     this.subscriptions.add(this.dataStorageService.pageOfDataBus.subscribe((d: RawData[]) => {
       if(this.gridApi.getModel().getRowCount() != 0) {
         this.refreshCurrentRowCount();
-        this.gridApi.applyTransaction({ add: d });
         this.gridApi?.showLoadingOverlay();
+        this.gridApi.applyTransaction({ add: d });
+        this.gridApi?.sizeColumnsToFit();
       }
     }));
     this.subscriptions.add(this.dataStorageService.loadingStatusBus.subscribe((s: boolean) =>{
@@ -96,7 +97,7 @@ export class RawDataComponent implements OnInit, OnDestroy {
         this.gridApi?.setRowData([]);
       } else {
         this.gridApi?.hideOverlay();
-        console.log('grid count:'+this.gridApi?.getModel().getRowCount());
+        console.log('grid count:' + this.gridApi?.getModel().getRowCount());
       }
     }));
   }
