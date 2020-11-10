@@ -1,8 +1,8 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, concatMap, map } from 'rxjs/operators';
 import { MessageService } from './message.service';
-import { BehaviorSubject, Observable, Subscription, throwError } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, Subscription, throwError } from 'rxjs';
 import { Owner } from 'src/app/model/owner';
 import { Device } from 'src/app/model/device';
 import { Region } from 'src/app/model/region';
@@ -94,7 +94,7 @@ export class DataStorageService {
     );
   }
 
-  fetchPages(filter: any, page: number, availableData: RawData[]): Subscription {
+  fetchPages(filter: any, page: number, availableData: RawData[]): Observable<any> {
     return this.http.post<Data>(this.getURL('data/') + page, filter)
     .pipe(
       catchError(this.handleError),
@@ -105,27 +105,24 @@ export class DataStorageService {
           this.messageService.showErrorMessage('Data request failed with no message');
         }
         return res.data;
-      })
+      }),
+      concatMap(((p: RawData[]) => {
+        this.sendPageOfData(p);
+        availableData = availableData.concat(p);
+        this.sendAvailableData(availableData);
+         if (p?.length > 0) {
+          return this.fetchPages(filter, ++page, availableData);
+        } else {
+          return EMPTY;
+        }
+      }))
     )
-    .subscribe((p: RawData[]) => {
-      this.sendPageOfData(p);
-      availableData = availableData.concat(p);
-      this.sendAvailableData(availableData);
-      if (p?.length != 0) {
-        p?.map((data: RawData) => {
-          data.measured = format(new Date(data.measured), 'dd.MM.yyyy HH:mm:ss'); // TODO: date/time format should be specified according app localization
-          return data;
-        });
-        this.fetchPages(filter, ++page, availableData);
-      } else {
-       this.sendLoadingStatus(false);
-      }
-    })
   }
   
   fetchData(): Subscription {
     let availableData: RawData[] = [];
     let filter: any = {};
+    let subs = [];;
     filter.sensors = this.filterModel.sensors
     filter.time = this.filterModel.time;
     filter.locations = this.filterModel.locations;
@@ -139,7 +136,13 @@ export class DataStorageService {
         (filter.locations.name))) {
           //RawDataComponent.clearRawData();
         this.sendLoadingStatus(true);
-        return this.fetchPages(filter, 1, availableData);
+        let res = this.fetchPages(filter, 1, availableData).subscribe((p: RawData[]) => {
+          this.sendPageOfData(p);
+          availableData = availableData.concat(p);
+          this.sendAvailableData(availableData);
+        })
+    
+        return res;
     }
   }
 }
