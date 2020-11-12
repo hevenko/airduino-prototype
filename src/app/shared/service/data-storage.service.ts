@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, concatMap, map } from 'rxjs/operators';
 import { MessageService } from './message.service';
@@ -21,6 +21,8 @@ export class DataStorageService {
   static i = 0;
   //noAccessControlAllowOriginProxy = 'https://thingproxy.freeboard.io/fetch/'; //fix thanks to: https://stackoverflow.com/questions/43871637/no-access-control-allow-origin-header-is-present-on-the-requested-resource-whe/43881141#43881141
   noAccessControlAllowOriginProxy = ''; //no need to use proxy
+
+  headers = new HttpHeaders({ "Content-type": "text/plain" });
   pageOfDataBus: BehaviorSubject<RawData[]> = new BehaviorSubject<RawData[]>(null);
   availableDataBus: BehaviorSubject<RawData[]> = new BehaviorSubject<RawData[]>(null);
   drawDataBus: BehaviorSubject<GeoJSONFeature[]> = new BehaviorSubject<GeoJSONFeature[]>(null);
@@ -95,7 +97,7 @@ export class DataStorageService {
   }
 
   fetchPages(filter: any, page: number, availableData: RawData[]): Observable<any> {
-    return this.http.post<Data>(this.getURL('data/') + page, filter)
+    return this.http.post<Data>(this.getURL('data/') + page, filter, { headers: this.headers })
     .pipe(
       catchError(this.handleError),
       map(res => {
