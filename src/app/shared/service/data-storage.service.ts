@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, concatMap, map } from 'rxjs/operators';
 import { MessageService } from './message.service';
-import { BehaviorSubject, EMPTY, Observable, Subscription, throwError } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, of, Subscription, throwError } from 'rxjs';
 import { Owner } from 'src/app/model/owner';
 import { Device } from 'src/app/model/device';
 import { Region } from 'src/app/model/region';
@@ -113,7 +113,7 @@ export class DataStorageService {
          if (p?.length > 0) {
           return this.fetchPages(filter, ++page, availableData);
         } else {
-          return EMPTY;
+          return of([]);
         }
       }))
     )
@@ -137,9 +137,10 @@ export class DataStorageService {
           //RawDataComponent.clearRawData();
         this.sendLoadingStatus(true);
         let res = this.fetchPages(filter, 1, availableData).subscribe((p: RawData[]) => {
-          this.sendPageOfData(p);
-          availableData = availableData.concat(p);
-          this.sendAvailableData(availableData);
+          // this.sendPageOfData(p);
+          // availableData = availableData.concat(p);
+          // this.sendAvailableData(availableData);
+          this.sendLoadingStatus(false);
         })
     
         return res;
