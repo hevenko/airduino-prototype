@@ -184,15 +184,15 @@ export class MapComponent implements OnInit, OnDestroy {
 
   changeInteraction(locations: any) {
     this.drawPolygon.setActive(false);
-    console.log("polygon deactivated");
+    //console.log("polygon deactivated");
     this.drawCircle.setActive(false);
-    console.log("circle deactivated");
+    //console.log("circle deactivated");
     if (locations && locations.polygon) {
-      console.log("polygon activated");
+      //console.log("polygon activated");
       this.drawPolygon.setActive(true);
     }
     if (locations && locations.circle) {
-      console.log("circle activated");
+      //console.log("circle activated");
       this.drawCircle.setActive(true);
     }
   }
@@ -252,20 +252,20 @@ export class MapComponent implements OnInit, OnDestroy {
     this.drawCircle.on('drawstart', this.drawStart);
     this.drawCircle.on('drawend', this.drawEnd);
     this.modify.setActive(false);
-    console.log("modify deactivated");
+    //console.log("modify deactivated");
     this.drawPolygon.setActive(false);
-    console.log("polygon deactivated");
+    //console.log("polygon deactivated");
     this.drawCircle.setActive(false);
-    console.log("circle deactivated");
+    //console.log("circle deactivated");
     this.filterModel.locationsSubject.subscribe(value => {
       console.log("filterModel changed to:", value);
       const locations = this.filterModel.locations;
-      console.log("location:", locations);
+      //console.log("location:", locations);
       this.createFeaturesFromLocation();
       
       this.changeInteraction(locations);
       this.modify.setActive(locations.polygon || locations.circle);
-      console.log("modify activated:", !!(locations.polygon || locations.circle));
+      //console.log("modify activated:", !!(locations.polygon || locations.circle));
     });
     this.dataStorageService.drawDataBus.subscribe((region: any) => {
       console.log("named location:", region);
