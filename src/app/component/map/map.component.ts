@@ -184,11 +184,15 @@ export class MapComponent implements OnInit, OnDestroy {
 
   changeInteraction(locations: any) {
     this.drawPolygon.setActive(false);
+    console.log("polygon deactivated");
     this.drawCircle.setActive(false);
+    console.log("circle deactivated");
     if (locations && locations.polygon) {
+      console.log("polygon activated");
       this.drawPolygon.setActive(true);
     }
     if (locations && locations.circle) {
+      console.log("circle activated");
       this.drawCircle.setActive(true);
     }
   }
@@ -240,16 +244,32 @@ export class MapComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     await this.initMap(this);
+    this.map.addInteraction(this.modify);
+    this.map.addInteraction(this.drawPolygon);
+    this.map.addInteraction(this.drawCircle);
+    this.drawPolygon.on('drawstart', this.drawStart);
+    this.drawPolygon.on('drawend', this.drawEnd);
+    this.drawCircle.on('drawstart', this.drawStart);
+    this.drawCircle.on('drawend', this.drawEnd);
+    this.modify.setActive(false);
+    console.log("modify deactivated");
+    this.drawPolygon.setActive(false);
+    console.log("polygon deactivated");
+    this.drawCircle.setActive(false);
+    console.log("circle deactivated");
     this.filterModel.locationsSubject.subscribe(value => {
       console.log("filterModel changed to:", value);
+      const locations = this.filterModel.locations;
+      console.log("location:", locations);
       this.createFeaturesFromLocation();
-
-      this.changeInteraction(value);
-      this.modify.setActive(value.polygon || value.circle);
+      
+      this.changeInteraction(locations);
+      this.modify.setActive(locations.polygon || locations.circle);
+      console.log("modify activated:", !!(locations.polygon || locations.circle));
     });
     this.dataStorageService.drawDataBus.subscribe((region: any) => {
       console.log("named location:", region);
-      if (!region) {
+      if (!region || (this.filterModel.locations && (this.filterModel.locations.polygon || this.filterModel.locations.circle))) {
         return;
       }
       let geometry;
@@ -264,21 +284,10 @@ export class MapComponent implements OnInit, OnDestroy {
       const feature = new Feature({ geometry });
       console.log("feature created");
       this.clearMap();
-      //this.fetchData();
       this.vectorFeatures.getSource().addFeature(feature);
       console.log("feature added");
       this.map.getView().fit(feature.getGeometry(), { padding: [100, 100, 100, 100], duration: 2000, easing: inAndOut });
     });
-    this.map.addInteraction(this.modify);
-    this.modify.setActive(false);
-    this.drawPolygon.setActive(false);
-    this.drawCircle.setActive(false);
-    this.map.addInteraction(this.drawPolygon);
-    this.map.addInteraction(this.drawCircle);
-    this.drawPolygon.on('drawstart', this.drawStart);
-    this.drawPolygon.on('drawend', this.drawEnd);
-    this.drawCircle.on('drawstart', this.drawStart);
-    this.drawCircle.on('drawend', this.drawEnd);
     /*
     this.vector.getSource().on('addfeature', function(event){
       console.log('addfeature:', event);
