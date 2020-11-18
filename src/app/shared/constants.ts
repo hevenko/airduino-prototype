@@ -13,4 +13,7 @@ export class Constants {
   static MSG_FILTER_ADDED = 'New filter saved.';
   static SERVER_URL0 = 'http://localhost:5000/api/v1/';
   static SERVER_URL = 'http://airduino-server.herokuapp.com/api/v1/';
+  static INACTIVE_PERIOD_LOGOUT = 300;
+  static DUMMY_LOCAL_ID = '11111';
+  static DUMMY_TOKEN_ID = '11111';
 }

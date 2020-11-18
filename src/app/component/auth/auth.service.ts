@@ -53,10 +53,10 @@ export class AuthService {
         catchError(this.handleError),
         tap(resData => {
           this.handleAuthentication(
-            resData.email,
-            resData.localId,
-            resData.idToken,
-            +resData.expiresIn
+            email,
+            Constants.DUMMY_LOCAL_ID,
+            Constants.DUMMY_TOKEN_ID,
+            Constants.INACTIVE_PERIOD_LOGOUT
           );
         })
       );
