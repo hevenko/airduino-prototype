@@ -12,24 +12,30 @@ import { GeoJSONGeometry } from 'src/app/model/geo-json-geometry';
 })
 export class RawDataComponent implements OnInit, OnDestroy {
   displayedColumns = [
-    {field: 'pm10', minWidth:110},
-    {field: 'pm2_5', minWidth:80},
-    {field: 'so2', minWidth:60},
-    {field: 'co', minWidth:80},
-    {field: 'o3', minWidth:80},
-    {field: 'pb', minWidth:80},
-    {field: 'hc', minWidth:80},
-    {field: 'voc', minWidth:80},
-    {field: 'temp', minWidth:80},
-    {field: 'humidity', minWidth:120},
-    {field: 'pressure', minWidth:120},
-    {field: 'gps', minWidth:200},
-    {field: 'battery', minWidth:120},
-    {field: 'measured', minWidth:200, sort:'asc'},
-    {field: 'aqi', minWidth:80}
+    {
+      headerName: "row",
+      valueGetter: "node.rowIndex + 1",
+      minWidth: 70,
+      sortable: false, filter: false
+    },
+    { field: 'pm10', minWidth: 110 },
+    { field: 'pm2_5', minWidth: 80 },
+    { field: 'so2', minWidth: 60 },
+    { field: 'co', minWidth: 80 },
+    { field: 'o3', minWidth: 80 },
+    { field: 'pb', minWidth: 80 },
+    { field: 'hc', minWidth: 80 },
+    { field: 'voc', minWidth: 80 },
+    { field: 'temp', minWidth: 80 },
+    { field: 'humidity', minWidth: 120 },
+    { field: 'pressure', minWidth: 120 },
+    { field: 'gps', minWidth: 200 },
+    { field: 'battery', minWidth: 120 },
+    { field: 'measured', minWidth: 200, sort:'asc' },
+    { field: 'aqi', minWidth: 80 }
   ];
   defaultColDef = { resizable: true, filter: true, sortable: true };
-  dataSource: RawData[] = [];// grid expects all data at once
+  dataSource: RawData[] = []; // grid expects all data at once
 
   isLoadingData = true;
   currentRowCount;
@@ -45,7 +51,7 @@ export class RawDataComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
   }
-  
+
   onGridReady(params) {
     this.gridApi = params.api;
     params.api.sizeColumnsToFit();
@@ -84,6 +90,10 @@ export class RawDataComponent implements OnInit, OnDestroy {
       }
       this.refreshCurrentRowCount();
     }));
+  }
+
+  onSortChanged(e: any /*AgGridEvent*/) {
+    e.api.refreshCells();
   }
 
   refreshCurrentRowCount = () => {
