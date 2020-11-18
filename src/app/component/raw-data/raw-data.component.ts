@@ -31,7 +31,7 @@ export class RawDataComponent implements OnInit, OnDestroy {
     { field: 'pressure', headerName: "Pressure", minWidth: 120 },
     { field: 'gps', headerName: "GPS", minWidth: 200 },
     { field: 'battery', headerName: "Battery", minWidth: 120 },
-    { field: 'measured', headerName: "Measured", minWidth: 200, sort:'asc' },
+    { field: 'measured', headerName: "Measured", minWidth: 210, sort:'asc' },
     { field: 'aqi', headerName: "AQI", minWidth: 80 }
   ];
   defaultColDef = { resizable: true, filter: true, sortable: true };
