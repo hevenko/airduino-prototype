@@ -2,8 +2,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { RawData } from 'src/app/model/raw-data';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
 import { SelectionModel } from '@angular/cdk/collections';
-import { CustomLoadingOverlay } from '../map/ag-grid.ts/custom-loading-overlay.component';
-import { CustomNoRowsOverlay } from '../map/ag-grid.ts/custom-no-rows-overlay.component';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { GeoJSONGeometry } from 'src/app/model/geo-json-geometry';
 
@@ -33,32 +31,13 @@ export class RawDataComponent implements OnInit, OnDestroy {
   defaultColDef = { resizable: true, filter: true, sortable: true };
   dataSource: RawData[] = [];// grid expects all data at once
 
-  frameworkComponents;
-  loadingOverlayComponent;
-  loadingOverlayComponentParams;
-  noRowsOverlayComponent;
-  noRowsOverlayComponentParams;
   isLoadingData = true;
   currentRowCount;
   gridApi;
   subscriptions = new Subscription(); //parent for all subscription
 
-  constructor(private dataStorageService: DataStorageService) {
-    this.frameworkComponents = {
-      customLoadingOverlay: CustomLoadingOverlay,
-      customNoRowsOverlay: CustomNoRowsOverlay,
-    };
-    this.loadingOverlayComponent = 'customLoadingOverlay';
-    this.loadingOverlayComponentParams = {
-      loadingMessage: 'Loading...('+this.gridApi?.getModel().getRowCount()+')',
-    };
-    this.noRowsOverlayComponent = 'customNoRowsOverlay';
-    this.noRowsOverlayComponentParams = {
-      noRowsMessageFunc: function () {
-        return 'Sorry - no rows!';
-      },
-    };
-  }
+  constructor(private dataStorageService: DataStorageService) { }
+  
   ngOnDestroy(): void {
     this.subscriptions?.unsubscribe();
     this.gridApi = null;
@@ -66,40 +45,44 @@ export class RawDataComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
   }
+  
   onGridReady(params) {
     this.gridApi = params.api;
-    //this.gridApi.hideOverlay();
     params.api.sizeColumnsToFit();
     this.refreshCurrentRowCount();
+
     window.addEventListener('resize', function () {
       setTimeout(function () {
         this.gridApi?.sizeColumnsToFit();
       });
     });
+
     this.subscriptions.add(this.dataStorageService.availableDataBus.subscribe((d: RawData[]) => {
       if(this.gridApi.getModel().getRowCount() == 0) {
-        this.gridApi?.showLoadingOverlay();
         this.gridApi.applyTransaction({ add: d });
         this.gridApi?.sizeColumnsToFit();
+        //console.log('grid count1:' + this.gridApi?.getModel().getRowCount());
       }
+      this.refreshCurrentRowCount();
     }));
+
     this.subscriptions.add(this.dataStorageService.pageOfDataBus.subscribe((d: RawData[]) => {
       if(this.gridApi.getModel().getRowCount() != 0) {
-        this.refreshCurrentRowCount();
-        this.gridApi?.showLoadingOverlay();
         this.gridApi.applyTransaction({ add: d });
         this.gridApi?.sizeColumnsToFit();
+        //console.log('grid count2:' + this.gridApi?.getModel().getRowCount());
       }
+      this.refreshCurrentRowCount();
     }));
+
     this.subscriptions.add(this.dataStorageService.loadingStatusBus.subscribe((s: boolean) =>{
-      this.gridApi?.showLoadingOverlay();
       this.isLoadingData = s;
       if(this.isLoadingData) {
         this.gridApi?.setRowData([]);
       } else {
-        this.gridApi?.hideOverlay();
-        console.log('grid count:' + this.gridApi?.getModel().getRowCount());
+        //console.log('grid count:' + this.gridApi?.getModel().getRowCount());
       }
+      this.refreshCurrentRowCount();
     }));
   }
 

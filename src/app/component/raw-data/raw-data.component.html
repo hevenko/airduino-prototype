@@ -6,10 +6,12 @@
   </div>
   <div *ngIf="isLoadingData" class="loading">
     <mat-progress-spinner diameter="20" mode="indeterminate" value="100">abc</mat-progress-spinner>
-    <span class="loadingText">loading data {{currentRowCount}}...</span>
+    <span *ngIf="currentRowCount" class="loadingText">loading data {{currentRowCount}}...</span>
+    <span *ngIf="!currentRowCount" class="loadingText">loading data...</span>
   </div>
   <div *ngIf="!isLoadingData" class="loading">
-    <span class="loadingText">Total rows {{currentRowCount}}</span>
+    <span *ngIf="!currentRowCount" class="loadingText">No rows found</span>
+    <span *ngIf="currentRowCount" class="loadingText">Total rows {{currentRowCount}}</span>
   </div>
   <div>
     <button mat-raised-button (click)="onBtnExport()">Export to excel</button>
@@ -22,11 +24,6 @@
   [rowData]="dataSource"
   [columnDefs]="displayedColumns"
   [defaultColDef]="defaultColDef"
-  [frameworkComponents]="frameworkComponents"
-  [loadingOverlayComponent]="loadingOverlayComponent"
-  [loadingOverlayComponentParams]="loadingOverlayComponentParams"
-  [noRowsOverlayComponent]="noRowsOverlayComponent"
-  [noRowsOverlayComponentParams]="noRowsOverlayComponentParams"
   [suppressDragLeaveHidesColumns]="true"
   [rowSelection]="'multiple'"
   (gridReady)="onGridReady($event)"
