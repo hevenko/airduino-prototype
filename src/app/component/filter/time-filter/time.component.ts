@@ -33,6 +33,7 @@ export class TimeComponent implements OnInit, AfterViewInit {
   calendarIsOpen: boolean = false;
   hourRangeIsOpen: boolean = false;
   stayOpened = Constants.STAY_OPEN;
+  subscription;
 
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { }
 
@@ -61,11 +62,18 @@ export class TimeComponent implements OnInit, AfterViewInit {
       }
     });
   }
+  fetchData() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+      this.subscription = null;
+    }
+    this.subscription = this.dataStorageService.fetchData();
+  }
   setSlidingRange(e: any) {
     //default label when nothing selected
     this.label = this.hoursTime.filter((v) => {return v.value === e.value}).map((v, i) => {return v.desc !== '' ? v.desc : this.defaultLabel})[0];
     this.deleteOtherValues(true, false, false, false);
-    this.dataStorageService.fetchData();
+    this.fetchData();
   }
   setCustomRange(value: string, timeUnit: string) {
     // console.log(evt);
@@ -75,7 +83,7 @@ export class TimeComponent implements OnInit, AfterViewInit {
       this.label = this.defaultLabel;
     }
     this.deleteOtherValues(false, true, true, false);
-    this.dataStorageService.fetchData();
+    this.fetchData();
   }
   setFixedRange(evt: any) {
     if (evt.target.value !== '') {
@@ -84,7 +92,7 @@ export class TimeComponent implements OnInit, AfterViewInit {
       this.label = this.defaultLabel;
     }
     this.deleteOtherValues(false, false, false, true);
-    this.dataStorageService.fetchData();
+    this.fetchData();
   }
   /**
    * deletes form control values whose coresponding param is set to false
