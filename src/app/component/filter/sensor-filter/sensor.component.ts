@@ -24,11 +24,19 @@ export class SensorComponent implements OnInit {
   ];
   compForm: FormGroup = new FormGroup({});
   defaultLabel = 'Sensors (?)';
+  subscription;
 
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { }
 
   ngOnInit(): void {
     this.initForm();
+  }
+  fetchData() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+      this.subscription = null;
+    }
+    this.subscription = this.dataStorageService.fetchData();
   }
   initForm() {
     const faSensors: FormArray = new FormArray([]);
@@ -40,7 +48,7 @@ export class SensorComponent implements OnInit {
     })
     this.compForm.valueChanges.subscribe(() => {
       this.filterModel.sensors = this.getComponentValue();
-      this.dataStorageService.fetchData();
+      this.fetchData();
     });
     this.compForm.patchValue({"sensors":[true,true,true,true,true,true,true,true,true,true,true]});
   }
