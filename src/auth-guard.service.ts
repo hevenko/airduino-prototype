@@ -28,15 +28,18 @@ export class AuthGuardService implements CanActivate, CanActivateChild {
     console.log(route);
     console.log(state);
     console.log(this.router);
+    if (this.authService.userDataBus.value) {        
+      this.authService.setAutoLogoutTime();
+    }
     if ((<any>route.component).name === 'AuthComponent') {
-      if (this.authService.user.value) {
+      if (this.authService.userDataBus.value) {
         this.messageService.showMessage(Constants.MSG_ALREADY_LOGGED_IN, MessageColor.Green);
         return this.router.navigate(['map']);
       } else {
         return true;
       }
     } else {
-      if (this.authService.user.value) {        
+      if (this.authService.userDataBus.value) {        
         return true;
       } else {
         if (this.restrictVist.includes((<any>route.component).name)) {          
@@ -50,6 +53,6 @@ export class AuthGuardService implements CanActivate, CanActivateChild {
   }
   canActivateChild(childRoute: ActivatedRouteSnapshot, state: RouterStateSnapshot):
     Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    return this.canActivate(childRoute, state);
+      return this.canActivate(childRoute, state);
   }
 }

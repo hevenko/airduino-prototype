@@ -21,9 +21,10 @@ export interface AuthResponseData {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  user = new BehaviorSubject<User>(null);
+  userDataBus = new BehaviorSubject<User>(null);
   private tokenExpirationTimer: any;
   server = Constants.SERVER_URL;
+  user: User;
 
   constructor(private http: HttpClient, private router: Router, private messageService: MessageService) { }
 
@@ -40,8 +41,7 @@ export class AuthService {
           this.handleAuthentication(
             resData.email,
             resData.localId,
-            resData.idToken,
-            +resData.expiresIn
+            resData.idToken
           );
         })
       );
@@ -55,8 +55,7 @@ export class AuthService {
           this.handleAuthentication(
             email,
             Constants.DUMMY_LOCAL_ID,
-            Constants.DUMMY_TOKEN_ID,
-            Constants.INACTIVE_PERIOD_LOGOUT
+            Constants.DUMMY_TOKEN_ID
           );
         })
       );
@@ -110,15 +109,13 @@ export class AuthService {
   private handleAuthentication(
     email: string,
     userId: string,
-    token: string,
-    expiresIn: number
+    token: string
   ) {
     console.log("login user with email:", email);
-    const expirationDate = new Date(new Date().getTime() + expiresIn * 1000);
-    const user = new User(email, userId, token, expirationDate);
-    this.user.next(user);
-    this.autoLogout(expiresIn * 1000);
-    localStorage.setItem('userData', JSON.stringify(user));
+    const expirationDate = new Date(new Date().getTime() + Constants.INACTIVE_PERIOD_LOGOUT * 1000);
+    this.user = new User(email, userId, token, expirationDate);
+    this.setAutoLogoutTime();
+    localStorage.setItem('userData', JSON.stringify(this.user));
   }
   autoLogin() {
     const userData: {
@@ -139,22 +136,26 @@ export class AuthService {
     );
 
     if (loadedUser.token) { // checks token validity
-      this.user.next(loadedUser);
       const expirationDuration =
         new Date(userData._tokenExpirationDate).getTime() -
         new Date().getTime();
-      this.autoLogout(expirationDuration);
+      this.setAutoLogoutTime();
     }
   }
-  autoLogout(expirationDuration: number) {
+  setAutoLogoutTime() {
+    let expirationDuration: number = Constants.INACTIVE_PERIOD_LOGOUT * 1000;
+    clearTimeout(this.tokenExpirationTimer);
+    // autologout
     this.tokenExpirationTimer = setTimeout(() => {
       this.logout();
     }, expirationDuration);
+    this.user.tokenExpirationDate = new Date(new Date().getTime() + Constants.INACTIVE_PERIOD_LOGOUT * 1000);
+    this.userDataBus.next(this.user);
   }
-
   firebaseLogout() {
+    clearTimeout(this.tokenExpirationTimer);
     localStorage.removeItem('userData');
-    this.user.next(null);
+    this.userDataBus.next(null);
     this.messageService.showMessage(Constants.MSG_LOGGED_OUT, MessageColor.Green);
     this.router.navigate(['/map']);
   }

@@ -12,4 +12,7 @@ export class User {
     }
     return this._token;
   }
+  set tokenExpirationDate(expires: Date) {
+    this._tokenExpirationDate = expires;
+  }
 }

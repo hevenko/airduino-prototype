@@ -22,7 +22,7 @@ export class MainNavComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.authService.user.subscribe((value: User) => {
+    this.authService.userDataBus.subscribe((value: User) => {
       this.isAuthenticated = !!value;
       this.welcomeLabel = this.isAuthenticated ? value.email : '';
     });

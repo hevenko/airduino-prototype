@@ -12,8 +12,8 @@ import { BedacekComponent } from './bedacek/bedacek.component';
 
 
 const routes: Routes = [
-  {path: '', redirectTo: '/map', pathMatch: 'full' },
-  {path: 'map', component: MapComponent},
+  {path: '', redirectTo: '/map', pathMatch: 'full'},
+  {path: 'map', component: MapComponent, canActivate: [AuthGuardService]},
   {path: 'userDevices', component: UserListComponent, canActivate: [AuthGuardService]},
   {path: 'auth', component: AuthComponent, canActivate: [AuthGuardService]},
   {path: 'user', component: UserComponent, canActivate: [AuthGuardService]},
