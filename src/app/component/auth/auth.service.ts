@@ -128,14 +128,14 @@ export class AuthService {
       return;
     }
 
-    const loadedUser = new User(
+    this.user = new User(
       userData.email,
       userData.id,
       userData._token,
       new Date(userData._tokenExpirationDate)
     );
 
-    if (loadedUser.token) { // checks token validity
+    if (this.user.token) { // checks token validity
       const expirationDuration =
         new Date(userData._tokenExpirationDate).getTime() -
         new Date().getTime();
