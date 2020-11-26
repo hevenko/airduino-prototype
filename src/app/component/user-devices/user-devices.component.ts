@@ -19,16 +19,6 @@ export class UserDevicesComponent implements OnInit {
   defaultColDef = { resizable: true, filter: true, sortable: true };
   dataSource = []; // grid expects all data at once
   gridApi;
-  detail = [{'id' : '1',
-  'type':'1',
-  'owner':'1',
-  'firmware':'1',
-  'ffirmware':'1',
-  'configuration':'1',
-  'fconfiguration':'1',
-  'apykey':'1',
-  'note':'1',
-  'enabled':'1'}];
 
   constructor(private dataStorageService: DataStorageService) { }
 
