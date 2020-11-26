@@ -9,12 +9,13 @@ import { UserComponent } from './component/user/user.component';
 import { RawDataComponent } from './component/raw-data/raw-data.component';
 import { GraphComponent } from './component/graph/graph.component';
 import { BedacekComponent } from './bedacek/bedacek.component';
+import { UserDevicesComponent } from './component/user-devices/user-devices.component';
 
 
 const routes: Routes = [
   {path: '', redirectTo: '/map', pathMatch: 'full'},
   {path: 'map', component: MapComponent, canActivate: [AuthGuardService]},
-  {path: 'userDevices', component: UserListComponent, canActivate: [AuthGuardService]},
+  {path: 'userDevices', component: UserDevicesComponent, canActivate: [AuthGuardService]},
   {path: 'auth', component: AuthComponent, canActivate: [AuthGuardService]},
   {path: 'user', component: UserComponent, canActivate: [AuthGuardService]},
   {path: 'rawData', component: RawDataComponent, canActivate: [AuthGuardService]},

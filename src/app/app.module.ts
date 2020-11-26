@@ -52,6 +52,7 @@ import { MessageComponent } from './component/dialog/message/message.component';
 import { FilterModel } from './model/filter-model';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { AgGridModule } from 'ag-grid-angular';
+import { UserDevicesComponent } from './component/user-devices/user-devices.component';
 
 @NgModule({
   declarations: [
@@ -78,7 +79,8 @@ import { AgGridModule } from 'ag-grid-angular';
     LoginComponent,
     ConfirmComponent,
     AirduinoComponent,
-    MessageComponent
+    MessageComponent,
+    UserDevicesComponent
   ],
   imports: [
     FormsModule,

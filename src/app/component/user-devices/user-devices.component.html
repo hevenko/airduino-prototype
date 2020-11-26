@@ -1,0 +1,15 @@
+<ag-grid-angular
+  style="width: 100%; height: 100%;flex: '1 1 auto'"
+  class="ag-theme-alpine"
+  [rowData]="dataSource"
+  [columnDefs]="displayedColumns"
+  [defaultColDef]="defaultColDef"
+  [suppressDragLeaveHidesColumns]="true"
+  [rowSelection]="'multiple'"
+  (gridReady)="onGridReady($event)"
+  (sortChanged)="onSortChanged($event)"
+  (selectionChanged)="onSelectionChanged($event)"
+  [detailCellRendererParams]="gridOptionsLevel2"
+  [masterDetail]="true"
+>
+</ag-grid-angular>
