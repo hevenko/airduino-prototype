@@ -31,9 +31,7 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { MapComponent } from './component/map/map.component';
 import {MatTableModule} from '@angular/material/table';
 import { HttpClientModule } from '@angular/common/http';
-import { UserListComponent } from './component/user-devices/user-list.component';
 import { RemoteLoDService } from './component/user-devices/remote-lod.service';
-import { DeviceListComponent } from './component/user-devices/device-list/device-list.component';
 import { NewDeviceComponent } from './component/user-devices/new-device/new-device.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import { DeviceSensorComponent } from './component/user-devices/device-sensor/device-sensor.component';
@@ -65,8 +63,6 @@ import { UserDevicesComponent } from './component/user-devices/user-devices.comp
     PresetFilterComponent,
     AlertComponent,
     MapComponent,
-    UserListComponent,
-    DeviceListComponent,
     NewDeviceComponent,
     DeviceSensorComponent,
     AuthComponent,

@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { MapComponent } from './component/map/map.component';
-import { UserListComponent } from './component/user-devices/user-list.component';
 import { AuthComponent } from './component/auth/auth.component';
 import { AuthGuardService } from 'src/auth-guard.service';
 import { NewUserComponent } from './component/new-user/new-user.component';
