@@ -257,7 +257,7 @@ export class MapComponent implements OnInit, OnDestroy {
     //console.log("polygon deactivated");
     this.drawCircle.setActive(false);
     //console.log("circle deactivated");
-    this.filterModel.locationsSubject.subscribe(value => {
+    this.dataStorageService.locationsSubject?.subscribe(value => {
       console.log("filterModel changed to:", value);
       const locations = this.filterModel.locations;
       //console.log("location:", locations);

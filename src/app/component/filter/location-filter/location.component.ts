@@ -42,18 +42,23 @@ export class LocationComponent implements OnInit {
       if(!!this.locationForm.value.selectedRegion) {
         console.log("region name:", this.locationForm.value);
         this.filterModel.setLocations({name : this.locationForm.value.selectedRegion});
+        this.dataStorageService.locationsSubject.next(this.filterModel.locations);
         //this.filterModel.locations = {name : this.locationForm.value.selectedRegion};
       } else if (this.locationForm.controls.selectedDevices.value === '1'){
         this.filterModel.setLocations({devices : [1]}); //mock
+        this.dataStorageService.locationsSubject.next(this.filterModel.locations);
         //this.filterModel.locations = {devices : [1]}; //mock
       } else if (this.locationForm.controls.selectedDevices.value === '2'){
         this.filterModel.setLocations({ polygon: [] }); //mock
+        this.dataStorageService.locationsSubject.next(this.filterModel.locations);
         //this.filterModel.locations = "Polygon"; //mock
       } else if (this.locationForm.controls.selectedDevices.value === '3'){
         this.filterModel.setLocations({ circle: {} }); //mock
+        this.dataStorageService.locationsSubject.next(this.filterModel.locations);
         //this.filterModel.locations = "Circle"; //mock
       } else {
         this.filterModel.setLocations(null);
+        this.dataStorageService.locationsSubject.next(this.filterModel.locations);
         //this.filterModel.locations = null;
       }
     });

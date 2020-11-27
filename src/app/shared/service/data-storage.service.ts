@@ -26,6 +26,7 @@ export class DataStorageService {
   drawDataBus: BehaviorSubject<GeoJSONFeature[]> = new BehaviorSubject<GeoJSONFeature[]>(null);
   loadingStatusBus: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   highlightFeaturesBus: BehaviorSubject<GeoJSONGeometry[]> = new BehaviorSubject<GeoJSONGeometry[]>([]);
+  locationsSubject: BehaviorSubject<any> = new BehaviorSubject([]); //to redraw polygon or circle or... when returning to map
 
   constructor(private http: HttpClient,private messageService: MessageService) {
     console.log('DataStorageService' + (++DataStorageService.i));
@@ -78,12 +79,19 @@ export class DataStorageService {
     );
   }
 
-  fetchSensors(deviceId: string): Observable<Device[]> {
-    return this.http.get<Data>(this.getURL('sensors/' + deviceId))
-      .pipe(
-        catchError(this.handleError),
-        map(res => res.data)
-    );
+  fetchSensors(filter: FilterModel): Observable<Device[]> {
+    return this.http.post<Data>(this.getURL('data/'), filter, { headers: this.headers })
+    .pipe(
+      catchError(this.handleError),
+      map(res => {
+        if (!!res.error) {
+          this.messageService.showErrorMessage(res.error);
+        } else if (!res.success) {
+          this.messageService.showErrorMessage('Data request failed with no message');
+        }
+        return res.data;
+      })
+    )
   }
 
   fetchRegions(): Observable<Region[]> {
