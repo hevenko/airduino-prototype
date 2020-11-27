@@ -343,7 +343,7 @@ export class MapComponent implements OnInit, OnDestroy {
   fetchData() {
     this.clearPoints();
     this.subscribeData();
-    this.subscription = this.dataStorageService.fetchData();
+    this.subscription = this.dataStorageService.fetchData(this.filterModel);
   }
 
   unsubscribeData() {

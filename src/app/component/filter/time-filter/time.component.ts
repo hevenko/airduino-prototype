@@ -67,7 +67,7 @@ export class TimeComponent implements OnInit, AfterViewInit {
       this.subscription.unsubscribe();
       this.subscription = null;
     }
-    this.subscription = this.dataStorageService.fetchData();
+    this.subscription = this.dataStorageService.fetchData(this.filterModel);
   }
   setSlidingRange(e: any) {
     //default label when nothing selected

@@ -79,7 +79,7 @@ export class LocationComponent implements OnInit {
       this.locationForm.controls.selectedDevices.setValue(lastRadioBtnValue, { emitEvent: false });
     }
     if (!((this.locationForm.value == "2") || (this.locationForm.value == "3"))) {
-      this.dataStorageService.fetchData();
+      this.dataStorageService.fetchData(this.filterModel);
     }
   }
 

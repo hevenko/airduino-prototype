@@ -36,7 +36,7 @@ export class SensorComponent implements OnInit {
       this.subscription.unsubscribe();
       this.subscription = null;
     }
-    this.subscription = this.dataStorageService.fetchData();
+    this.subscription = this.dataStorageService.fetchData(this.filterModel);
   }
   initForm() {
     const faSensors: FormArray = new FormArray([]);

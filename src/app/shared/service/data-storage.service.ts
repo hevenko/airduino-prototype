@@ -27,7 +27,7 @@ export class DataStorageService {
   loadingStatusBus: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   highlightFeaturesBus: BehaviorSubject<GeoJSONGeometry[]> = new BehaviorSubject<GeoJSONGeometry[]>([]);
 
-  constructor(private http: HttpClient,private messageService: MessageService, private filterModel: FilterModel) {
+  constructor(private http: HttpClient,private messageService: MessageService) {
     console.log('DataStorageService' + (++DataStorageService.i));
   }
 
@@ -119,13 +119,13 @@ export class DataStorageService {
     )
   }
   
-  fetchData(): Subscription {
+  fetchData(filterModel: FilterModel): Subscription {
     let availableData: RawData[] = [];
     let filter: any = {};
     let subs = [];;
-    filter.sensors = this.filterModel.sensors
-    filter.time = this.filterModel.time;
-    filter.locations = this.filterModel.locations;
+    filter.sensors = filterModel.sensors
+    filter.time = filterModel.time;
+    filter.locations = filterModel.locations;
     //console.log(JSON.stringify(filter));
     this.sendPageOfData([]);
     this.sendAvailableData([]);     
