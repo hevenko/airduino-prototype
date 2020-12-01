@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Owner } from 'src/app/model/owner';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
-import 'ag-grid-enterprise';
 import { Device } from 'src/app/model/device';
 import { FilterModel } from 'src/app/model/filter-model';
 import { subscribeOn } from 'rxjs/operators';
