@@ -26,7 +26,8 @@ export class DataStorageService {
   drawDataBus: BehaviorSubject<GeoJSONFeature[]> = new BehaviorSubject<GeoJSONFeature[]>(null);
   loadingStatusBus: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   highlightFeaturesBus: BehaviorSubject<GeoJSONGeometry[]> = new BehaviorSubject<GeoJSONGeometry[]>([]);
-  locationsSubject: BehaviorSubject<any> = new BehaviorSubject([]); //to redraw polygon or circle or... when returning to map
+  locationsSelectorBus: BehaviorSubject<any> = new BehaviorSubject([]); //to redraw polygon or circle or... when returning to map
+
 
   constructor(private http: HttpClient,private messageService: MessageService) {
     console.log('DataStorageService' + (++DataStorageService.i));
