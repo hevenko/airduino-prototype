@@ -17,17 +17,36 @@ export class UserDevicesComponent implements OnInit, OnDestroy {
   }
   //grid users
   gridUsersApi;
+  userHeaders = {
+    id: "id",
+    name: "name",
+    email: "email",
+    created: "created",
+    Add: "Add device"
+  };
   gridUsersColumnDef = [
-    { field: 'id', headerName: "id", minWidth: 80},
-    { field: 'name', headerName: "name", minWidth: 100 },
-    { field: 'email', headerName: "email", minWidth: 120 },
-    { field: 'created', headerName: "created", minWidth: 210 },
-    { field: 'Add', headerName: "Add device", minWidth: 50, cellRenderer: this.addDeviceCell }
+    { field: 'id', minWidth: 80},
+    { field: 'name', minWidth: 100 },
+    { field: 'email', minWidth: 120 },
+    { field: 'created', minWidth: 210 },
+    { field: 'Add', minWidth: 50, cellRenderer: this.addDeviceCell }
   ];
   gridUsersDefaultColDef = { resizable: true, filter: true, sortable: true };
   dsUsers = []; // grid expects all data at once
   //grid devices
   gridDevicesApi;
+  deviceHeaders = {
+    id: "id",
+    type: "type",
+    owner: "owner",
+    firmware: "firmware",
+    ffirmware: "ffirmware",
+    configuration: "configuration",
+    fconfiguration: "fconfiguration",
+    apikey: "apikey",
+    note: "note",
+    enabled: "enabled",
+  };
   gridDeviceColumnDefs = [
     { field: 'id', headerName: "id", minWidth: 110},
     { field: 'type', headerName: "type", minWidth: 110 },
@@ -40,10 +59,27 @@ export class UserDevicesComponent implements OnInit, OnDestroy {
     { field: 'note', headerName: "note", minWidth: 110 },
     { field: 'enabled', headerName: "enabled", minWidth: 110}
   ];
-  gridDeviceDefaultColDef = { flex: 1 };
+  gridDeviceDefaultColDef = { resizable: true, flex: 1 };
   dsDevices = []; // grid expects all data at once
   //grid sensors
   gridSensorsApi;
+  sensorHeaders = {
+    pm10: "PM 10",
+    pm2_5: "PM 2.5",
+    so2: "SO2",
+    co: "CO",
+    o3: "O3",
+    pb: "PB",
+    hc: "HC",
+    voc: "VOC",
+    temp: "Temp",
+    humidity: "Humidity",
+    pressure: "Pressure",
+    gps: "GPS",
+    battery: "Battery",
+    measured: "Measured",
+    aqi: "AQI",
+  };
   gridSensorsColumnDefs = [
     { field: 'pm10', headerName: "PM 10", minWidth: 110 },
     { field: 'pm2_5', headerName: "PM 2.5", minWidth: 100 },
@@ -62,7 +98,7 @@ export class UserDevicesComponent implements OnInit, OnDestroy {
     { field: 'aqi', headerName: "AQI", minWidth: 80 }     
   ];
 
-  gridSensorsDefaultColDef = { flex: 1 };
+  gridSensorsDefaultColDef = { resizable: true, flex: 1 };
   dsSensors = []; // grid expects all data at once
 
   
@@ -71,7 +107,15 @@ export class UserDevicesComponent implements OnInit, OnDestroy {
   constructor(private dataStorageService: DataStorageService) { }
 
   ngOnInit(): void {
-    console.log('init: UserDevicesComponent')
+    console.log('init: UserDevicesComponent');
+    // load user headers;
+    this.gridUsersColumnDef.forEach((column: any) => column.headerName = this.userHeaders[column.field]);
+
+    // load device headers
+    this.gridDeviceColumnDefs.forEach((column: any) => column.headerName = this.deviceHeaders[column.field]);
+
+    // load sensor headers
+    this.gridSensorsColumnDefs.forEach((column: any) => column.headerName = this.sensorHeaders[column.field]);
   }
   ngOnDestroy(): void {
     this.subcriptions.forEach(v => {
