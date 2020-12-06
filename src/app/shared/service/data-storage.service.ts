@@ -27,8 +27,9 @@ export class DataStorageService {
   loadingStatusBus: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   highlightFeaturesBus: BehaviorSubject<GeoJSONGeometry[]> = new BehaviorSubject<GeoJSONGeometry[]>([]);
   locationsSelectorBus: BehaviorSubject<any> = new BehaviorSubject([]); //to redraw polygon or circle or... when returning to map
-
-
+  userDevicesBus: BehaviorSubject<any> = new BehaviorSubject([]);
+  deviceSensorsBus: BehaviorSubject<any> = new BehaviorSubject([]);
+  newUserBus: BehaviorSubject<any> = new BehaviorSubject([]);
   constructor(private http: HttpClient,private messageService: MessageService) {
     console.log('DataStorageService' + (++DataStorageService.i));
   }
@@ -72,16 +73,18 @@ export class DataStorageService {
     );
   }
 
-  fetchDevices(ownerId: string): Observable<Device[]> {
-    return this.http.get<Data>(this.getURL('devices/' + ownerId))
+  fetchDevices(ownerId: string) {
+    this.http.get<Data>(this.getURL('devices/' + ownerId))
       .pipe(
         catchError(this.handleError),
         map(res => res.data)
-    );
+    ).subscribe(d => {
+      this.userDevicesBus.next(d);
+    });
   }
 
-  fetchSensors(filter: FilterModel): Observable<Device[]> {
-    return this.http.post<Data>(this.getURL('data/'), filter, { headers: this.headers })
+  fetchSensors(filter: FilterModel){
+    this.http.post<Data>(this.getURL('data/'), filter, { headers: this.headers })
     .pipe(
       catchError(this.handleError),
       map(res => {
@@ -92,7 +95,9 @@ export class DataStorageService {
         }
         return res.data;
       })
-    )
+    ).subscribe(d => {
+      this.deviceSensorsBus.next(d);
+    });
   }
 
   fetchRegions(): Observable<Region[]> {
@@ -155,4 +160,25 @@ export class DataStorageService {
         return res;
     }
   }
+  newUser(userName: string, email: string, password: string){
+    let newUser: any = {};
+    newUser.name = userName;
+    newUser.email = email;
+    newUser.password = password;
+    this.http.post<Data>(this.getURL('owners/full'), newUser)
+    .pipe(
+      catchError(this.handleError),
+      map(res => {
+        if (!!res.error) {
+          this.messageService.showErrorMessage(res.error);
+        } else if (!res.success) {
+          this.messageService.showErrorMessage('Data request failed with no message');
+        }
+        return res.data;
+      })
+    ).subscribe(d => {
+      this.newUserBus.next(d);
+    });
+  }
+ 
 }

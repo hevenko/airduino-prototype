@@ -1,3 +1,12 @@
+<div class="toolbar">
+  <div style="margin-right:25px;">
+    <button mat-raised-button (click)="btnAddUserOnClick($event)">Add</button>
+    <button mat-raised-button (click)="btnDeleteUserOnClick($event)">Delete</button>
+  </div>
+  <div style="margin-right:25px;">
+    <button mat-raised-button>Edit</button>
+  </div>
+</div>
 <ag-grid-angular
   style="width: 100%; height: 100%;flex: '1 1 auto'"
   class="ag-theme-alpine"
@@ -9,8 +18,22 @@
   (gridReady)="onGridUsersReady($event)"
   (sortChanged)="onGridUsersSortChanged($event)"
   (selectionChanged)="onGridUsersSelectionChanged($event)"
+  [frameworkComponents]="userGridFrameworkComponents"
 >
 </ag-grid-angular>
+<div class="toolbar">
+  <div style="margin-right:25px;">
+    <button mat-raised-button (click)="btnAddDeviceOnClick($event)">Add</button>
+    <button mat-raised-button>Delete</button>
+  </div>
+  <div style="margin-right:25px;">
+    <button mat-raised-button>Edit</button>
+  </div>
+  <div>
+    <button mat-raised-button>Enable</button>
+    <button mat-raised-button>Disable</button>
+  </div>
+</div>
 <ag-grid-angular
   style="width: 100%; height: 100%;flex: '1 1 auto'"
   class="ag-theme-alpine"

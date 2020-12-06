@@ -50,6 +50,8 @@ import { FilterModel } from './model/filter-model';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { AgGridModule } from 'ag-grid-angular';
 import { UserDevicesComponent } from './component/user-devices/user-devices.component';
+import { CheckRowRendererComponent } from './component/check-row-renderer/check-row-renderer.component';
+import { AddUserComponent } from './component/user-devices/add-user/add-user.component';
 
 @NgModule({
   declarations: [
@@ -74,7 +76,9 @@ import { UserDevicesComponent } from './component/user-devices/user-devices.comp
     ConfirmComponent,
     AirduinoComponent,
     MessageComponent,
-    UserDevicesComponent
+    UserDevicesComponent,
+    CheckRowRendererComponent,
+    AddUserComponent
   ],
   imports: [
     FormsModule,

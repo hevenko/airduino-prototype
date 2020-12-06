@@ -1,0 +1,29 @@
+<h1 mat-dialog-title>{{title}}</h1>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <mat-form-field style="display: block;">
+    <mat-label>name</mat-label>
+    <input matInput formControlName="name">
+  </mat-form-field>
+
+  <mat-form-field style="display: block;">
+    <mat-label>e-mail</mat-label>
+    <input matInput formControlName="email">
+  </mat-form-field>
+  <div formGroupName="auth">
+    <mat-form-field style="display: block;">
+      <mat-label>Password</mat-label>
+      <input type="text" matInput formControlName="password">
+      <mat-error *ngIf="showPasswordError()">
+        Passwords don't match
+      </mat-error>      
+    </mat-form-field>
+    <mat-form-field style="display: block;">
+      <mat-label>Confirm password</mat-label>
+      <input type="text" matInput formControlName="passwordAgain">
+    </mat-form-field>
+  </div>
+  <div mat-dialog-actions align="end">
+    <button mat-button mat-stroked-button mat-dialog-close style="margin-right: 5px;">Cancel</button>
+    <button mat-button mat-stroked-button [mat-dialog-close]="true" type="submit" [disabled]="!form.valid">Confirm</button>
+  </div>
+</form>

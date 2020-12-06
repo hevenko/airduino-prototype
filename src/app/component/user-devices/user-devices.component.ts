@@ -5,30 +5,36 @@ import { Device } from 'src/app/model/device';
 import { FilterModel } from 'src/app/model/filter-model';
 import { subscribeOn } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
+import { CheckRowRendererComponent } from '../check-row-renderer/check-row-renderer.component';
+import { AirduinoComponent } from '../airduino/airduino.component';
+import { MatDialog } from '@angular/material/dialog';
+import { NewDeviceComponent } from './new-device/new-device.component';
+import { NewUserComponent } from '../new-user/new-user.component';
+import { AddUserComponent } from './add-user/add-user.component';
 
 @Component({
   selector: 'app-user-devices',
   templateUrl: './user-devices.component.html',
   styleUrls: ['./user-devices.component.css']
 })
-export class UserDevicesComponent implements OnInit, OnDestroy {
-  addDeviceCell = (p) => {
-    return '<div syle="padding: 5px"><button type="text" class="btn-default">Add device</button></div>'
-  }
+export class UserDevicesComponent extends AirduinoComponent implements OnInit, OnDestroy {
   //grid users
   gridUsersApi;
   gridUsersColumnDef = [
+    { field: 'rowChecked', headerName: "mark", maxWidth: 100,
+      cellRenderer: 'checkRowRenderer'
+    },
     { field: 'id', headerName: "id", minWidth: 80},
     { field: 'name', headerName: "name", minWidth: 100 },
     { field: 'email', headerName: "email", minWidth: 120 },
-    { field: 'created', headerName: "created", minWidth: 210 },
-    { field: 'Add', headerName: "Add device", minWidth: 50, cellRenderer: this.addDeviceCell }
+    { field: 'created', headerName: "created", minWidth: 210 }
   ];
   gridUsersDefaultColDef = { resizable: true, filter: true, sortable: true };
   dsUsers = []; // grid expects all data at once
   //grid devices
   gridDevicesApi;
   gridDeviceColumnDefs = [
+    { field: '', headerName: "", minWidth: 60, checkboxSelection: true},
     { field: 'id', headerName: "id", minWidth: 110},
     { field: 'type', headerName: "type", minWidth: 110 },
     { field: 'owner', headerName: "owner", minWidth: 110 },
@@ -68,10 +74,24 @@ export class UserDevicesComponent implements OnInit, OnDestroy {
   
   subcriptions: Subscription[] = [];
 
-  constructor(private dataStorageService: DataStorageService) { }
+  constructor(private dataStorageService: DataStorageService, private dialog: MatDialog) { 
+    super();
+  }
 
   ngOnInit(): void {
-    console.log('init: UserDevicesComponent')
+    console.log('init: UserDevicesComponent');
+    //grid devices
+    this.dataStorageService.userDevicesBus.subscribe(d => {
+      this.dsDevices = d;
+    });
+    //grid sensors
+    this.dataStorageService.deviceSensorsBus.subscribe(d => {
+      this.dsSensors = d;
+    });
+    //new user
+    this.dataStorageService.newUserBus.subscribe(u => {
+      this.dsUsers.push(u);
+    });
   }
   ngOnDestroy(): void {
     this.subcriptions.forEach(v => {
@@ -97,11 +117,12 @@ export class UserDevicesComponent implements OnInit, OnDestroy {
   }
   onGridUsersSelectionChanged(e: any) {
     let selectedId = e.api.getSelectedRows()[0].id;
-    let s = this.dataStorageService.fetchDevices(selectedId).subscribe( d => {
-      this.dsDevices = d;
-      s.unsubscribe();
-    });
+    let s = this.dataStorageService.fetchDevices(selectedId);
   }
+  userGridFrameworkComponents = {
+    checkRowRenderer: CheckRowRendererComponent
+  }
+
   //grid devices
   onGridDevicesReady(params) {
     this.gridDevicesApi = params.api;
@@ -114,10 +135,7 @@ export class UserDevicesComponent implements OnInit, OnDestroy {
     filter.time = {from: {date : new Date(2020, 1, 1)}};
     filter.order = ["-measured"];
     filter.limit = 1;
-    let s = this.dataStorageService.fetchSensors(filter).subscribe( d => {
-      this.dsSensors = d;
-      s.unsubscribe();
-    });
+    let s = this.dataStorageService.fetchSensors(filter);
   }
   onGridDevicesSortChanged(e: any /*AgGridEvent*/) {
     e.api.refreshCells();
@@ -134,5 +152,16 @@ export class UserDevicesComponent implements OnInit, OnDestroy {
     let selectedRows = this.gridSensorsApi.getSelectedRows();
     selectedRows.forEach(element => {
     });
+  }
+  btnDeleteUserOnClick(e: any) {
+    this.showConfirmationDialog(this.dialog, "Delete row?");
+  }
+  btnAddDeviceOnClick(e: any) {
+    this.showDialog(this.dialog, null, null, NewDeviceComponent, 'New user', null, null);
+  }
+  btnAddUserOnClick(e: any) {
+    let afterClose = r => {console.log(r)};
+    //this.dialog.open(AddUserComponent, {data: {title: 'New user'}});
+    this.showDialog(this.dialog, '', '', AddUserComponent, 'New user', null, afterClose);
   }
 }
