@@ -11,6 +11,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { NewDeviceComponent } from './new-device/new-device.component';
 import { NewUserComponent } from '../new-user/new-user.component';
 import { AddUserComponent } from './add-user/add-user.component';
+import { RowNode } from 'ag-grid-community';
+import { exit } from 'process';
+import { MessageColor, MessageService } from 'src/app/shared/service/message.service';
+import { Constants } from 'src/app/shared/constants';
 
 @Component({
   selector: 'app-user-devices',
@@ -110,7 +114,7 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
   subcriptions: Subscription[] = [];
 
 
-  constructor(private dataStorageService: DataStorageService, private dialog: MatDialog) {
+  constructor(private dataStorageService: DataStorageService, private dialog: MatDialog, private messageService: MessageService) {
     super();
   }
 
@@ -138,6 +142,10 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
       let newNode = addObject?.add[0];
       newNode?.setSelected(true);
       this.gridUsersApi?.ensureNodeVisible(newNode, 'middle');
+    });
+    //delete user
+    this.dataStorageService.deleteUsersBus.subscribe(ids => {
+      let addObject = this.gridUsersApi?.applyTransaction({remove: ids});
     });
   }
   ngOnDestroy(): void {
@@ -201,14 +209,37 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     });
   }
   btnDeleteUserOnClick(e: any) {
-    this.showConfirmationDialog(this.dialog, "Delete row?");
+    let isCheckedRows = false;
+    this.gridUsersApi.forEachNode((node: RowNode, index: any) => {
+      if(node.data.rowChecked) {
+        isCheckedRows = true;
+        exit;
+      }
+    });
+    if(isCheckedRows) {
+      let d = this.showConfirmationDialog(this.dialog, Constants.MSG_ARE_U_SHURE);
+      d.afterClosed().subscribe(d => {
+        if (d) {
+          let list = [];
+          this.gridUsersApi.forEachNode((node: RowNode, index: any) => {
+            if(node.data.rowChecked) {
+              list.push(node.data);
+            }
+            console.log(node);
+          });
+          this.dataStorageService.deleteUsers(list);
+        }
+      });  
+    } else {
+      this.messageService.showMessage(Constants.MSG_CHECK_SOME_ROWS, MessageColor.Yellow);
+    }
   }
   btnAddDeviceOnClick(e: any) {
-    this.showDialog(this.dialog, null, null, NewDeviceComponent, 'New user', null, null);
+    this.showDialog(this.dialog, null, null, NewDeviceComponent, Constants.TITLE_NEW_USER, null, null);
   }
   btnAddUserOnClick(e: any) {
     let afterClose = r => {console.log(r)};
     //this.dialog.open(AddUserComponent, {data: {title: 'New user'}});
-    this.showDialog(this.dialog, '', '', AddUserComponent, 'New user', null, afterClose);
+    this.showDialog(this.dialog, '', '', AddUserComponent,  Constants.TITLE_NEW_USER, null, afterClose);
   }
 }

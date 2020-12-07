@@ -16,4 +16,7 @@ export class Constants {
   static INACTIVE_PERIOD_LOGOUT = 300; //seconds
   static DUMMY_LOCAL_ID = '11111';
   static DUMMY_TOKEN_ID = '11111';
+  static MSG_ARE_U_SHURE = "Are you shure?";
+  static MSG_CHECK_SOME_ROWS = "Check some rows!";
+  static TITLE_NEW_USER = "New user";
 }

@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, concatMap, map } from 'rxjs/operators';
 import { MessageColor, MessageService } from './message.service';
@@ -12,6 +12,7 @@ import { Data } from '@angular/router';
 import { Constants } from '../../shared/constants';
 import { GeoJSONFeature } from 'src/app/model/geo-json-feature';
 import { GeoJSONGeometry } from 'src/app/model/geo-json-geometry';
+import { RowNode } from 'ag-grid-community';
 
 @Injectable({ providedIn: 'root' })
 export class DataStorageService {
@@ -30,7 +31,9 @@ export class DataStorageService {
   userDevicesBus: BehaviorSubject<any> = new BehaviorSubject([]);
   deviceSensorsBus: BehaviorSubject<any> = new BehaviorSubject([]);
   newUserBus: BehaviorSubject<any> = new BehaviorSubject([]);
-  constructor(private http: HttpClient,private messageService: MessageService) {
+  deleteUsersBus: BehaviorSubject<any> = new BehaviorSubject([]);
+  
+  constructor(private http: HttpClient, private messageService: MessageService) {
     console.log('DataStorageService' + (++DataStorageService.i));
   }
 
@@ -185,6 +188,35 @@ export class DataStorageService {
     ).subscribe(d => {
       if(!!d) {
         this.newUserBus.next(d);
+      }
+    });
+  }
+  deleteUsers(userList: any[]){
+    let params: any = {};
+    params.ids = []
+    userList.forEach(v => {
+      params.ids.push({id: v.id});
+    });
+    this.http.request('delete', this.getURL('owners/'), {body: params})
+    .pipe(
+      catchError(this.handleError),
+      map((res: any) => {
+        if (!!res.error) {
+          if(res.error.indexOf("duplicate key") != -1) {
+            this.messageService.showErrorMessage("Already exists.");
+          } else {
+            this.messageService.showErrorMessage(res.error);
+          }
+        } else if (!res.success) {
+          this.messageService.showErrorMessage('Data request failed with no message');
+        } else {
+          this.messageService.showMessage("Deleted.", MessageColor.Green);
+        }
+        return res.success;
+      })
+    ).subscribe(d => {
+      if(!!d) {
+        this.deleteUsersBus.next(userList);
       }
     });
   }
