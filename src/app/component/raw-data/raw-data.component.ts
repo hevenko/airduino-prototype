@@ -11,13 +11,7 @@ import { GeoJSONGeometry } from 'src/app/model/geo-json-geometry';
   styleUrls: ['./raw-data.component.css']
 })
 export class RawDataComponent implements OnInit, OnDestroy {
-  displayedColumns = [
-    {
-      headerName: "row",
-      valueGetter: "node.rowIndex + 1",
-      minWidth: 70,
-      sortable: false, filter: false
-    },
+  headers = [
     { field: 'pm10', headerName: "PM 10", minWidth: 110 },
     { field: 'pm2_5', headerName: "PM 2.5", minWidth: 100 },
     { field: 'so2', headerName: "SO2", minWidth: 60 },
@@ -33,6 +27,15 @@ export class RawDataComponent implements OnInit, OnDestroy {
     { field: 'battery', headerName: "Battery", minWidth: 120 },
     { field: 'measured', headerName: "Measured", minWidth: 210, sort:'asc' },
     { field: 'aqi', headerName: "AQI", minWidth: 80 }
+  ];
+  displayedColumns = [
+    {
+      headerName: "row",
+      valueGetter: "node.rowIndex + 1",
+      minWidth: 70,
+      sortable: false, filter: false
+    },
+    this.headers
   ];
   defaultColDef = { resizable: true, filter: true, sortable: true };
   dataSource: RawData[] = []; // grid expects all data at once

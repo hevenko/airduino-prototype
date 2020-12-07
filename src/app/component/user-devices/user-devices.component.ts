@@ -20,21 +20,39 @@ import { AddUserComponent } from './add-user/add-user.component';
 export class UserDevicesComponent extends AirduinoComponent implements OnInit, OnDestroy {
   //grid users
   gridUsersApi;
+  userHeaders = {
+    mark: "mark",
+    id: "id",
+    name: "name",
+    email: "email",
+    created: "created"
+  };
   gridUsersColumnDef = [
-    { field: 'rowChecked', headerName: "mark", maxWidth: 100,
+    { field: 'rowChecked', maxWidth: 100,
       cellRenderer: 'checkRowRenderer'
     },
-    { field: 'id', headerName: "id", minWidth: 80},
-    { field: 'name', headerName: "name", minWidth: 100 },
-    { field: 'email', headerName: "email", minWidth: 120 },
-    { field: 'created', headerName: "created", minWidth: 210 }
+    { field: 'id', minWidth: 80},
+    { field: 'name', minWidth: 100 },
+    { field: 'email', minWidth: 120 },
+    { field: 'created', minWidth: 210 }
   ];
   gridUsersDefaultColDef = { resizable: true, filter: true, sortable: true };
   dsUsers = []; // grid expects all data at once
   //grid devices
   gridDevicesApi;
+  deviceHeaders = {
+    id: "id",
+    type: "type",
+    owner: "owner",
+    firmware: "firmware",
+    ffirmware: "ffirmware",
+    configuration: "configuration",
+    fconfiguration: "fconfiguration",
+    apikey: "apikey",
+    note: "note",
+    enabled: "enabled",
+  };
   gridDeviceColumnDefs = [
-    { field: '', headerName: "", minWidth: 60, checkboxSelection: true},
     { field: 'id', headerName: "id", minWidth: 110},
     { field: 'type', headerName: "type", minWidth: 110 },
     { field: 'owner', headerName: "owner", minWidth: 110 },
@@ -46,10 +64,27 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     { field: 'note', headerName: "note", minWidth: 110 },
     { field: 'enabled', headerName: "enabled", minWidth: 110}
   ];
-  gridDeviceDefaultColDef = { flex: 1 };
+  gridDeviceDefaultColDef = { resizable: true, flex: 1 };
   dsDevices = []; // grid expects all data at once
   //grid sensors
   gridSensorsApi;
+  sensorHeaders = {
+    pm10: "PM 10",
+    pm2_5: "PM 2.5",
+    so2: "SO2",
+    co: "CO",
+    o3: "O3",
+    pb: "PB",
+    hc: "HC",
+    voc: "VOC",
+    temp: "Temp",
+    humidity: "Humidity",
+    pressure: "Pressure",
+    gps: "GPS",
+    battery: "Battery",
+    measured: "Measured",
+    aqi: "AQI",
+  };
   gridSensorsColumnDefs = [
     { field: 'pm10', headerName: "PM 10", minWidth: 110 },
     { field: 'pm2_5', headerName: "PM 2.5", minWidth: 100 },
@@ -65,21 +100,29 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     { field: 'gps', headerName: "GPS", minWidth: 200 },
     { field: 'battery', headerName: "Battery", minWidth: 120 },
     { field: 'measured', headerName: "Measured", minWidth: 210, sort:'asc' },
-    { field: 'aqi', headerName: "AQI", minWidth: 80 }     
+    { field: 'aqi', headerName: "AQI", minWidth: 80 }
   ];
 
-  gridSensorsDefaultColDef = { flex: 1 };
+  gridSensorsDefaultColDef = { resizable: true, flex: 1 };
   dsSensors = []; // grid expects all data at once
 
-  
+
   subcriptions: Subscription[] = [];
 
-  constructor(private dataStorageService: DataStorageService, private dialog: MatDialog) { 
+  constructor(private dataStorageService: DataStorageService, private dialog: MatDialog) {
     super();
   }
 
   ngOnInit(): void {
     console.log('init: UserDevicesComponent');
+    // load user headers;
+    this.gridUsersColumnDef.forEach((column: any) => column.headerName = this.userHeaders[column.field]);
+
+    // load device headers
+    this.gridDeviceColumnDefs.forEach((column: any) => column.headerName = this.deviceHeaders[column.field]);
+
+    // load sensor headers
+    this.gridSensorsColumnDefs.forEach((column: any) => column.headerName = this.sensorHeaders[column.field]);
     //grid devices
     this.dataStorageService.userDevicesBus.subscribe(d => {
       this.dsDevices = d;
