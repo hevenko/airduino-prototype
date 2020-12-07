@@ -183,7 +183,9 @@ export class DataStorageService {
         return res.data;
       })
     ).subscribe(d => {
-      this.newUserBus.next(d);
+      if(!!d) {
+        this.newUserBus.next(d);
+      }
     });
   }
  
