@@ -109,6 +109,7 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
 
   subcriptions: Subscription[] = [];
 
+
   constructor(private dataStorageService: DataStorageService, private dialog: MatDialog) {
     super();
   }
@@ -133,7 +134,10 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     });
     //new user
     this.dataStorageService.newUserBus.subscribe(u => {
-      this.dsUsers = this.dsUsers.concat([u]);
+      let addObject = this.gridUsersApi?.applyTransaction({add: [u]});
+      let newNode = addObject?.add[0];
+      newNode?.setSelected(true);
+      this.gridUsersApi?.ensureNodeVisible(newNode, 'middle');
     });
   }
   ngOnDestroy(): void {

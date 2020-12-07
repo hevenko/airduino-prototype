@@ -170,7 +170,11 @@ export class DataStorageService {
       catchError(this.handleError),
       map(res => {
         if (!!res.error) {
-          this.messageService.showErrorMessage(res.error);
+          if(res.error.indexOf("duplicate key") != -1) {
+            this.messageService.showErrorMessage("Already exists.");
+          } else {
+            this.messageService.showErrorMessage(res.error);
+          }
         } else if (!res.success) {
           this.messageService.showErrorMessage('Data request failed with no message');
         } else {
