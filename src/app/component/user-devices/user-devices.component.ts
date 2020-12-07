@@ -133,7 +133,7 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     });
     //new user
     this.dataStorageService.newUserBus.subscribe(u => {
-      this.dsUsers.push(u);
+      this.dsUsers = this.dsUsers.concat([u]);
     });
   }
   ngOnDestroy(): void {
