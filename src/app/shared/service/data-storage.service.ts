@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, concatMap, map } from 'rxjs/operators';
-import { MessageService } from './message.service';
+import { MessageColor, MessageService } from './message.service';
 import { BehaviorSubject, EMPTY, Observable, of, Subscription, throwError } from 'rxjs';
 import { Owner } from 'src/app/model/owner';
 import { Device } from 'src/app/model/device';
@@ -173,6 +173,8 @@ export class DataStorageService {
           this.messageService.showErrorMessage(res.error);
         } else if (!res.success) {
           this.messageService.showErrorMessage('Data request failed with no message');
+        } else {
+          this.messageService.showMessage("Created.", MessageColor.Green);
         }
         return res.data;
       })
