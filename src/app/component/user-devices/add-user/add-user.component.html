@@ -12,14 +12,14 @@
   <div formGroupName="auth">
     <mat-form-field style="display: block;">
       <mat-label>Password</mat-label>
-      <input type="text" matInput formControlName="password">
+      <input type="text" matInput formControlName="password" placeholder="{{isMode(modeEdit) ? 'Not required' : ''}}">
       <mat-error *ngIf="showPasswordError()">
         Passwords don't match
       </mat-error>      
     </mat-form-field>
     <mat-form-field style="display: block;">
       <mat-label>Confirm password</mat-label>
-      <input type="text" matInput formControlName="passwordAgain">
+      <input type="text" matInput formControlName="passwordAgain" placeholder="{{isMode(modeEdit) ? 'Not required' : ''}}">
     </mat-form-field>
   </div>
   <div mat-dialog-actions align="end">

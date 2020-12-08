@@ -17,6 +17,9 @@ export class Constants {
   static DUMMY_LOCAL_ID = '11111';
   static DUMMY_TOKEN_ID = '11111';
   static MSG_ARE_U_SHURE = "Are you shure?";
-  static MSG_CHECK_SOME_ROWS = "Check some rows!";
+  static MSG_CHECK_SOME_ROWS = "Check some rows.";
+  static MSG_SELECT_ROW = "Select a row.";
+  static MSG_SELECT_ONE_ROW = "Select only one row.";
   static TITLE_NEW_USER = "New user";
+  static TITLE_EDIT_USER = "Edit user";
 }

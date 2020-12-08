@@ -21,7 +21,7 @@ export class AirduinoComponent implements OnInit {
     return dialog.open(MessageComponent, {data: {title: titleText}});
   }
   showDialog(dialog: MatDialog, height: string, width: string, component: any, title: string, formData: any, afterCloseCallback: any): MatDialogRef<any, any> {
-    let d = dialog.open(component, {height: height, width: width, data: {title: title, formData: formData}});
+    let d = dialog.open(component, {height: height, width: width, data: {title: title, data: formData}});
     d.afterClosed().subscribe(afterCloseCallback);
     return d;
   }

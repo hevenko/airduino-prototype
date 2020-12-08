@@ -1,9 +1,14 @@
 import { AfterViewInit, Component, Inject, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { RowNode } from 'ag-grid-community';
 import { DialogData } from 'src/app/shared/dialog-data';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
 
+export enum Mode {
+  Add,
+  Edit
+}
 @Component({
   selector: 'app-add-user',
   templateUrl: './add-user.component.html',
@@ -12,9 +17,20 @@ import { DataStorageService } from 'src/app/shared/service/data-storage.service'
 export class AddUserComponent implements OnInit, AfterViewInit {
   title;
   form = new FormGroup({});
-
+  initData: RowNode;
+  mode: Mode; //add, edit
+  modeEdit = Mode.Edit
+  
   constructor(@Inject(MAT_DIALOG_DATA) public data: DialogData, private dataStorageService: DataStorageService) {
     this.title = data.title;
+    this.initData = data.data;
+    this.setMode(this.initData);
+  }
+  setMode(data: any) { //this component is used for adding new or editing user, hence different modes (Add, Edit)
+    this.mode = !!data ? Mode.Edit : Mode.Add;
+  }
+  isMode(m: Mode): boolean {
+    return this.mode === m;
   }
   ngAfterViewInit(): void {
   }
@@ -24,10 +40,18 @@ export class AddUserComponent implements OnInit, AfterViewInit {
       name: new FormControl('rajko', [Validators.required]),
       email:  new FormControl('rajko@rajko.com', [Validators.required, Validators.email]),
       auth: new FormGroup({
-        password:  new FormControl('', [Validators.required]),
-        passwordAgain:  new FormControl('', [Validators.required])
+        password:  new FormControl(),
+        passwordAgain:  new FormControl()
       },{validators: this.passwordsMatchValidator()})
     })
+    if (this.isMode(Mode.Add)) {
+      let fgAuth = (this.form.controls['auth'] as FormGroup);
+      fgAuth.controls['password']?.setValidators([Validators.required]);
+      fgAuth.controls['passwordAgain']?.setValidators([Validators.required]);
+    } else {
+      this.form.controls['name'].setValue(this.initData.data.name);
+      this.form.controls['email'].setValue(this.initData.data.email);
+    }
   }
   passwordsMatchValidator(): ValidatorFn {
     return (control: FormGroup): ValidationErrors | null => {
@@ -47,7 +71,13 @@ export class AddUserComponent implements OnInit, AfterViewInit {
   }
   onSubmit() {
     console.log(this.form.value);
-    this.dataStorageService.newUser(this.form.value.name, this.form.value.email, this.form.value.auth.password);
+    if(this.isMode(Mode.Add)) {
+      this.dataStorageService.newUser(this.form.value.name, this.form.value.email, this.form.value.auth.password);
+    } else {
+      this.initData.data.name = this.form.value.name;
+      this.initData.data.email = this.form.value.email;
+      this.dataStorageService.editUser(this.initData, this.form.value.auth.password);
+    }
   }
   showPasswordError(): boolean {
     return (this.form.controls['auth'] as FormGroup)?.controls['password']?.hasError('passwordsDontMatch');

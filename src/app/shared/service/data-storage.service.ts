@@ -32,6 +32,7 @@ export class DataStorageService {
   deviceSensorsBus: BehaviorSubject<any> = new BehaviorSubject([]);
   newUserBus: BehaviorSubject<any> = new BehaviorSubject([]);
   deleteUsersBus: BehaviorSubject<any> = new BehaviorSubject([]);
+  editUserBus: BehaviorSubject<any> = new BehaviorSubject([]);
   
   constructor(private http: HttpClient, private messageService: MessageService) {
     console.log('DataStorageService' + (++DataStorageService.i));
@@ -217,6 +218,40 @@ export class DataStorageService {
     ).subscribe(d => {
       if(!!d) {
         this.deleteUsersBus.next(userList);
+      }
+    });
+  }
+  editUser(user: RowNode, password: string){
+    let params: any = {};
+    params.ids = []
+    params.ids.push({id: user.data.id});
+    let newData: any = {};
+    newData.name = user.data.name;
+    newData.email = user.data.email;
+    if(password) {
+      newData.password = password;
+    }
+    params.values = newData;
+    this.http.request('put', this.getURL('owners/fast'), {body: params})
+    .pipe(
+      catchError(this.handleError),
+      map((res: any) => {
+        if (!!res.error) {
+          if(res.error.indexOf("duplicate key") != -1) {
+            this.messageService.showErrorMessage("Already exists.");
+          } else {
+            this.messageService.showErrorMessage(res.error);
+          }
+        } else if (!res.success) {
+          this.messageService.showErrorMessage('Data request failed with no message');
+        } else {
+          this.messageService.showMessage("Updated.", MessageColor.Green);
+        }
+        return res.success;
+      })
+    ).subscribe(d => {
+      if(!!d) {
+        this.editUserBus.next(user);
       }
     });
   }

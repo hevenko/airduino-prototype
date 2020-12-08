@@ -147,6 +147,10 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     this.dataStorageService.deleteUsersBus.subscribe(ids => {
       let addObject = this.gridUsersApi?.applyTransaction({remove: ids});
     });
+    //edit user
+    this.dataStorageService.editUserBus.subscribe((u: RowNode) => {
+      this.gridUsersApi?.applyTransaction({update : [u.data]});
+    });
   }
   ngOnDestroy(): void {
     this.subcriptions.forEach(v => {
@@ -173,6 +177,9 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
   onGridUsersSelectionChanged(e: any) {
     let selectedId = e.api.getSelectedRows()[0].id;
     let s = this.dataStorageService.fetchDevices(selectedId);
+  }
+  onGridUsersCellDoubleClicked(e: any) {
+    this.btnEditUserOnCLick(e);
   }
   userGridFrameworkComponents = {
     checkRowRenderer: CheckRowRendererComponent
@@ -241,5 +248,15 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     let afterClose = r => {console.log(r)};
     //this.dialog.open(AddUserComponent, {data: {title: 'New user'}});
     this.showDialog(this.dialog, '', '', AddUserComponent,  Constants.TITLE_NEW_USER, null, afterClose);
+  }
+  btnEditUserOnCLick(e:any) {
+    let r = this.gridUsersApi.getSelectedNodes();
+    if (r.length === 1) {
+      this.showDialog(this.dialog, '', '', AddUserComponent,  Constants.TITLE_EDIT_USER, r[0], null);
+    } else if (r.length > 1) {
+      this.messageService.showMessage(Constants.MSG_SELECT_ONE_ROW, MessageColor.Yellow);
+    } else {
+      this.messageService.showMessage(Constants.MSG_SELECT_ROW, MessageColor.Yellow);
+    }
   }
 }
