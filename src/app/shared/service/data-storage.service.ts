@@ -192,32 +192,30 @@ export class DataStorageService {
       }
     });
   }
-  deleteUsers(userList: any[]){
+  setUsersEnabled(userList: RowNode[], enableUser: boolean){
     let params: any = {};
     params.ids = []
-    userList.forEach(v => {
-      params.ids.push({id: v.id});
+    userList.forEach((v: RowNode) => {
+      v.data.enabled = enableUser;
+      params.ids.push({id: v.data.id});
     });
-    this.http.request('delete', this.getURL('owners/'), {body: params})
+    params.values = {enabled: enableUser};
+    this.http.request('put', this.getURL('owners/full'), {body: params})
     .pipe(
       catchError(this.handleError),
       map((res: any) => {
         if (!!res.error) {
-          if(res.error.indexOf("duplicate key") != -1) {
-            this.messageService.showErrorMessage("Already exists.");
-          } else {
-            this.messageService.showErrorMessage(res.error);
-          }
+          this.messageService.showErrorMessage(res.error);
         } else if (!res.success) {
           this.messageService.showErrorMessage('Data request failed with no message');
         } else {
-          this.messageService.showMessage("Deleted.", MessageColor.Green);
+          this.messageService.showMessage("Done.", MessageColor.Green);
         }
         return res.success;
       })
     ).subscribe(d => {
       if(!!d) {
-        this.deleteUsersBus.next(userList);
+        this.deleteUsersBus.next(userList); //ignoring http result
       }
     });
   }

@@ -1,10 +1,14 @@
 <div class="toolbar">
   <div style="margin-right:25px;">
     <button mat-raised-button (click)="btnAddUserOnClick($event)">Add</button>
-    <button mat-raised-button (click)="btnDeleteUserOnClick($event)">Delete</button>
+    <button mat-raised-button (click)="btnEditUserOnCLick($event)">Edit</button>
   </div>
   <div style="margin-right:25px;">
-    <button mat-raised-button (click)="btnEditUserOnCLick($event)">Edit</button>
+    <button mat-raised-button (click)="setUsersEnabled(false)">Disable</button>
+    <button mat-raised-button (click)="setUsersEnabled(true)">Enable</button>
+  </div>
+  <div>
+    <mat-checkbox class="example-margin" [(ngModel)]="showDisabledUsers" (changed)="showDisabledUsersOnChange($event)">Show disabled</mat-checkbox>
   </div>
 </div>
 <ag-grid-angular
@@ -20,6 +24,8 @@
   (selectionChanged)="onGridUsersSelectionChanged($event)"
   (cellDoubleClicked)="onGridUsersCellDoubleClicked($event)"
   [frameworkComponents]="userGridFrameworkComponents"
+  [isExternalFilterPresent]="userGridHasFilter"
+  [doesExternalFilterPass]="userGridFilterDisabledUser"
 >
 </ag-grid-angular>
 <div class="toolbar">

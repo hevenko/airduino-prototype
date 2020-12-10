@@ -22,6 +22,7 @@ import { Constants } from 'src/app/shared/constants';
   styleUrls: ['./user-devices.component.css']
 })
 export class UserDevicesComponent extends AirduinoComponent implements OnInit, OnDestroy {
+  showDisabledUsers;
   //grid users
   gridUsersApi;
   userHeaders = {
@@ -29,7 +30,8 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     id: "id",
     name: "name",
     email: "email",
-    created: "created"
+    created: "created",
+    enabled: "enabled"
   };
   gridUsersColumnDef = [
     { field: 'rowChecked', maxWidth: 100,
@@ -38,7 +40,8 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     { field: 'id', minWidth: 80},
     { field: 'name', minWidth: 100 },
     { field: 'email', minWidth: 120 },
-    { field: 'created', minWidth: 210 }
+    { field: 'created', minWidth: 210 },
+    { field: 'enabled', minWidth: 110 }
   ];
   gridUsersDefaultColDef = { resizable: true, filter: true, sortable: true };
   dsUsers = []; // grid expects all data at once
@@ -144,8 +147,8 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
       this.gridUsersApi?.ensureNodeVisible(newNode, 'middle');
     });
     //delete user
-    this.dataStorageService.deleteUsersBus.subscribe(ids => {
-      let addObject = this.gridUsersApi?.applyTransaction({remove: ids});
+    this.dataStorageService.deleteUsersBus.subscribe((ids: RowNode[]) => {
+      let addObject = this.gridUsersApi?.applyTransaction({update: ids});
     });
     //edit user
     this.dataStorageService.editUserBus.subscribe((u: RowNode) => {
@@ -184,7 +187,15 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
   userGridFrameworkComponents = {
     checkRowRenderer: CheckRowRendererComponent
   }
-
+  showDisabledUsersOnChange(e: any) {
+    this.gridUsersApi.onFilterChanged();
+  }
+  userGridHasFilter(): boolean {
+    return !this.showDisabledUsers;
+  }
+  userGridFilterDisabledUser(rowNode: RowNode): boolean {
+    return rowNode.data.enabled
+  }
   //grid devices
   onGridDevicesReady(params) {
     this.gridDevicesApi = params.api;
@@ -215,7 +226,7 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     selectedRows.forEach(element => {
     });
   }
-  btnDeleteUserOnClick(e: any) {
+  setUsersEnabled(enableUser: boolean) {
     let isCheckedRows = false;
     this.gridUsersApi.forEachNode((node: RowNode, index: any) => {
       if(node.data.rowChecked) {
@@ -230,11 +241,11 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
           let list = [];
           this.gridUsersApi.forEachNode((node: RowNode, index: any) => {
             if(node.data.rowChecked) {
-              list.push(node.data);
+              list.push(node);
             }
             console.log(node);
           });
-          this.dataStorageService.deleteUsers(list);
+          this.dataStorageService.setUsersEnabled(list, enableUser); // setting enabled/disabled to each row
         }
       });  
     } else {
