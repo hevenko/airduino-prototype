@@ -22,4 +22,6 @@ export class Constants {
   static MSG_SELECT_ONE_ROW = "Select only one row.";
   static TITLE_NEW_USER = "New user";
   static TITLE_EDIT_USER = "Edit user";
+  static TITLE_NEW_DEVICE = "New device";
+  static TITLE_EDIT_DEVICE = "Edit device";
 }

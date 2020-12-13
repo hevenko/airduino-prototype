@@ -33,6 +33,7 @@ export class DataStorageService {
   newUserBus: BehaviorSubject<any> = new BehaviorSubject([]);
   deleteUsersBus: BehaviorSubject<any> = new BehaviorSubject([]);
   editUserBus: BehaviorSubject<any> = new BehaviorSubject([]);
+  newDeviceBus: BehaviorSubject<any> = new BehaviorSubject([]);
   
   constructor(private http: HttpClient, private messageService: MessageService) {
     console.log('DataStorageService' + (++DataStorageService.i));
@@ -253,5 +254,32 @@ export class DataStorageService {
       }
     });
   }
- 
+  newDevice(owner: string, key: string, note: string){
+    let newUser: any = {};
+    newUser.owner = owner;
+    newUser.key = key;
+    newUser.note = note;
+    this.http.post<Data>(this.getURL('devices/full'), newUser)
+    .pipe(
+      catchError(this.handleError),
+      map(res => {
+        if (!!res.error) {
+          if(res.error.indexOf("duplicate key") != -1) {
+            this.messageService.showErrorMessage("Already exists.");
+          } else {
+            this.messageService.showErrorMessage(res.error);
+          }
+        } else if (!res.success) {
+          this.messageService.showErrorMessage('Data request failed with no message');
+        } else {
+          this.messageService.showMessage("Created.", MessageColor.Green);
+        }
+        return res.data;
+      })
+    ).subscribe(d => {
+      if(!!d) {
+        this.newDeviceBus.next(d);
+      }
+    });
+  }
 }

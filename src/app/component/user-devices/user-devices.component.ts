@@ -154,6 +154,13 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     this.dataStorageService.editUserBus.subscribe((u: RowNode) => {
       this.gridUsersApi?.applyTransaction({update : [u.data]});
     });
+    //new device
+    this.dataStorageService.newDeviceBus.subscribe(u => {
+      let addObject = this.gridDevicesApi?.applyTransaction({add: [u]});
+      let newNode = addObject?.add[0];
+      newNode?.setSelected(true);
+      this.gridDevicesApi?.ensureNodeVisible(newNode, 'middle');
+    });
   }
   ngOnDestroy(): void {
     this.subcriptions.forEach(v => {
@@ -253,7 +260,14 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     }
   }
   btnAddDeviceOnClick(e: any) {
-    this.showDialog(this.dialog, null, null, NewDeviceComponent, Constants.TITLE_NEW_USER, null, null);
+    let r = this.gridUsersApi.getSelectedNodes();
+    if (r.length === 1) {
+      this.showDialog(this.dialog, null, null, NewDeviceComponent, Constants.TITLE_NEW_DEVICE, r[0], null);
+    } else if (r.length > 1) {
+      this.messageService.showMessage(Constants.MSG_SELECT_ONE_ROW, MessageColor.Yellow);
+    } else {
+      this.messageService.showMessage(Constants.MSG_SELECT_ROW, MessageColor.Yellow);
+    }
   }
   btnAddUserOnClick(e: any) {
     let afterClose = r => {console.log(r)};
