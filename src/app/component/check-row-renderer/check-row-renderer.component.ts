@@ -10,7 +10,6 @@ import { ICellRendererParams, IAfterGuiAttachedParams } from 'ag-grid-community'
 export class CheckRowRendererComponent implements OnInit, ICellRendererAngularComp {
   isChecked: boolean;
   gridParams;
-  @ViewChild('cbChecked', { read: ViewContainerRef }) public cbChecked;
 
   constructor() { }
   
@@ -28,8 +27,8 @@ export class CheckRowRendererComponent implements OnInit, ICellRendererAngularCo
   ngOnInit(): void {
   }
   setChecked(e: any) {
-    this.gridParams.api.getRowNode(this.gridParams.rowIndex).setDataValue(
-      this.gridParams.colDef.field, this.cbChecked.element.nativeElement.checked
+    this.gridParams.node.setDataValue(
+      this.gridParams.colDef.field, e.currentTarget.value
     );
   }
 }
