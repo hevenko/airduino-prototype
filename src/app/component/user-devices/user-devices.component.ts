@@ -22,7 +22,7 @@ import { Constants } from 'src/app/shared/constants';
   styleUrls: ['./user-devices.component.css']
 })
 export class UserDevicesComponent extends AirduinoComponent implements OnInit, OnDestroy {
-  showDisabledUsers = false;
+  showBlockedUsers = false;
   //grid users
   gridUsersApi;
   userHeaders = {
@@ -194,11 +194,11 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
   userGridFrameworkComponents = {
     checkRowRenderer: CheckRowRendererComponent
   }
-  showDisabledUsersOnChange(e: any) {
+  showBlockedUsersOnChange(e: any) {
     this.gridUsersApi.onFilterChanged();
   }
   userGridHasFilter = (): boolean => {
-    return !this.showDisabledUsers;
+    return !this.showBlockedUsers;
   }
   userGridFilterDisabledUser(rowNode: RowNode): boolean {
     return rowNode.data.enabled
