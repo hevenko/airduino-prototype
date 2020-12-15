@@ -205,18 +205,23 @@ export class DataStorageService {
     .pipe(
       catchError(this.handleError),
       map((res: any) => {
+        let rows = [];
         if (!!res.error) {
           this.messageService.showErrorMessage(res.error);
         } else if (!res.success) {
           this.messageService.showErrorMessage('Data request failed with no message');
         } else {
-          this.messageService.showMessage("Done.", MessageColor.Green);
+          res.data.forEach((v:any )=> {
+            v.rowChecked = true; //restoring row's checkbox state
+            rows.push(v);
+          });
+            this.messageService.showMessage("Done.", MessageColor.Green);
         }
-        return res.success;
+        return rows;
       })
-    ).subscribe(d => {
+    ).subscribe((d: any[]) => {
       if(!!d) {
-        this.deleteUsersBus.next(userList); //ignoring http result
+        this.deleteUsersBus.next(d);
       }
     });
   }

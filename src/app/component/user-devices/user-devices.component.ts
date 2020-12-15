@@ -147,7 +147,7 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
       this.gridUsersApi?.ensureNodeVisible(newNode, 'middle');
     });
     //delete user
-    this.dataStorageService.deleteUsersBus.subscribe((ids: RowNode[]) => {
+    this.dataStorageService.deleteUsersBus.subscribe((ids: any[]) => {
       let addObject = this.gridUsersApi?.applyTransaction({update: ids});
     });
     //edit user
@@ -203,6 +203,9 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
   userGridFilterDisabledUser(rowNode: RowNode): boolean {
     return rowNode.data.enabled
   }
+  gridUsersGetRowNodeId = (d: any) => {
+    return d.id;
+  } 
   //grid devices
   onGridDevicesReady(params) {
     this.gridDevicesApi = params.api;
