@@ -238,7 +238,7 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
   }
   setUsersEnabled(enableUser: boolean) {
     let isCheckedRows = false;
-    this.gridUsersApi.forEachNode((node: RowNode, index: any) => {
+    this.gridUsersApi.forEachNodeAfterFilterAndSort((node: RowNode, index: any) => {
       if(node.data.rowChecked) {
         isCheckedRows = true;
         exit;
@@ -249,7 +249,7 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
       d.afterClosed().subscribe(d => {
         if (d) {
           let list = [];
-          this.gridUsersApi.forEachNode((node: RowNode, index: any) => {
+          this.gridUsersApi.forEachNodeAfterFilterAndSort((node: RowNode, index: any) => {
             if(node.data.rowChecked) {
               list.push(node);
             }
