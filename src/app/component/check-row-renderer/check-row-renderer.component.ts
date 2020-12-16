@@ -18,7 +18,7 @@ export class CheckRowRendererComponent implements OnInit, ICellRendererAngularCo
   }
   agInit(params: ICellRendererParams): void {
     this.gridParams = params;
-    this.isChecked = params.value;
+    this.isChecked = params.data.rowChecked;
   }
   afterGuiAttached?(params?: IAfterGuiAttachedParams): void {
     //throw new Error('Method not implemented.');
@@ -28,7 +28,7 @@ export class CheckRowRendererComponent implements OnInit, ICellRendererAngularCo
   }
   setChecked(e: any) {
     this.gridParams.node.setDataValue(
-      this.gridParams.colDef.field, e.currentTarget.value
+      this.gridParams.colDef.field, e.currentTarget.checked
     );
   }
 }
