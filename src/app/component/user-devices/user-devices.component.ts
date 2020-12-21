@@ -15,6 +15,7 @@ import { RowNode } from 'ag-grid-community';
 import { exit } from 'process';
 import { MessageColor, MessageService } from 'src/app/shared/service/message.service';
 import { Constants } from 'src/app/shared/constants';
+import { GenerateApiKeysComponent } from './generate-api-keys/generate-api-keys.component';
 
 @Component({
   selector: 'app-user-devices',
@@ -286,5 +287,9 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     } else {
       this.messageService.showMessage(Constants.MSG_SELECT_ROW, MessageColor.Yellow);
     }
+  }
+  btnAddApiKeysOnClick(e: any) {
+    let afterClose = r => {console.log(r)};
+    this.showDialog(this.dialog, '', '', GenerateApiKeysComponent,  Constants.TITLE_ADD_API_KEYS, null, afterClose);
   }
 }

@@ -1,0 +1,19 @@
+<h1 mat-dialog-title>{{title}}</h1>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <mat-form-field style="display: block;">
+    <mat-label>Type</mat-label>    
+    <mat-select formControlName="type">
+        <mat-option *ngFor="let t of dataTypes" [value]="t.id">
+          {{t.name}}
+        </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field style="display: block;">
+    <mat-label>Count</mat-label>
+    <input matInput formControlName="count" type="number">
+  </mat-form-field>
+  <div mat-dialog-actions align="end">
+    <button mat-button mat-stroked-button mat-dialog-close style="margin-right: 5px;">Cancel</button>
+    <button mat-button mat-stroked-button [mat-dialog-close]="true" type="submit" [disabled]="!form.valid">Confirm</button>
+  </div>
+</form>

@@ -287,4 +287,12 @@ export class DataStorageService {
       }
     });
   }
+  fetchDeviceTypes(): Observable<any> {
+    return this.http.get<Data>(this.getURL('devicetypes/'))
+      .pipe(
+        catchError(this.handleError),
+        map(res => res.data)
+    );
+  }
+
 }

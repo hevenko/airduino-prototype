@@ -24,4 +24,5 @@ export class Constants {
   static TITLE_EDIT_USER = "Edit user";
   static TITLE_NEW_DEVICE = "New device";
   static TITLE_EDIT_DEVICE = "Edit device";
+  static TITLE_ADD_API_KEYS = "Add api keys";
 }

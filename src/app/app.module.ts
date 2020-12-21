@@ -52,6 +52,7 @@ import { AgGridModule } from 'ag-grid-angular';
 import { UserDevicesComponent } from './component/user-devices/user-devices.component';
 import { CheckRowRendererComponent } from './component/check-row-renderer/check-row-renderer.component';
 import { AddUserComponent } from './component/user-devices/add-user/add-user.component';
+import { GenerateApiKeysComponent } from './component/user-devices/generate-api-keys/generate-api-keys.component';
 
 @NgModule({
   declarations: [
@@ -78,7 +79,8 @@ import { AddUserComponent } from './component/user-devices/add-user/add-user.com
     MessageComponent,
     UserDevicesComponent,
     CheckRowRendererComponent,
-    AddUserComponent
+    AddUserComponent,
+    GenerateApiKeysComponent
   ],
   imports: [
     FormsModule,
