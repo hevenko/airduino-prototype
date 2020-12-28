@@ -6,11 +6,11 @@ import { DialogData } from 'src/app/shared/dialog-data';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
 
 @Component({
-  selector: 'app-generate-api-keys',
-  templateUrl: './generate-api-keys.component.html',
-  styleUrls: ['./generate-api-keys.component.css']
+  selector: 'app-add-devices',
+  templateUrl: './add-devices.component.html',
+  styleUrls: ['./add-devices.component.css']
 })
-export class GenerateApiKeysComponent implements OnInit {
+export class AddDevicesComponent implements OnInit {
   title;
   form = new FormGroup({});
   initData: RowNode;

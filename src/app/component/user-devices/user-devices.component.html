@@ -42,7 +42,7 @@
     <mat-checkbox class="example-margin" [(ngModel)]="showBlockedUsers" (changed)="showBlockedUsersOnChange($event)">Show blocked</mat-checkbox>
   </div>
   <div style="margin-right:25px;">
-    <button mat-raised-button (click)="btnAddApiKeysOnClick($event)">Add api keys...</button>
+    <button mat-raised-button (click)="btnAddDevicesOnClick($event)" [disabled]="disableAddDevices">Add devices...</button>
   </div>
 </div>
 <ag-grid-angular

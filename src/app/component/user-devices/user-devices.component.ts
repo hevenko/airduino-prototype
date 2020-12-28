@@ -15,7 +15,7 @@ import { RowNode } from 'ag-grid-community';
 import { exit } from 'process';
 import { MessageColor, MessageService } from 'src/app/shared/service/message.service';
 import { Constants } from 'src/app/shared/constants';
-import { GenerateApiKeysComponent } from './generate-api-keys/generate-api-keys.component';
+import { AddDevicesComponent } from './add-devices/add-devices.component';
 
 @Component({
   selector: 'app-user-devices',
@@ -32,7 +32,8 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     name: "name",
     email: "email",
     created: "created",
-    enabled: "enabled"
+    enabled: "enabled",
+    groupowner: "groupowner"
   };
   gridUsersColumnDef = [
     { field: 'rowChecked', maxWidth: 100,
@@ -42,7 +43,8 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     { field: 'name', minWidth: 100 },
     { field: 'email', minWidth: 120 },
     { field: 'created', minWidth: 210 },
-    { field: 'enabled', minWidth: 110 }
+    { field: 'enabled', minWidth: 50 },
+    { field: 'groupowner', minWidth: 50}
   ];
   gridUsersDefaultColDef = { resizable: true, filter: true, sortable: true };
   dsUsers = []; // grid expects all data at once
@@ -117,7 +119,8 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
 
   subcriptions: Subscription[] = [];
 
-
+  disableAddDevices = true;
+  
   constructor(private dataStorageService: DataStorageService, private dialog: MatDialog, private messageService: MessageService) {
     super();
   }
@@ -288,8 +291,8 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
       this.messageService.showMessage(Constants.MSG_SELECT_ROW, MessageColor.Yellow);
     }
   }
-  btnAddApiKeysOnClick(e: any) {
+  btnAddDevicesOnClick(e: any) {
     let afterClose = r => {console.log(r)};
-    this.showDialog(this.dialog, '', '', GenerateApiKeysComponent,  Constants.TITLE_ADD_API_KEYS, null, afterClose);
+    this.showDialog(this.dialog, '', '', AddDevicesComponent,  Constants.TITLE_ADD_API_KEYS, null, afterClose);
   }
 }
