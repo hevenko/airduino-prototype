@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { RowNode } from 'ag-grid-community';
+import { filter, map } from 'rxjs/operators';
 import { DialogData } from 'src/app/shared/dialog-data';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
 
@@ -13,7 +14,7 @@ import { DataStorageService } from 'src/app/shared/service/data-storage.service'
 export class AddDevicesComponent implements OnInit {
   title;
   form = new FormGroup({});
-  initData: RowNode;
+  initData: any;
   userName;
   dataTypes = [];
   
@@ -22,15 +23,21 @@ export class AddDevicesComponent implements OnInit {
       this.title = data.title;
       this.initData = data.data;
     }
-    dataStorageService.fetchDeviceTypes().subscribe(d => {
-      this.dataTypes = d;
-    });
   }
   ngOnInit(): void {
+
     this.form = new FormGroup({
-      type: new FormControl('Airduino', [Validators.required]),
+      type: new FormControl('', [Validators.required]),
       count:  new FormControl('1', [Validators.required]),
     })
+
+    this.dataStorageService.fetchDeviceTypes().pipe(
+      map((d: any[]) => {return d.filter(v => {return v.initgroupowner === this.initData.groupOwnerId})})).subscribe((d: any[]) => {
+      this.dataTypes = d;
+      if(this.dataTypes.length === 1) {
+        this.form.controls['type'].setValue(this.dataTypes[0].id)
+      }
+    });
   }
   onSubmit() {
     console.log(this.form.value);

@@ -189,7 +189,12 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     e.api.refreshCells();
   }
   onGridUsersSelectionChanged(e: any) {
-    let selectedId = e.api.getSelectedRows()[0].id;
+    //disable
+    let selRow = e.api.getSelectedRows()[0];
+    this.disableAddDevices = !selRow.groupowner;
+    
+    //grid data
+    let selectedId = selRow.id;
     let s = this.dataStorageService.fetchDevices(selectedId);
   }
   onGridUsersCellDoubleClicked(e: any) {
@@ -292,7 +297,17 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     }
   }
   btnAddDevicesOnClick(e: any) {
+    let selRow = this.gridUsersApi.getSelectedRows()[0];
+    if(!selRow) {
+      this.messageService.showMessage(Constants.MSG_SELECT_ROW, MessageColor.Yellow);
+      return;
+    }
+    if(!selRow.groupowner) {
+      this.messageService.showMessage(Constants.MSG_NOT_A_GROUPOWNER, MessageColor.Yellow);
+      return;
+    }
+    let groupOwnerId = selRow.id;
     let afterClose = r => {console.log(r)};
-    this.showDialog(this.dialog, '', '', AddDevicesComponent,  Constants.TITLE_ADD_API_KEYS, null, afterClose);
+    this.showDialog(this.dialog, '', '', AddDevicesComponent,  Constants.TITLE_ADD_DEVICES, {groupOwnerId: groupOwnerId}, afterClose);
   }
 }
