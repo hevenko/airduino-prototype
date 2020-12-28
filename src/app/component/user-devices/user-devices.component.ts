@@ -120,7 +120,7 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
   subcriptions: Subscription[] = [];
 
   disableAddDevices = true;
-  
+  disabled
   constructor(private dataStorageService: DataStorageService, private dialog: MatDialog, private messageService: MessageService) {
     super();
   }
