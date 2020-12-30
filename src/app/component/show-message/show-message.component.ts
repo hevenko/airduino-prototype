@@ -9,16 +9,16 @@ import { MessageService, iMessage, MessageColor } from 'src/app/shared/service/m
 export class ShowMessageComponent implements OnInit {
   errorMessages: iMessage[] = [];
   constructor(private messageService: MessageService) { }
-  setTimeOutId;
+  idSetTimeOut;
 
   ngOnInit() {
     this.messageService.messageBus.subscribe((value: iMessage[]) => {
       if (!!value && value.length > 0) {
         this.errorMessages = this.errorMessages.concat(value);
-        if(!!this.setTimeOutId) {
-          clearTimeout(this.setTimeOutId)
+        if(!!this.idSetTimeOut) {
+          clearTimeout(this.idSetTimeOut)
         }
-        this.setTimeOutId = setTimeout(() => {
+        this.idSetTimeOut = setTimeout(() => {
           this.autoClose();
         }, 3000);
       }
