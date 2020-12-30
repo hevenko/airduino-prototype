@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { RowNode } from 'ag-grid-community';
+import { from } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { DialogData } from 'src/app/shared/dialog-data';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
@@ -31,7 +32,7 @@ export class AddDevicesComponent implements OnInit {
       count:  new FormControl('1', [Validators.required]),
     })
 
-    this.dataStorageService.fetchDeviceTypes().pipe(
+    from(this.dataStorageService.fetchDeviceTypes()).pipe(
       map((d: any[]) => {return d.filter(v => {return v.initgroupowner === this.initData.groupOwnerId})})).subscribe((d: any[]) => {
       this.dataTypes = d;
       if(this.dataTypes.length === 1) {

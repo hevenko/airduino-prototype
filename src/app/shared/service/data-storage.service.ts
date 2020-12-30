@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, concatMap, map } from 'rxjs/operators';
+import { catchError, concatMap, map, shareReplay } from 'rxjs/operators';
 import { MessageColor, MessageService } from './message.service';
 import { BehaviorSubject, EMPTY, Observable, of, Subscription, throwError } from 'rxjs';
 import { Owner } from 'src/app/model/owner';
@@ -35,6 +35,7 @@ export class DataStorageService {
   editUserBus: BehaviorSubject<any> = new BehaviorSubject([]);
   newDeviceBus: BehaviorSubject<any> = new BehaviorSubject([]);
   
+  deviceTypesObervable: Promise<any[]>;
   constructor(private http: HttpClient, private messageService: MessageService) {
     console.log('DataStorageService' + (++DataStorageService.i));
   }
@@ -287,12 +288,16 @@ export class DataStorageService {
       }
     });
   }
-  fetchDeviceTypes(): Observable<any> {
-    return this.http.get<Data>(this.getURL('devicetypes/'))
+  fetchDeviceTypes(): Promise<any[]> {
+    if(!this.deviceTypesObervable) {
+      this.deviceTypesObervable = this.http.get<Data>(this.getURL('devicetypes/'))
       .pipe(
         catchError(this.handleError),
-        map(res => res.data)
-    );
+        map(res => res.data),
+        shareReplay(1)
+      ).toPromise();
+    }
+    return this.deviceTypesObervable;
   }
 
 }

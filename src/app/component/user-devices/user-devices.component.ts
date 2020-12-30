@@ -62,18 +62,7 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     note: "note",
     enabled: "enabled",
   };
-  gridDeviceColumnDefs = [
-    { field: 'id', headerName: "id", minWidth: 110},
-    { field: 'type', headerName: "type", minWidth: 110 },
-    { field: 'owner', headerName: "owner", minWidth: 110 },
-    { field: 'firmware', headerName: "firmware", minWidth: 110 },
-    { field: 'ffirmware', headerName: "ffirmware", minWidth: 110 },
-    { field: 'configuration', headerName: "configuration", minWidth: 110 },
-    { field: 'fconfiguration', headerName: "fconfiguration", minWidth: 110 },
-    { field: 'apikey', headerName: "apikey", minWidth: 110 },
-    { field: 'note', headerName: "note", minWidth: 110 },
-    { field: 'enabled', headerName: "enabled", minWidth: 110}
-  ];
+  gridDeviceColumnDefs;
   gridDeviceDefaultColDef = { resizable: true, flex: 1 };
   dsDevices = []; // grid expects all data at once
   //grid sensors
@@ -120,12 +109,32 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
   subcriptions: Subscription[] = [];
 
   disableAddDevices = true;
-  disabled
+  disabled;
+  deviceTypeList = [];
+
   constructor(private dataStorageService: DataStorageService, private dialog: MatDialog, private messageService: MessageService) {
     super();
+    
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
+    this.deviceTypeList = await this.dataStorageService.fetchDeviceTypes(); //needs parent method to be async
+
+    this.gridDeviceColumnDefs = [
+      { field: 'id', headerName: "id", minWidth: 110},
+      { field: 'type', headerName: "type", minWidth: 110, valueGetter: this.getDeviceType },
+      { field: 'owner', headerName: "owner", minWidth: 110 },
+      { field: 'firmware', headerName: "firmware", minWidth: 110 },
+      { field: 'ffirmware', headerName: "ffirmware", minWidth: 110 },
+      { field: 'configuration', headerName: "configuration", minWidth: 110 },
+      { field: 'fconfiguration', headerName: "fconfiguration", minWidth: 110 },
+      { field: 'apikey', headerName: "apikey", minWidth: 110 },
+      { field: 'note', headerName: "note", minWidth: 110 },
+      { field: 'enabled', headerName: "enabled", minWidth: 110}
+    ];
+    // this.dataStorageService.fetchDeviceTypes()?.then(v => {
+    //   this.deviceTypeList = v;
+    // });
     console.log('init: UserDevicesComponent');
     // load user headers;
     this.gridUsersColumnDef.forEach((column: any) => column.headerName = this.userHeaders[column.field]);
@@ -145,6 +154,7 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     });
     //new user
     this.dataStorageService.newUserBus.subscribe(u => {
+      if(!u || u.length == 0) return;
       let addObject = this.gridUsersApi?.applyTransaction({add: [u]});
       let newNode = addObject?.add[0];
       newNode?.setSelected(true);
@@ -152,14 +162,17 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     });
     //delete user
     this.dataStorageService.deleteUsersBus.subscribe((ids: any[]) => {
+      if(!ids || ids.length == 0) return;
       let addObject = this.gridUsersApi?.applyTransaction({update: ids});
     });
     //edit user
-    this.dataStorageService.editUserBus.subscribe((u: RowNode) => {
+    this.dataStorageService.editUserBus.subscribe((u: any) => {
+      if(!u || u.length == 0) return;
       this.gridUsersApi?.applyTransaction({update : [u.data]});
     });
     //new device
     this.dataStorageService.newDeviceBus.subscribe(u => {
+      if(!u || u.length == 0) return;
       let addObject = this.gridDevicesApi?.applyTransaction({add: [u]});
       let newNode = addObject?.add[0];
       newNode?.setSelected(true);
@@ -231,7 +244,7 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
   }
   onGridDevicesSortChanged(e: any /*AgGridEvent*/) {
     e.api.refreshCells();
-  }
+  }var 
   //grid sensors
   onGridSensorsReady(params) {
     this.gridSensorsApi = params.api;
@@ -309,5 +322,11 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     let groupOwnerId = selRow.id;
     let afterClose = r => {console.log(r)};
     this.showDialog(this.dialog, '', '', AddDevicesComponent,  Constants.TITLE_ADD_DEVICES, {groupOwnerId: groupOwnerId}, afterClose);
+  }
+  getDeviceType = (param: any): string => {
+    let result = this.deviceTypeList?.filter(v => {
+      return v.id === param.data.type;
+    });
+    return result ? result[0]?.name : '?';
   }
 }
