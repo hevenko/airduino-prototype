@@ -296,6 +296,42 @@ export class DataStorageService {
       }
     });
   }
+  editDevice(deviceId: string, type: string, firmware: string, config: string, apiKey: string, note: string, isPublic: boolean){
+    let params: any = {};
+    params.ids = []
+    params.ids.push({id: deviceId});
+    let newData: any = {};
+    //newData.devicetype = type;
+    newData.firmware = firmware;
+    newData.apikey = apiKey;
+    newData.note = note;
+    //params.config = config;
+    newData.public = isPublic;
+    params.values = newData;
+
+    this.http.request('put', this.getURL('devices/full'), {body: params})
+    .pipe(
+      catchError(this.handleError),
+      map((res: any) => {
+        if (!!res.error) {
+          if(res.error.indexOf("duplicate key") != -1) {
+            this.messageService.showErrorMessage("Already exists.");
+          } else {
+            this.messageService.showErrorMessage(res.error);
+          }
+        } else if (!res.success) {
+          this.messageService.showErrorMessage('Data request failed with no message');
+        } else {
+          this.messageService.showMessage("Updated.", MessageColor.Green);
+        }
+        return res.data;
+      })
+    ).subscribe(d => {
+      if(!!d) {
+        this.newDeviceBus.next(d);
+      }
+    });
+  }
   fetchDeviceTypes(): Promise<any[]> {
     if(!this.deviceTypesObervable) {
       this.deviceTypesObervable = this.http.get<Data>(this.getURL('devicetypes/'))

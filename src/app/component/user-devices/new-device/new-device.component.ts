@@ -15,21 +15,38 @@ import { DataStorageService } from 'src/app/shared/service/data-storage.service'
 export class NewDeviceComponent implements OnInit {
   title;
   form = new FormGroup({});
-  initData: RowNode;
   mode: Mode; //add, edit
   modeEdit = Mode.Edit;
-  userName;
+  
+  ownerName;
+  ownerId;
+  deviceId;
+  devicetype;
+  firmware;
+  config;
+  apikey;
+  public;
+  note;
+  
   deviceTypeList;
   firmwareList;
   configList;
+
   constructor(@Inject(MAT_DIALOG_DATA) public data: DialogData, private dataStorageService: DataStorageService) {
     this.title = data.title;
-    this.initData = data.data;
-    this.userName = this.initData.data.name;
-    this.setMode(this.initData);
+    this.ownerName = data.data.ownerName;
+    this.ownerId = data.data.ownerId;
+    this.deviceId = data.data.deviceId;
+    this.devicetype = data.data.devicetype;
+    this.firmware = data.data.firmware;
+    this.config = data.data.config;
+    this.apikey = data.data.apikey;
+    this.public = data.data.public;
+    this.note = data.data.note;
+    this.setMode(data.data);
   }
-  setMode(data: RowNode) { //this component is used for adding new or editing, hence different modes (Add, Edit)
-    this.mode = !!data.data.key ? Mode.Edit : Mode.Add;
+  setMode(data: any) { //this component is used for adding new or editing, hence different modes (Add, Edit)
+    this.mode = !!data.apikey ? Mode.Edit : Mode.Add;
   }
   isMode(m: Mode): boolean {
     return this.mode === m;
@@ -47,31 +64,37 @@ export class NewDeviceComponent implements OnInit {
       firmware: new FormControl('', [Validators.required]),
       config: new FormControl('', [Validators.required]),
       key: new FormControl('1111', [Validators.required]),
+      public: new FormControl(false, [Validators.required]),
       note:  new FormControl('rajkove device'),
     })
     if (this.isMode(Mode.Edit)) {
-      this.form.controls['key'].setValue(this.initData.data.key);
-      this.form.controls['note'].setValue(this.initData.data.note);
+      this.form.controls['type'].setValue(this.devicetype);
+      this.form.controls['firmware'].setValue(this.firmware);
+      this.form.controls['config'].setValue(this.config);
+      this.form.controls['key'].setValue(this.apikey);
+      this.form.controls['public'].setValue(this.public);
+      this.form.controls['note'].setValue(this.note);
     }
-    from(this.deviceTypeList).subscribe((v: any[]) => {
-      this.form.controls['type'].setValue(v[0].id);
-    });
-    from(this.firmwareList).subscribe((v: any[]) => {
-      this.form.controls['firmware'].setValue(v[0].id);
-    });
-    from(this.configList).subscribe((v: any[]) => {
-      this.form.controls['config'].setValue(v[0].id);
-    });
+    if(this.isMode(Mode.Add)) {
+      from(this.deviceTypeList).subscribe((v: any[]) => {
+        this.form.controls['type'].setValue(v[0].id);
+      });
+      from(this.firmwareList).subscribe((v: any[]) => {
+        this.form.controls['firmware'].setValue(v[0].id);
+      });
+      from(this.configList).subscribe((v: any[]) => {
+        this.form.controls['config'].setValue(v[0].id);
+      });  
+    }
   }
   onSubmit() {
     console.log(this.form.value);
     if(this.isMode(Mode.Add)) {
-      this.dataStorageService.newDevice(this.initData.data.id, this.form.value.key,
+      this.dataStorageService.newDevice(this.ownerId, this.form.value.key,
         this.form.value.note, this.form.value.type, this.form.value.firmware, this.form.value.config);
     } else {
-      this.initData.data.name = this.form.value.name;
-      this.initData.data.email = this.form.value.email;
-      this.dataStorageService.editUser(this.initData, this.form.value.auth.password);
+      this.dataStorageService.editDevice(this.deviceId, this.form.value.type,this.form.value.firmware, this.form.value.config,
+        this.form.value.key, this.form.value.note, this.form.value.public);
     }
   }
 }

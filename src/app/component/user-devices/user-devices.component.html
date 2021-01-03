@@ -32,7 +32,7 @@
 <div class="toolbar">
   <div style="margin-right:25px;">
     <button mat-raised-button (click)="btnAddDeviceOnClick($event)">Add</button>
-    <button mat-raised-button>Edit</button>
+    <button mat-raised-button (click)="btnEditDevicOnCLick($event)">Edit</button>
   </div>
   <div style="margin-right:25px;">
     <button mat-raised-button>Enable</button>
@@ -56,6 +56,7 @@
   (gridReady)="onGridDevicesReady($event)"
   (sortChanged)="onGridDevicesSortChanged($event)"
   (selectionChanged)="onGridDevicesSelectionChanged($event)"
+  [getRowNodeId]="gridDevicesGetRowNodeId"
 >
 </ag-grid-angular>
 <ag-grid-angular

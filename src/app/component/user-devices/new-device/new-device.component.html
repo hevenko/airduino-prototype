@@ -2,11 +2,11 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <mat-form-field style="display: block;">
     <mat-label>User name</mat-label>
-    <input matInput disabled="true" value="{{userName}}">
+    <input matInput disabled="true" value="{{ownerName}}">
   </mat-form-field>
   <mat-form-field style="display: block;">
     <mat-label>Type</mat-label>    
-    <mat-select formControlName="type">
+    <mat-select formControlName="type" [disabled]="isMode(modeEdit)">
         <mat-option *ngFor="let t of deviceTypeList | async" [value]="t.id">
           {{t.name}}
         </mat-option>
@@ -14,7 +14,7 @@
   </mat-form-field>
   <mat-form-field style="display: block;">
     <mat-label>Firmware</mat-label>    
-    <mat-select formControlName="firmware">
+    <mat-select formControlName="firmware" [disabled]="isMode(modeEdit)">
         <mat-option *ngFor="let t of firmwareList | async" [value]="t.id">
           {{t.name}}
         </mat-option>
@@ -22,7 +22,7 @@
   </mat-form-field>
   <mat-form-field style="display: block;">
     <mat-label>Configuration</mat-label>    
-    <mat-select formControlName="config">
+    <mat-select formControlName="config" [disabled]="isMode(modeEdit)">
         <mat-option *ngFor="let t of configList | async" [value]="t.id">
           {{t.name}}
         </mat-option>
@@ -37,6 +37,8 @@
     <mat-label>Note</mat-label>
     <input matInput formControlName="note">
   </mat-form-field>
+  <mat-checkbox matInput formControlName="public">Public</mat-checkbox>
+
   <div mat-dialog-actions align="end">
     <button mat-button mat-stroked-button mat-dialog-close style="margin-right: 5px;">Cancel</button>
     <button mat-button mat-stroked-button [mat-dialog-close]="true" type="submit" [disabled]="!form.valid">Confirm</button>

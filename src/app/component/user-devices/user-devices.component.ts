@@ -183,6 +183,11 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
       newNode?.setSelected(true);
       this.gridDevicesApi?.ensureNodeVisible(newNode, 'middle');
     });
+    //edit device
+    this.dataStorageService.newDeviceBus.subscribe((u: any[]) => {
+      if(!u || u.length == 0) return;
+      this.gridDevicesApi?.applyTransaction({update : u});
+    });
   }
   ngOnDestroy(): void {
     this.subcriptions.forEach(v => {
@@ -249,7 +254,10 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
   }
   onGridDevicesSortChanged(e: any /*AgGridEvent*/) {
     e.api.refreshCells();
-  }var 
+  }
+  gridDevicesGetRowNodeId = (d: any) => {
+    return d.id;
+  } 
   //grid sensors
   onGridSensorsReady(params) {
     this.gridSensorsApi = params.api;
@@ -292,23 +300,32 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
   btnAddDeviceOnClick(e: any) {
     let r = this.gridUsersApi.getSelectedNodes();
     if (r.length === 1) {
-      this.showDialog(this.dialog, null, null, NewDeviceComponent, Constants.TITLE_NEW_DEVICE, r[0], null);
+      let formData: any = {};
+      formData.ownerName = r[0].data.name;
+      formData.ownerId = r[0].data.id;
+        this.showDialog(this.dialog, null, null, NewDeviceComponent, Constants.TITLE_NEW_DEVICE, formData, null);
     } else if (r.length > 1) {
       this.messageService.showMessage(Constants.MSG_SELECT_ONE_ROW, MessageColor.Yellow);
     } else {
       this.messageService.showMessage(Constants.MSG_SELECT_ROW, MessageColor.Yellow);
     }
   }
-  btnAddUserOnClick(e: any) {
-    let afterClose = r => {console.log(r)};
-    //this.dialog.open(AddUserComponent, {data: {title: 'New user'}});
-    this.showDialog(this.dialog, '', '', AddUserComponent,  Constants.TITLE_NEW_USER, null, afterClose);
-  }
-  btnEditUserOnCLick(e:any) {
-    let r = this.gridUsersApi.getSelectedNodes();
-    if (r.length === 1) {
-      this.showDialog(this.dialog, '', '', AddUserComponent,  Constants.TITLE_EDIT_USER, r[0], null);
-    } else if (r.length > 1) {
+  btnEditDevicOnCLick(e:any) {
+    let selDevices = this.gridDevicesApi.getSelectedNodes();
+    let selUsers = this.gridUsersApi.getSelectedNodes();
+    if (selDevices.length === 1 && selUsers.length === 1) {
+      let formData: any = {};
+      formData.ownerName = selUsers[0].data.name;
+      formData.ownerid = selUsers[0].data.id;
+      formData.deviceId = selDevices[0].data.id;
+      formData.devicetype = selDevices[0].data.type;
+      formData.firmware = selDevices[0].data.firmware;
+      formData.config = selDevices[0].data.configuration;
+      formData.apikey = selDevices[0].data.apikey;
+      formData.public = selDevices[0].data.public;
+      formData.note = selDevices[0].data.note;
+      this.showDialog(this.dialog, '', '', NewDeviceComponent,  Constants.TITLE_EDIT_DEVICE, formData, null);
+    } else if (selDevices.length > 1) {
       this.messageService.showMessage(Constants.MSG_SELECT_ONE_ROW, MessageColor.Yellow);
     } else {
       this.messageService.showMessage(Constants.MSG_SELECT_ROW, MessageColor.Yellow);
@@ -327,6 +344,21 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     let groupOwnerId = selRow.id;
     let afterClose = r => {console.log(r)};
     this.showDialog(this.dialog, '', '', AddDevicesComponent,  Constants.TITLE_ADD_DEVICES, {groupOwnerId: groupOwnerId}, afterClose);
+  }
+  btnAddUserOnClick(e: any) {
+    let afterClose = r => {console.log(r)};
+    //this.dialog.open(AddUserComponent, {data: {title: 'New user'}});
+    this.showDialog(this.dialog, '', '', AddUserComponent,  Constants.TITLE_NEW_USER, null, afterClose);
+  }
+  btnEditUserOnCLick(e:any) {
+    let r = this.gridUsersApi.getSelectedNodes();
+    if (r.length === 1) {
+      this.showDialog(this.dialog, '', '', AddUserComponent,  Constants.TITLE_EDIT_USER, r[0], null);
+    } else if (r.length > 1) {
+      this.messageService.showMessage(Constants.MSG_SELECT_ONE_ROW, MessageColor.Yellow);
+    } else {
+      this.messageService.showMessage(Constants.MSG_SELECT_ROW, MessageColor.Yellow);
+    }
   }
   getDeviceType = (param: any): string => {
     let result = this.deviceTypeList?.filter(v => {
