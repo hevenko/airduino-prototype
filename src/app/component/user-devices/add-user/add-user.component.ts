@@ -2,13 +2,10 @@ import { AfterViewInit, Component, Inject, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { RowNode } from 'ag-grid-community';
+import { Mode } from 'src/app/shared/ComponentMode';
 import { DialogData } from 'src/app/shared/dialog-data';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
 
-export enum Mode {
-  Add,
-  Edit
-}
 @Component({
   selector: 'app-add-user',
   templateUrl: './add-user.component.html',

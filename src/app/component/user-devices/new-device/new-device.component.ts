@@ -3,13 +3,10 @@ import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn,
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { RowNode } from 'ag-grid-community';
 import { from } from 'rxjs';
+import { Mode } from 'src/app/shared/ComponentMode';
 import { DialogData } from 'src/app/shared/dialog-data';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
 
-export enum Mode {
-  Add,
-  Edit
-}
 @Component({
   selector: 'app-new-device',
   templateUrl: './new-device.component.html',
