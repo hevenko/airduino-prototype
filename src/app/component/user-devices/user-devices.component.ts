@@ -111,6 +111,8 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
   disableAddDevices = true;
   disabled;
   deviceTypeList = [];
+  firmwaresList = [];
+  configurationsList = [];
 
   constructor(private dataStorageService: DataStorageService, private dialog: MatDialog, private messageService: MessageService) {
     super();
@@ -118,15 +120,18 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
   }
 
   async ngOnInit() {
-    this.deviceTypeList = await this.dataStorageService.fetchDeviceTypes(); //needs parent method to be async
+    // waiting for codebooks to load, otherwise colums are empty
+    this.deviceTypeList = await this.dataStorageService.fetchDeviceTypes(); //await needs parent method to be async
+    this.firmwaresList = await this.dataStorageService.fetchFirmwares();
+    this.configurationsList = await this.dataStorageService.fetchConfigurations();
 
     this.gridDeviceColumnDefs = [
       { field: 'id', headerName: "id", minWidth: 110},
       { field: 'type', headerName: "type", minWidth: 110, valueGetter: this.getDeviceType },
       { field: 'owner', headerName: "owner", minWidth: 110 },
-      { field: 'firmware', headerName: "firmware", minWidth: 110 },
+      { field: 'firmware', headerName: "firmware", minWidth: 110, valueGetter: this.getFirmware },
       { field: 'ffirmware', headerName: "ffirmware", minWidth: 110 },
-      { field: 'configuration', headerName: "configuration", minWidth: 110 },
+      { field: 'configuration', headerName: "configuration", minWidth: 110, valueGetter: this.getConfiguration },
       { field: 'fconfiguration', headerName: "fconfiguration", minWidth: 110 },
       { field: 'apikey', headerName: "apikey", minWidth: 110 },
       { field: 'note', headerName: "note", minWidth: 110 },
@@ -326,6 +331,18 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
   getDeviceType = (param: any): string => {
     let result = this.deviceTypeList?.filter(v => {
       return v.id === param.data.type;
+    });
+    return result ? result[0]?.name : '?';
+  }
+  getFirmware = (param: any): string => {
+    let result = this.firmwaresList?.filter(v => {
+      return v.id === param.data.firmware;
+    });
+    return result ? result[0]?.name : '?';
+  }
+  getConfiguration = (param: any): string => {
+    let result = this.configurationsList?.filter(v => {
+      return v.id === param.data.configuration;
     });
     return result ? result[0]?.name : '?';
   }

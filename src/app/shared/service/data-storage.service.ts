@@ -36,6 +36,9 @@ export class DataStorageService {
   newDeviceBus: BehaviorSubject<any> = new BehaviorSubject([]);
   
   deviceTypesObervable: Promise<any[]>;
+  firmwaresObervable: Promise<any[]>;
+  configurationsObervable: Promise<any[]>;
+  
   constructor(private http: HttpClient, private messageService: MessageService) {
     console.log('DataStorageService' + (++DataStorageService.i));
   }
@@ -260,12 +263,17 @@ export class DataStorageService {
       }
     });
   }
-  newDevice(owner: string, key: string, note: string){
-    let newUser: any = {};
-    newUser.owner = owner;
-    newUser.key = key;
-    newUser.note = note;
-    this.http.post<Data>(this.getURL('devices/full'), newUser)
+  newDevice(owner: string, key: string, note: string, type: string, firmware: number, config: string){
+    let newDevice: any = {};
+    newDevice.owner = owner;
+    newDevice.apikey = key;
+    newDevice.note = note;
+    newDevice.type = type + "";
+    newDevice.firmware = firmware;
+    newDevice.configuration = config;
+    newDevice.public = true;
+
+    this.http.post<Data>(this.getURL('devices/full'), newDevice)
     .pipe(
       catchError(this.handleError),
       map(res => {
@@ -297,6 +305,26 @@ export class DataStorageService {
       ).toPromise();
     }
     return this.deviceTypesObervable;
+  }
+  fetchFirmwares(): Promise<any[]> {
+    if(!this.firmwaresObervable) {
+      this.firmwaresObervable = this.http.get<Data>(this.getURL('firmwares/'))
+      .pipe(
+        catchError(this.handleError),
+        map(res => res.data)
+      ).toPromise();
+    }
+    return this.firmwaresObervable;
+  }
+  fetchConfigurations(): Promise<any[]> {
+    if(!this.configurationsObervable) {
+      this.configurationsObervable = this.http.get<Data>(this.getURL('config/'))
+      .pipe(
+        catchError(this.handleError),
+        map(res => res.data)
+      ).toPromise();
+    }
+    return this.configurationsObervable;
   }
 
 }
