@@ -60,9 +60,9 @@ export class NewDeviceComponent implements OnInit {
     this.configList = this.dataStorageService.fetchConfigurations();
 
     this.form = new FormGroup({
-      type: new FormControl('', [Validators.required]),
-      firmware: new FormControl('', [Validators.required]),
-      config: new FormControl('', [Validators.required]),
+      type: new FormControl({value: '', disabled: this.isMode(this.modeEdit)}, [Validators.required]),
+      firmware: new FormControl({value: '', disabled: this.isMode(this.modeEdit)}, [Validators.required]),
+      config: new FormControl({value: '', disabled: this.isMode(this.modeEdit)}, [Validators.required]),
       key: new FormControl('1111', [Validators.required]),
       public: new FormControl(false, [Validators.required]),
       note:  new FormControl('rajkove device'),

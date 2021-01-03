@@ -6,7 +6,7 @@
   </mat-form-field>
   <mat-form-field style="display: block;">
     <mat-label>Type</mat-label>    
-    <mat-select formControlName="type" [disabled]="isMode(modeEdit)">
+    <mat-select formControlName="type" >
         <mat-option *ngFor="let t of deviceTypeList | async" [value]="t.id">
           {{t.name}}
         </mat-option>
@@ -14,7 +14,7 @@
   </mat-form-field>
   <mat-form-field style="display: block;">
     <mat-label>Firmware</mat-label>    
-    <mat-select formControlName="firmware" [disabled]="isMode(modeEdit)">
+    <mat-select formControlName="firmware" >
         <mat-option *ngFor="let t of firmwareList | async" [value]="t.id">
           {{t.name}}
         </mat-option>
@@ -22,7 +22,7 @@
   </mat-form-field>
   <mat-form-field style="display: block;">
     <mat-label>Configuration</mat-label>    
-    <mat-select formControlName="config" [disabled]="isMode(modeEdit)">
+    <mat-select formControlName="config" >
         <mat-option *ngFor="let t of configList | async" [value]="t.id">
           {{t.name}}
         </mat-option>

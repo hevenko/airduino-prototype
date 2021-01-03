@@ -34,6 +34,7 @@ export class DataStorageService {
   deleteUsersBus: BehaviorSubject<any> = new BehaviorSubject([]);
   editUserBus: BehaviorSubject<any> = new BehaviorSubject([]);
   newDeviceBus: BehaviorSubject<any> = new BehaviorSubject([]);
+  editDeviceBus: BehaviorSubject<any> = new BehaviorSubject([]);
   
   deviceTypesObervable: Promise<any[]>;
   firmwaresObervable: Promise<any[]>;
@@ -328,7 +329,7 @@ export class DataStorageService {
       })
     ).subscribe(d => {
       if(!!d) {
-        this.newDeviceBus.next(d);
+        this.editDeviceBus.next(d);
       }
     });
   }

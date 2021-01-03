@@ -184,7 +184,7 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
       this.gridDevicesApi?.ensureNodeVisible(newNode, 'middle');
     });
     //edit device
-    this.dataStorageService.newDeviceBus.subscribe((u: any[]) => {
+    this.dataStorageService.editDeviceBus.subscribe((u: any[]) => {
       if(!u || u.length == 0) return;
       this.gridDevicesApi?.applyTransaction({update : u});
     });
