@@ -293,8 +293,7 @@ export class DataStorageService {
       this.deviceTypesObervable = this.http.get<Data>(this.getURL('devicetypes/'))
       .pipe(
         catchError(this.handleError),
-        map(res => res.data),
-        shareReplay(1)
+        map(res => res.data)
       ).toPromise();
     }
     return this.deviceTypesObervable;
