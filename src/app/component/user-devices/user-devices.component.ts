@@ -27,7 +27,7 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
   //grid users
   gridUsersApi;
   userHeaders = {
-    mark: "mark",
+    rowChecked: "mark",
     id: "id",
     name: "name",
     email: "email",
@@ -37,7 +37,7 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
   };
   gridUsersColumnDef = [
     { field: 'rowChecked', maxWidth: 100,
-      cellRenderer: 'checkRowRenderer'
+      cellRenderer: 'checkRowRenderer', headerName: 'Mark'
     },
     { field: 'id', minWidth: 80},
     { field: 'name', minWidth: 100 },
