@@ -31,7 +31,6 @@ export class DataStorageService {
   userDevicesBus: BehaviorSubject<any> = new BehaviorSubject([]);
   deviceSensorsBus: BehaviorSubject<any> = new BehaviorSubject([]);
   newUserBus: BehaviorSubject<any> = new BehaviorSubject([]);
-  deleteUsersBus: BehaviorSubject<any> = new BehaviorSubject([]);
   editUserBus: BehaviorSubject<any> = new BehaviorSubject([]);
   newDeviceBus: BehaviorSubject<any> = new BehaviorSubject([]);
   editDeviceBus: BehaviorSubject<any> = new BehaviorSubject([]);
@@ -226,7 +225,7 @@ export class DataStorageService {
       })
     ).subscribe((d: any[]) => {
       if(!!d) {
-        this.deleteUsersBus.next(d);
+        this.editUserBus.next(d);
       }
     });
   }

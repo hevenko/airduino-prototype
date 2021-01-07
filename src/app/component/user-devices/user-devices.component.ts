@@ -28,7 +28,7 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
   //grid users
   gridUsersApi;
   userHeaders = {
-    rowChecked: "mark",
+    rowChecked: "Check",
     id: "id",
     name: "name",
     email: "email",
@@ -36,23 +36,13 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     enabled: "enabled",
     groupowner: "groupowner"
   };
-  gridUsersColumnDef = [
-    { field: 'rowChecked', maxWidth: 100,
-      cellRenderer: 'checkRowRenderer', headerName: 'Mark'
-    },
-    { field: 'id', minWidth: 80},
-    { field: 'name', minWidth: 100 },
-    { field: 'email', minWidth: 120 },
-    { field: 'created', minWidth: 210 },
-    { field: 'enabled', minWidth: 50 },
-    { field: 'groupowner', minWidth: 50}
-  ];
-  gridUsersDefaultColDef = { resizable: true, filter: true, sortable: true };
+  gridUsersColumnDef;
+  gridUsersDefaultColDef = { resizable: true, flex: 1, filter: true, sortable: true };
   dsUsers = []; // grid expects all data at once
   //grid devices
   gridDevicesApi;
   deviceHeaders = {
-    rowChecked: "mark",
+    rowChecked: "Check",
     id: "id",
     type: "type",
     owner: "owner",
@@ -128,7 +118,7 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     this.configurationsList = await this.dataStorageService.fetchConfigurations();
 
     this.gridDeviceColumnDefs = [
-      { field: 'rowChecked', cellRenderer: 'checkRowRenderer', headerName: "mark", maxWidth: 100},
+      { field: 'rowChecked', cellRenderer: 'checkRowRenderer', headerName: "Check", maxWidth: 100},
       { field: 'id', headerName: "id", minWidth: 110},
       { field: 'type', headerName: "type", minWidth: 110, valueGetter: this.getDeviceType },
       { field: 'owner', headerName: "owner", minWidth: 110 },
@@ -140,6 +130,18 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
       { field: 'note', headerName: "note", minWidth: 110 },
       { field: 'enabled', headerName: "enabled", minWidth: 110}
     ];
+    this.gridUsersColumnDef = [
+      { field: 'rowChecked', maxWidth: 100,
+        cellRenderer: 'checkRowRenderer', headerName: 'Check'
+      },
+      { field: 'id', minWidth: 80},
+      { field: 'name', minWidth: 100 },
+      { field: 'email', minWidth: 120 },
+      { field: 'created', minWidth: 210 },
+      { field: 'enabled', minWidth: 50 },
+      { field: 'groupowner', minWidth: 50}
+    ];
+  
     // this.dataStorageService.fetchDeviceTypes()?.then(v => {
     //   this.deviceTypeList = v;
     // });
@@ -168,15 +170,10 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
       newNode?.setSelected(true);
       this.gridUsersApi?.ensureNodeVisible(newNode, 'middle');
     });
-    //delete user
-    this.dataStorageService.deleteUsersBus.subscribe((ids: any[]) => {
+    //edit user
+    this.dataStorageService.editUserBus.subscribe((ids: any[]) => {
       if(!ids || ids.length == 0) return;
       let addObject = this.gridUsersApi?.applyTransaction({update: ids});
-    });
-    //edit user
-    this.dataStorageService.editUserBus.subscribe((u: any[]) => {
-      if(!u || u.length == 0) return;
-      this.gridUsersApi?.applyTransaction({update : u});
     });
     //new device
     this.dataStorageService.newDeviceBus.subscribe(u => {
