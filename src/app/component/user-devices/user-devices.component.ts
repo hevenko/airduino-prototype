@@ -208,6 +208,36 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
       this.dsUsers = data;
     });
   }
+  setUsersEnabled(enableUser: boolean) {
+    let isCheckedRows = false;
+    this.gridUsersApi.forEachNodeAfterFilterAndSort((node: RowNode, index: any) => {
+      if(node.data.rowChecked) {
+        isCheckedRows = true;
+        exit;
+      }
+    });
+    if(isCheckedRows) {
+      let d = this.showConfirmationDialog(this.dialog, Constants.MSG_ARE_U_SHURE);
+      d.afterClosed().subscribe(d => {
+        if (d) {
+          let list = [];
+          this.gridUsersApi.forEachNodeAfterFilterAndSort((node: RowNode, index: any) => {
+            if(node.data.rowChecked) {
+              list.push(node);
+            }
+            console.log(node);
+          });
+          this.dataStorageService.setUsersEnabled(list, enableUser); // setting enabled/disabled to each row
+        }
+        if(!enableUser) {
+          this.gridUsersApi.deselectAll();
+          this.dataStorageService.userDevicesBus.next([]);
+        }
+      });
+    } else {
+      this.messageService.showMessage(Constants.MSG_CHECK_SOME_ROWS, MessageColor.Yellow);
+    }
+  }
   onGridUsersSortChanged(e: any /*AgGridEvent*/) {
     e.api.refreshCells();
   }
@@ -309,32 +339,6 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     let selectedRows = this.gridSensorsApi.getSelectedRows();
     selectedRows.forEach(element => {
     });
-  }
-  setUsersEnabled(enableUser: boolean) {
-    let isCheckedRows = false;
-    this.gridUsersApi.forEachNodeAfterFilterAndSort((node: RowNode, index: any) => {
-      if(node.data.rowChecked) {
-        isCheckedRows = true;
-        exit;
-      }
-    });
-    if(isCheckedRows) {
-      let d = this.showConfirmationDialog(this.dialog, Constants.MSG_ARE_U_SHURE);
-      d.afterClosed().subscribe(d => {
-        if (d) {
-          let list = [];
-          this.gridUsersApi.forEachNodeAfterFilterAndSort((node: RowNode, index: any) => {
-            if(node.data.rowChecked) {
-              list.push(node);
-            }
-            console.log(node);
-          });
-          this.dataStorageService.setUsersEnabled(list, enableUser); // setting enabled/disabled to each row
-        }
-      });  
-    } else {
-      this.messageService.showMessage(Constants.MSG_CHECK_SOME_ROWS, MessageColor.Yellow);
-    }
   }
   btnAddDeviceOnClick(e: any) {
     let r = this.gridUsersApi.getSelectedNodes();
