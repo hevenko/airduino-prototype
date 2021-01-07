@@ -24,6 +24,7 @@ import { AddDevicesComponent } from './add-devices/add-devices.component';
 })
 export class UserDevicesComponent extends AirduinoComponent implements OnInit, OnDestroy {
   showBlockedUsers = false;
+  showBlockedDevices = false;
   //grid users
   gridUsersApi;
   userHeaders = {
@@ -51,6 +52,7 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
   //grid devices
   gridDevicesApi;
   deviceHeaders = {
+    rowChecked: "mark",
     id: "id",
     type: "type",
     owner: "owner",
@@ -126,6 +128,7 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     this.configurationsList = await this.dataStorageService.fetchConfigurations();
 
     this.gridDeviceColumnDefs = [
+      { field: 'rowChecked', cellRenderer: 'checkRowRenderer', headerName: "mark", maxWidth: 100},
       { field: 'id', headerName: "id", minWidth: 110},
       { field: 'type', headerName: "type", minWidth: 110, valueGetter: this.getDeviceType },
       { field: 'owner', headerName: "owner", minWidth: 110 },
@@ -171,9 +174,9 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
       let addObject = this.gridUsersApi?.applyTransaction({update: ids});
     });
     //edit user
-    this.dataStorageService.editUserBus.subscribe((u: any) => {
+    this.dataStorageService.editUserBus.subscribe((u: any[]) => {
       if(!u || u.length == 0) return;
-      this.gridUsersApi?.applyTransaction({update : [u.data]});
+      this.gridUsersApi?.applyTransaction({update : u});
     });
     //new device
     this.dataStorageService.newDeviceBus.subscribe(u => {
@@ -257,7 +260,46 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
   }
   gridDevicesGetRowNodeId = (d: any) => {
     return d.id;
-  } 
+  }
+  devicesGridFrameworkComponents = {
+    checkRowRenderer: CheckRowRendererComponent
+  }
+  showBlockedDevicesOnChange(e: any) {
+    this.gridDevicesApi.onFilterChanged();
+  }
+  devicesGridHasFilter = (): boolean => {
+    return !this.showBlockedDevices;
+  }
+  devicesGridFilterDisabledDevice(rowNode: RowNode): boolean {
+    return rowNode.data.enabled
+  }
+  setDevicesEnabled(enableUser: boolean) {
+    let isCheckedRows = false;
+    this.gridDevicesApi.forEachNodeAfterFilterAndSort((node: RowNode, index: any) => {
+      if(node.data.rowChecked) {
+        isCheckedRows = true;
+        exit;
+      }
+    });
+    if(isCheckedRows) {
+      let d = this.showConfirmationDialog(this.dialog, Constants.MSG_ARE_U_SHURE);
+      d.afterClosed().subscribe(d => {
+        if (d) {
+          let list = [];
+          this.gridDevicesApi.forEachNodeAfterFilterAndSort((node: RowNode, index: any) => {
+            if(node.data.rowChecked) {
+              list.push(node);
+            }
+            console.log(node);
+          });
+          this.dataStorageService.setDevicesEnabled(list, enableUser); // setting enabled/disabled to each row
+        }
+      });  
+    } else {
+      this.messageService.showMessage(Constants.MSG_CHECK_SOME_ROWS, MessageColor.Yellow);
+    }
+  }
+
   //grid sensors
   onGridSensorsReady(params) {
     this.gridSensorsApi = params.api;

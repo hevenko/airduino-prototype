@@ -241,7 +241,7 @@ export class DataStorageService {
       newData.password = password;
     }
     params.values = newData;
-    this.http.request('put', this.getURL('owners/fast'), {body: params})
+    this.http.request('put', this.getURL('owners/full'), {body: params})
     .pipe(
       catchError(this.handleError),
       map((res: any) => {
@@ -256,11 +256,11 @@ export class DataStorageService {
         } else {
           this.messageService.showMessage("Updated.", MessageColor.Green);
         }
-        return res.success;
+        return res.data;
       })
     ).subscribe(d => {
       if(!!d) {
-        this.editUserBus.next(user);
+        this.editUserBus.next(d);
       }
     });
   }
@@ -328,6 +328,38 @@ export class DataStorageService {
         return res.data;
       })
     ).subscribe(d => {
+      if(!!d) {
+        this.editDeviceBus.next(d);
+      }
+    });
+  }
+  setDevicesEnabled(userList: RowNode[], enableUser: boolean){
+    let params: any = {};
+    params.ids = []
+    userList.forEach((v: RowNode) => {
+      v.data.enabled = enableUser;
+      params.ids.push({id: v.data.id});
+    });
+    params.values = {enabled: enableUser};
+    this.http.request('put', this.getURL('devices/full'), {body: params})
+    .pipe(
+      catchError(this.handleError),
+      map((res: any) => {
+        let rows = [];
+        if (!!res.error) {
+          this.messageService.showErrorMessage(res.error);
+        } else if (!res.success) {
+          this.messageService.showErrorMessage('Data request failed with no message');
+        } else {
+          res.data.forEach((v:any )=> {
+            v.rowChecked = true; //restoring row's checkbox state
+            rows.push(v);
+          });
+            this.messageService.showMessage("Done.", MessageColor.Green);
+        }
+        return rows;
+      })
+    ).subscribe((d: any[]) => {
       if(!!d) {
         this.editDeviceBus.next(d);
       }
