@@ -65,7 +65,7 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     enabled: "enabled",
   };
   gridDeviceColumnDefs;
-  gridDeviceDefaultColDef = { resizable: true, flex: 1 };
+  gridDeviceDefaultColDef = { resizable: true, flex: 1, filter: true, sortable: true };
   dsDevices = []; // grid expects all data at once
   //grid sensors
   gridSensorsApi;
