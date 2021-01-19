@@ -57,45 +57,7 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
   gridDeviceColumnDefs;
   gridDeviceDefaultColDef = { resizable: true, flex: 1, filter: true, sortable: true };
   dsDevices = []; // grid expects all data at once
-  //grid sensors
-  gridSensorsApi;
-  sensorHeaders = {
-    pm10: "PM 10",
-    pm2_5: "PM 2.5",
-    so2: "SO2",
-    co: "CO",
-    o3: "O3",
-    pb: "PB",
-    hc: "HC",
-    voc: "VOC",
-    temp: "Temp",
-    humidity: "Humidity",
-    pressure: "Pressure",
-    gps: "GPS",
-    battery: "Battery",
-    measured: "Measured",
-    aqi: "AQI",
-  };
-  gridSensorsColumnDefs = [
-    { field: 'pm10', headerName: "PM 10", minWidth: 110 },
-    { field: 'pm2_5', headerName: "PM 2.5", minWidth: 100 },
-    { field: 'so2', headerName: "SO2", minWidth: 60 },
-    { field: 'co', headerName: "CO", minWidth: 80 },
-    { field: 'o3', headerName: "O3", minWidth: 80 },
-    { field: 'pb', headerName: "PB", minWidth: 80 },
-    { field: 'hc', headerName: "HC", minWidth: 80 },
-    { field: 'voc', headerName: "VOC", minWidth: 80 },
-    { field: 'temp', headerName: "Temp", minWidth: 100 },
-    { field: 'humidity', headerName: "Humidity", minWidth: 120 },
-    { field: 'pressure', headerName: "Pressure", minWidth: 120 },
-    { field: 'gps', headerName: "GPS", minWidth: 200 },
-    { field: 'battery', headerName: "Battery", minWidth: 120 },
-    { field: 'measured', headerName: "Measured", minWidth: 210, sort:'asc' },
-    { field: 'aqi', headerName: "AQI", minWidth: 80 }
-  ];
-
-  gridSensorsDefaultColDef = { resizable: true, flex: 1 };
-  dsSensors = []; // grid expects all data at once
+  dsSensors:any = {};
 
 
   subcriptions: Subscription[] = [];
@@ -152,16 +114,15 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     // load device headers
     this.gridDeviceColumnDefs.forEach((column: any) => column.headerName = this.deviceHeaders[column.field]);
 
-    // load sensor headers
-    this.gridSensorsColumnDefs.forEach((column: any) => column.headerName = this.sensorHeaders[column.field]);
     //grid devices
     this.dataStorageService.userDevicesBus.subscribe(d => {
       this.dsDevices = d;
     });
     //grid sensors
     this.dataStorageService.deviceSensorsBus.subscribe(d => {
-      this.dsSensors = d;
+      this.dsSensors = d ? d[0] : {};
     });
+
     //new user
     this.dataStorageService.newUserBus.subscribe(u => {
       if(!u || u.length == 0) return;
@@ -327,19 +288,6 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     }
   }
 
-  //grid sensors
-  onGridSensorsReady(params) {
-    this.gridSensorsApi = params.api;
-    params.api.sizeColumnsToFit();
-  }
-  onGridSensorsSortChanged(e: any /*AgGridEvent*/) {
-    e.api.refreshCells();
-  }
-  onGridSensorsSelectionChanged(e: any) {
-    let selectedRows = this.gridSensorsApi.getSelectedRows();
-    selectedRows.forEach(element => {
-    });
-  }
   btnAddDeviceOnClick(e: any) {
     let r = this.gridUsersApi.getSelectedNodes();
     if (r.length === 1) {
