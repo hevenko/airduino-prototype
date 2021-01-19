@@ -9,6 +9,7 @@
     display: flex;
     justify-content: baseline;
     padding: 0.5rem;
+    align-items: center;
   }
   button {
     margin-left: 3px;
@@ -47,5 +48,8 @@
   div div label {
     display: inline;
     color: black;
+  }
+  .check-box-fix {
+     margin-top: 5px; /* to contrast the bottom-marrgin of cbox inner class */
   }
   
