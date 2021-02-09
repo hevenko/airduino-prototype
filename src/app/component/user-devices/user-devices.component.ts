@@ -16,6 +16,8 @@ import { exit } from 'process';
 import { MessageColor, MessageService } from 'src/app/shared/service/message.service';
 import { Constants } from 'src/app/shared/constants';
 import { AddDevicesComponent } from './add-devices/add-devices.component';
+import { AuthService } from '../auth/auth.service';
+import { User } from '../auth/user.model';
 
 @Component({
   selector: 'app-user-devices',
@@ -25,6 +27,7 @@ import { AddDevicesComponent } from './add-devices/add-devices.component';
 export class UserDevicesComponent extends AirduinoComponent implements OnInit, OnDestroy {
   showBlockedUsers = false;
   showBlockedDevices = false;
+  showUsersGrid = false;
   //grid users
   gridUsersApi;
   userHeaders = {
@@ -34,7 +37,8 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     email: "email",
     created: "created",
     enabled: "enabled",
-    groupowner: "groupowner"
+    groupowner: "groupowner",
+    admin: "admin"
   };
   gridUsersColumnDef;
   gridUsersDefaultColDef = { resizable: true, flex: 1, filter: true, sortable: true };
@@ -68,7 +72,9 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
   firmwaresList = [];
   configurationsList = [];
 
-  constructor(private dataStorageService: DataStorageService, private dialog: MatDialog, private messageService: MessageService) {
+  constructor(private dataStorageService: DataStorageService, private dialog: MatDialog, private messageService: MessageService,
+    private auth: AuthService) 
+  {
     super();
     
   }
@@ -101,9 +107,23 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
       { field: 'email', minWidth: 120 },
       { field: 'created', minWidth: 210 },
       { field: 'enabled', minWidth: 50 },
-      { field: 'groupowner', minWidth: 50}
+      { field: 'groupowner', minWidth: 50},
+      { field: 'admin', minWidth: 50}
     ];
-  
+    //geting devices for non admin user
+    this.auth.loginBus.subscribe((user: User) => {
+      this.showUsersGrid = user?.admin;
+      if(!this.showUsersGrid) {
+        this.dataStorageService.fetchOwners().subscribe((data: Owner[]) => {
+          this.dsUsers = data;
+          this.dsUsers.forEach((v:any) => {
+            if(v.email === user?.email) {
+              this.dataStorageService.fetchDevices(v.id);
+            }
+          })
+        });  
+      }  
+    })
     // this.dataStorageService.fetchDeviceTypes()?.then(v => {
     //   this.deviceTypeList = v;
     // });

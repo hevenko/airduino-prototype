@@ -17,11 +17,14 @@ export interface AuthResponseData {
   expiresIn?: string;
   localId?: string;
   registered?: boolean;
+  user: any;
+  sucess: boolean;  
 }
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  userDataBus = new BehaviorSubject<User>(null);
+  loginBus = new BehaviorSubject<User>(null);
+  loginErrBus = new BehaviorSubject<string>(null);
   private tokenExpirationTimer: any;
   server = Constants.SERVER_URL;
   user: User;
@@ -41,24 +44,28 @@ export class AuthService {
           this.handleAuthentication(
             resData.email,
             resData.localId,
-            resData.idToken
+            resData.idToken,
+            false
           );
         })
       );
   }
   login(email: string, password: string) {
-    return this.http.post<AuthResponseData>(
+    this.http.post<AuthResponseData>(
       this.server + 'auth/local', { email, password })
       .pipe(
         catchError(this.handleError),
-        tap(resData => {
-          this.handleAuthentication(
-            email,
-            Constants.DUMMY_LOCAL_ID,
-            Constants.DUMMY_TOKEN_ID
-          );
-        })
-      );
+      ).subscribe(resData => {
+        this.handleAuthentication(
+          email,
+          Constants.DUMMY_LOCAL_ID,
+          Constants.DUMMY_TOKEN_ID,
+          resData.user?.admin
+        );
+      }, error => {
+        this.loginErrBus.next(error);
+      });
+      ;
   }
   FireBaseSignup(email: string, password: string) {
     return this.http.post<AuthResponseData>(
@@ -81,7 +88,7 @@ export class AuthService {
   }
   signup(name: string, email: string, password: string) {
     return this.http.post(this.server + 'owners/id', { name, email, password }).pipe(
-        catchError(this.handleError)/* ,
+        catchError(this.handleError)/* ,handleAuthentication
         tap(resData => {
           this.handleAuthentication(
             resData.email,
@@ -109,11 +116,12 @@ export class AuthService {
   private handleAuthentication(
     email: string,
     userId: string,
-    token: string
+    token: string,
+    admin: boolean
   ) {
     console.log("login user with email:", email);
     const expirationDate = new Date(new Date().getTime() + Constants.INACTIVE_PERIOD_LOGOUT * 1000);
-    this.user = new User(email, userId, token, expirationDate);
+    this.user = new User(email, userId, token, expirationDate, admin);
     this.setAutoLogoutTime();
     localStorage.setItem('userData', JSON.stringify(this.user));
   }
@@ -123,6 +131,7 @@ export class AuthService {
       id: string;
       _token: string;
       _tokenExpirationDate: string;
+      admin: boolean;
     } = JSON.parse(localStorage.getItem('userData'));
     if (!userData) {
       return;
@@ -132,7 +141,8 @@ export class AuthService {
       userData.email,
       userData.id,
       userData._token,
-      new Date(userData._tokenExpirationDate)
+      new Date(userData._tokenExpirationDate),
+      userData.admin
     );
 
     if (this.user.token) { // checks token validity
@@ -150,12 +160,12 @@ export class AuthService {
       this.logout();
     }, expirationDuration);
     this.user.tokenExpirationDate = new Date(new Date().getTime() + Constants.INACTIVE_PERIOD_LOGOUT * 1000);
-    this.userDataBus.next(this.user);
+    this.loginBus.next(this.user);
   }
   firebaseLogout() {
     clearTimeout(this.tokenExpirationTimer);
     localStorage.removeItem('userData');
-    this.userDataBus.next(null);
+    this.loginBus.next(null);
     this.messageService.showMessage(Constants.MSG_LOGGED_OUT, MessageColor.Green);
     this.router.navigate(['/map']);
   }
@@ -189,6 +199,8 @@ export class AuthService {
       } else {
         errorMessage = errorRes.error;
       }
+    } else if(errorRes.statusText) {
+      errorMessage = errorRes.statusText;
     }
     return throwError(errorMessage);
   }

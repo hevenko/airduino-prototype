@@ -15,7 +15,7 @@ export class LoginComponent implements OnInit {
   constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit(): void {
-    this.authService.userDataBus.subscribe((value: User) => {
+    this.authService.loginBus.subscribe((value: User) => {
       this.isAuthenticated = !!value;
       this.welcomeLabel = this.isAuthenticated ? value.email : '';
     });

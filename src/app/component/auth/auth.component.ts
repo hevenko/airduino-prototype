@@ -5,6 +5,7 @@ import {Observable} from 'rxjs';
 import {Router} from '@angular/router';
 import {MessageService, MessageColor} from 'src/app/shared/service/message.service';
 import { Constants } from '../../shared/constants';
+import { User } from './user.model';
 
 @Component({
   selector: 'app-auth',
@@ -12,8 +13,8 @@ import { Constants } from '../../shared/constants';
   styleUrls: ['./auth.component.css']
 })
 export class AuthComponent implements OnInit {
-  email = 'dd@dd.com';
-  password = 'dddddd';
+  email = 'abc@abc.com';
+  password = 'abc';
   isLoginMode = true;
   isLoading = false;
   constants = Constants;
@@ -21,29 +22,32 @@ export class AuthComponent implements OnInit {
   constructor(private auth: AuthService, public router: Router, private messageService: MessageService) { }
 
   ngOnInit() {
+    let sub = this.auth.loginBus.subscribe((u: User) => {
+      if(!u) return;
+      console.log(u);
+      this.isLoading = false;
+      sub.unsubscribe(); //prevents infinite loop (next line will try to navigate so ngOnInit is called infinitely)
+      this.router.navigate(['/map']);
+    });
+    this.auth.loginErrBus.subscribe((errorMessage: string) => {
+      console.log(errorMessage);
+      this.messageService.showMessage(errorMessage, MessageColor.Yellow);
+      this.isLoading = false;
+    });
   }
   onSubmit(form: NgForm) {
-    let authObs: Observable<AuthResponseData>;
 
     this.isLoading = true;
 
     if (this.isLoginMode) {
-      authObs = this.auth.login(form.value.email, form.value.password);
+      try {
+        this.auth.login(form.value.email, form.value.password);        
+      } catch (error) {
+        this.messageService.showMessage(error, MessageColor.Yellow);        
+      }
     } else {
-      authObs = this.auth.signup(form.value.name, form.value.email, form.value.password);
+      this.auth.signup(form.value.name, form.value.email, form.value.password);
     }
-    authObs.subscribe(
-      resData => {
-        console.log(resData);
-        this.isLoading = false;
-        this.router.navigate(['/map']);
-      },
-        errorMessage => {
-          console.log(errorMessage);
-          this.messageService.showMessage(errorMessage, MessageColor.Yellow);
-          this.isLoading = false;
-        }
-      );
   }
   onSwitchMode() {
     this.isLoginMode = !this.isLoginMode;

@@ -34,8 +34,8 @@ export class UserComponent implements OnInit {
 
   ngOnInit(): void {
     this.userForm = new FormGroup({
-      userName: new FormControl(this.authService.userDataBus.value.email, [Validators.required]),
-      email: new FormControl(this.authService.userDataBus.value.email, [Validators.required]),
+      userName: new FormControl(this.authService.loginBus.value.email, [Validators.required]),
+      email: new FormControl(this.authService.loginBus.value.email, [Validators.required]),
       newPassword: new FormControl(''),
       repeatNewPassword: new FormControl('')
     }, { validators: passwordsMismatch });

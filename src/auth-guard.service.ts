@@ -28,18 +28,18 @@ export class AuthGuardService implements CanActivate, CanActivateChild {
     console.log(route);
     console.log(state);
     console.log(this.router);
-    if (this.authService.userDataBus.value) {        
+    if (this.authService.loginBus.value) {        
       this.authService.setAutoLogoutTime();
     }
     if ((<any>route.component).name === 'AuthComponent') {
-      if (this.authService.userDataBus.value) {
+      if (this.authService.loginBus.value) {
         this.messageService.showMessage(Constants.MSG_ALREADY_LOGGED_IN, MessageColor.Green);
         return this.router.navigate(['map']);
       } else {
         return true;
       }
     } else {
-      if (this.authService.userDataBus.value) {        
+      if (this.authService.loginBus.value) {        
         return true;
       } else {
         if (this.restrictVist.includes((<any>route.component).name)) {          
