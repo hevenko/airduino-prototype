@@ -8,7 +8,7 @@ import {DialogData} from 'src/app/shared/dialog-data';
   styleUrls: ['./confirm.component.css']
 })
 export class ConfirmComponent implements OnInit {
-  title = 'Are you shure?';
+  title = 'Are you sure?';
   constructor(@Inject(MAT_DIALOG_DATA) private data: DialogData) { }
 
   ngOnInit(): void {
