@@ -18,6 +18,8 @@ import { Constants } from 'src/app/shared/constants';
 import { AddDevicesComponent } from './add-devices/add-devices.component';
 import { AuthService } from '../auth/auth.service';
 import { User } from '../auth/user.model';
+import { DatePipe, formatDate } from '@angular/common';
+import { CheckboxRequiredValidator } from '@angular/forms';
 
 @Component({
   selector: 'app-user-devices',
@@ -31,7 +33,7 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
   //grid users
   gridUsersApi;
   userHeaders = {
-    rowChecked: "Check",
+    rowChecked: "",
     id: "id",
     name: "name",
     email: "email",
@@ -46,7 +48,7 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
   //grid devices
   gridDevicesApi;
   deviceHeaders = {
-    rowChecked: "Check",
+    rowChecked: "",
     id: "id",
     type: "type",
     owner: "owner",
@@ -96,7 +98,7 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
       { field: 'fconfiguration', headerName: "fconfiguration", minWidth: 110 },
       { field: 'apikey', headerName: "apikey", minWidth: 110 },
       { field: 'note', headerName: "note", minWidth: 110 },
-      { field: 'enabled', headerName: "enabled", minWidth: 110}
+      { field: 'enabled', headerName: "enabled", minWidth: 110, cellRenderer: this.booleanCellRenderer}
     ];
     this.gridUsersColumnDef = [
       { field: 'rowChecked', maxWidth: 100,
@@ -105,10 +107,10 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
       { field: 'id', minWidth: 80},
       { field: 'name', minWidth: 100 },
       { field: 'email', minWidth: 120 },
-      { field: 'created', minWidth: 210 },
-      { field: 'enabled', minWidth: 50 },
-      { field: 'groupowner', minWidth: 50},
-      { field: 'admin', minWidth: 50}
+      { field: 'created', minWidth: 210, valueFormatter: this.formatCreatedColumn },
+      { field: 'enabled', minWidth: 50, cellRenderer: this.booleanCellRenderer },
+      { field: 'groupowner', minWidth: 50, cellRenderer: this.booleanCellRenderer},
+      { field: 'admin', minWidth: 50, cellRenderer: this.booleanCellRenderer}
     ];
     //geting devices for non admin user
     this.auth.loginBus.subscribe((user: User) => {
@@ -388,5 +390,20 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
       return v.id === param.data.configuration;
     });
     return result ? result[0]?.name : '?';
+  }
+  formatCreatedColumn(param: any) {
+    return new DatePipe('en_US').transform(param.value,"dd.MM.yyyy");
+  }
+  booleanCellRenderer(params: any): any {
+    let div = document.createElement('div');
+    div.style.cssText ="display:flex;align-items:center;height:100%";
+    let cbox = document.createElement('input');
+    cbox.type = 'checkbox';
+    cbox.checked = params.value;
+    cbox.onclick = () => {return false;};
+    cbox.style.padding = "0px";
+    cbox.style.margin = "0px";
+    div.appendChild(cbox);
+    return div;
   }
 }
