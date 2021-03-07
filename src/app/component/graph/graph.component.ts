@@ -1,5 +1,10 @@
+import { DataSource } from '@angular/cdk/collections';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Chart } from 'node_modules/chart.js'
+import { RawData } from 'src/app/model/raw-data';
+import { DataStorageService } from 'src/app/shared/service/data-storage.service';
+import { DataSet } from './data-set';
+import { DataSetPoint } from './data-set-point';
 @Component({
   selector: 'app-graph',
   templateUrl: './graph.component.html',
@@ -10,7 +15,7 @@ export class GraphComponent implements OnInit {
   drillStart = 'Hrvatska';
   drillPath: string[] = [];
 
-  constructor() { }
+  constructor(private dataStorageService: DataStorageService) { }
 
   data = {
     Hrvatska: {
@@ -95,19 +100,58 @@ export class GraphComponent implements OnInit {
 
   ngOnInit(): void {
     this.myChart = new Chart("chartCanvas", {
-      type: 'bar',
+      type: 'line',
       data: {},
       options: {
         scales: {
-          yAxes: [{
-            ticks: {
-              beginAtZero: true
-            }
+          xAxes: [{
+              type: 'time',
+              time: {
+                  unit: 'hour'
+              }
           }]
-        }
+      }      
+    }
+    });
+    this.dataStorageService.loadingStatusBus.subscribe((isLoadingData : boolean) => {
+      if(!isLoadingData) {
+        //this.goToLevel(this.drillStart);
+        this.dataStorageService.availableDataBus.subscribe((d :RawData[]) => {
+          if(!d || !d.length) return;
+          console.log(d);
+          let data: DataSet[] = [];
+          let seriesLabels = Object.keys(d[0]);
+
+          let getDataSetForSensor = (sensorName: string): DataSet  => { //returns new/existing data set for sensor name
+            let result;
+            let existingDs = data.filter(ds => {
+              return ds.label === sensorName;
+
+            });
+            if(!existingDs || !existingDs.length) {
+              result = new DataSet(sensorName);
+              data.push(result);
+            } else {
+              result = existingDs[0];
+            }
+            return result;
+          }
+          d.forEach((row: RawData) => {
+            seriesLabels.forEach(sensorName => {
+              //if('measured' !== sensorName && 'gps' !== sensorName) {
+              if('temp' === sensorName) {
+                  getDataSetForSensor(sensorName).data.push(new DataSetPoint(new Date(Date.parse(row['measured'])), row[sensorName]));
+              }
+            });
+          });
+          console.log(data);
+          let chartData = {datasets: data};
+          this.myChart.data = chartData;
+          this.myChart.update();
+
+        })
       }
     });
-    this.goToLevel(this.drillStart);
   }
   canvasOnClick(evt: any) {
     var firstPoint = this.myChart.getElementAtEvent(evt)[0];
