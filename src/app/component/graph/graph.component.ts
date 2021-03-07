@@ -14,7 +14,7 @@ export class GraphComponent implements OnInit {
   myChart: Chart;
   drillStart = 'Hrvatska';
   drillPath: string[] = [];
-
+  isLoadingData = true;
   constructor(private dataStorageService: DataStorageService) { }
 
   data = {
@@ -113,14 +113,15 @@ export class GraphComponent implements OnInit {
       }      
     }
     });
-    this.dataStorageService.loadingStatusBus.subscribe((isLoadingData : boolean) => {
+    //this.goToLevel(this.drillStart);
+    this.dataStorageService.loadingStatusBus.subscribe((isLoadingData : boolean) => { //this subscription ensures only all data is sent to graph
+      this.isLoadingData = isLoadingData;
       if(!isLoadingData) {
-        //this.goToLevel(this.drillStart);
         this.dataStorageService.availableDataBus.subscribe((d :RawData[]) => {
-          if(!d || !d.length) return;
+          if(!d || !d.length || this.isLoadingData) return;
           console.log(d);
           let data: DataSet[] = [];
-          let seriesLabels = Object.keys(d[0]);
+          let seriesLabels = Object.keys(d[0]); //using first row to extract sensor names (used to name data series)
 
           let getDataSetForSensor = (sensorName: string): DataSet  => { //returns new/existing data set for sensor name
             let result;
