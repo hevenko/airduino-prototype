@@ -227,12 +227,14 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     e.api.refreshCells();
   }
   onGridUsersSelectionChanged(e: any) {
-    //disable
+    let selectedId = null;
+    this.disableAddDevices = true;
     let selRow = e.api.getSelectedRows()[0];
-    this.disableAddDevices = !selRow.groupowner;
-    
+    if(selRow) {
+      this.disableAddDevices = !selRow.groupowner;
+      selectedId = selRow.id;      
+    }
     //grid data
-    let selectedId = selRow.id;
     let s = this.dataStorageService.fetchDevices(selectedId);
   }
   onGridUsersCellDoubleClicked(e: any) {
@@ -245,6 +247,9 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     checkRowRenderer: CheckRowRendererComponent
   }
   showBlockedUsersOnChange(e: any) {
+    if(!this.showBlockedUsers) {
+      this.gridUsersApi.deselectAllFiltered();
+    }
     this.gridUsersApi.onFilterChanged();
   }
   userGridHasFilter = (): boolean => {

@@ -91,13 +91,17 @@ export class DataStorageService {
   }
 
   fetchDevices(ownerId: string) {
-    this.http.get<Data>(this.getURL('devices/' + ownerId))
-      .pipe(
-        catchError(this.handleError),
-        map(res => res.data)
-    ).subscribe(d => {
-      this.userDevicesBus.next(d);
-    });
+    if(ownerId) {
+      this.http.get<Data>(this.getURL('devices/' + ownerId))
+        .pipe(
+          catchError(this.handleError),
+          map(res => res.data)
+        ).subscribe(d => {
+          this.userDevicesBus.next(d);
+      });
+    } else {
+      this.userDevicesBus.next([]);
+    }
   }
 
   fetchSensors(filter: FilterModel){
