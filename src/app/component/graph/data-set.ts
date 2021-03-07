@@ -1,11 +1,17 @@
 import { DataSetPoint } from "./data-set-point";
 
 export class DataSet {
+    static colorCounter = 0;
     label: string;
     fill: boolean = false;
     data: DataSetPoint[] = [];
-
-    constructor(label: string) {
+    backgroundColor: string;
+    borderColor: string;
+    borderWidth = 0;
+    pointRadius = 1;
+    constructor(label: string, backgroundColor: string)  {
         this.label = label;
+        this.backgroundColor = backgroundColor;
+        this.borderColor = backgroundColor;
     }
 }

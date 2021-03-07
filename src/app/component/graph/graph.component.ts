@@ -11,13 +11,13 @@ import { DataSetPoint } from './data-set-point';
   styleUrls: ['./graph.component.css']
 })
 export class GraphComponent implements OnInit {
-  myChart: Chart;
+  chart: Chart;
   drillStart = 'Hrvatska';
   drillPath: string[] = [];
   isLoadingData = true;
   constructor(private dataStorageService: DataStorageService) { }
 
-  data = {
+  dummyData = {
     Hrvatska: {
       labels: ['Zagreb', 'Varaždin'],
       datasets: [{
@@ -97,18 +97,40 @@ export class GraphComponent implements OnInit {
       }]
     }
   }
-
+  getColor(colorIndex: number): string { 
+    let result = '';
+    let colors = ['rgb(0, 0, 102)', //used every trid color from color palete. started at top right corner (https://www.w3schools.com/colors/colors_picker.asp)
+                'rgb(0, 0, 153)',
+                'rgb(51, 102, 255)',
+                'rgb(102, 102, 153)',
+                'rgb(153, 102, 255)',
+                'rgb(153, 204, 255)',
+                'rgb(0, 153, 255)',
+                'rgb(51, 102, 204)',
+                'rgb(51, 204, 204)',
+                'rgb(102, 255, 255)',
+                'rgb(0, 255, 153)']
+    if(colorIndex < colors.length) {
+      result = colors[colorIndex];
+    } else {
+      result = 'rgba('+Math.round((Math.random()*255))+','+(Math.random()*255)+','+(Math.random()*255)+','+'0.3)';
+    }
+    return result;
+  }
   ngOnInit(): void {
-    this.myChart = new Chart("chartCanvas", {
+    let colorIndex = 0;
+    this.chart = new Chart("chartCanvas", {
       type: 'line',
       data: {},
       options: {
         scales: {
           xAxes: [{
               type: 'time',
-              time: {
-                  unit: 'hour'
-              }
+              distribution: 'series'
+          }],
+          yAxes: [{
+            display: true,
+            type: 'logarithmic',
           }]
       }      
     }
@@ -130,7 +152,7 @@ export class GraphComponent implements OnInit {
 
             });
             if(!existingDs || !existingDs.length) {
-              result = new DataSet(sensorName);
+              result = new DataSet(sensorName,this.getColor(colorIndex++));
               data.push(result);
             } else {
               result = existingDs[0];
@@ -139,37 +161,38 @@ export class GraphComponent implements OnInit {
           }
           d.forEach((row: RawData) => {
             seriesLabels.forEach(sensorName => {
-              //if('measured' !== sensorName && 'gps' !== sensorName) {
-              if('temp' === sensorName) {
+              if('measured' !== sensorName && 'gps' !== sensorName) {
+              //if('temp' === sensorName) {
                   getDataSetForSensor(sensorName).data.push(new DataSetPoint(new Date(Date.parse(row['measured'])), row[sensorName]));
               }
             });
           });
+          
           console.log(data);
           let chartData = {datasets: data};
-          this.myChart.data = chartData;
-          this.myChart.update();
+          this.chart.data = chartData;
+          this.chart.update();
 
         })
       }
     });
   }
   canvasOnClick(evt: any) {
-    var firstPoint = this.myChart.getElementAtEvent(evt)[0];
+    var firstPoint = this.chart.getElementAtEvent(evt)[0];
 
     if (firstPoint) {
-      var label = this.myChart.data.labels[firstPoint._index];
-      var value = this.myChart.data.datasets[firstPoint._datasetIndex].data[firstPoint._index];
+      var label = this.chart.data.labels[firstPoint._index];
+      var value = this.chart.data.datasets[firstPoint._datasetIndex].data[firstPoint._index];
       console.log(label);
       console.log(value);
       this.goToLevel(label);
     }
   }
   goToLevel(segmentId: string) {
-    let childData = this.data[segmentId];
+    let childData = this.dummyData[segmentId];
     if (!!childData) {
-      this.myChart.data = childData
-      this.myChart.update();
+      this.chart.data = childData
+      this.chart.update();
       let segmentIndex = this.drillPath.indexOf(segmentId);
       if (segmentIndex === -1) {
         this.drillPath.push(segmentId);

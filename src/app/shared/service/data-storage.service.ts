@@ -161,6 +161,7 @@ export class DataStorageService {
     filter.sensors = filterModel.sensors
     filter.time = filterModel.time;
     filter.locations = filterModel.locations;
+    filter.order = ["measured"];
     //console.log(JSON.stringify(filter));
     this.sendPageOfData([]);
     this.sendAvailableData([]);     
