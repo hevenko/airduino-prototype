@@ -53,7 +53,6 @@ import { UserDevicesComponent } from './component/user-devices/user-devices.comp
 import { CheckRowRendererComponent } from './component/check-row-renderer/check-row-renderer.component';
 import { AddUserComponent } from './component/user-devices/add-user/add-user.component';
 import { AddDevicesComponent } from './component/user-devices/add-devices/add-devices.component';
-import { BooleanRendererForAgGridComponent } from './component/user-devices/boolean-renderer-for-ag-grid/boolean-renderer-for-ag-grid.component';
 
 @NgModule({
   declarations: [
@@ -81,8 +80,7 @@ import { BooleanRendererForAgGridComponent } from './component/user-devices/bool
     UserDevicesComponent,
     CheckRowRendererComponent,
     AddUserComponent,
-    AddDevicesComponent,
-    BooleanRendererForAgGridComponent
+    AddDevicesComponent
   ],
   imports: [
     FormsModule,
