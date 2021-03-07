@@ -247,10 +247,15 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     checkRowRenderer: CheckRowRendererComponent
   }
   showBlockedUsersOnChange(e: any) {
-    if(!this.showBlockedUsers) {
-      this.gridUsersApi.deselectAllFiltered();
-    }
     this.gridUsersApi.onFilterChanged();
+    if(!this.showBlockedUsers) {
+      let sel: [] = this.gridUsersApi.getSelectedNodes();
+      sel.forEach((element: RowNode) => {
+        if(!element.data.enabled) {
+          element.setSelected(false);
+        }
+      });
+    }
   }
   userGridHasFilter = (): boolean => {
     return !this.showBlockedUsers;
