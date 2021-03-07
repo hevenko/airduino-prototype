@@ -59,6 +59,7 @@
   (sortChanged)="onGridDevicesSortChanged($event)"
   (selectionChanged)="onGridDevicesSelectionChanged($event)"
   [getRowNodeId]="gridDevicesGetRowNodeId"
+  (cellDoubleClicked)="devicesGridCellDoubleClicked($event)"
   [frameworkComponents]="devicesGridFrameworkComponents"
   [isExternalFilterPresent]="devicesGridHasFilter"
   [doesExternalFilterPass]="devicesGridFilterDisabledDevice"

@@ -19,7 +19,7 @@ import { Constants } from './app/shared/constants';
 
 @Injectable()
 export class AuthGuardService implements CanActivate, CanActivateChild {
-  restrictVist: string[] = ['UserListComponent', 'UserComponent']; // allowed only when logged in
+  restrictVist: string[] = ['UserListComponent', 'UserComponent', 'UserDevicesComponent']; // allowed only when logged in
 
   constructor(private authService: AuthService, private router: Router, private messageService: MessageService) { }
 

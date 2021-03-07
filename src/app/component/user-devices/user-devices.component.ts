@@ -114,17 +114,19 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     ];
     //geting devices for non admin user
     this.auth.loginBus.subscribe((user: User) => {
-      this.showUsersGrid = user?.admin;
-      if(!this.showUsersGrid) {
-        this.dataStorageService.fetchOwners().subscribe((data: Owner[]) => {
-          this.dsUsers = data;
-          this.dsUsers.forEach((v:any) => {
-            if(v.email === user?.email) {
-              this.dataStorageService.fetchDevices(v.id);
-            }
-          })
-        });  
-      }  
+      if(user) {
+        this.showUsersGrid = user.admin;
+        if(!this.showUsersGrid) {
+          this.dataStorageService.fetchOwners().subscribe((data: Owner[]) => {
+            this.dsUsers = data;
+            this.dsUsers.forEach((v:any) => {
+              if(v.email === user?.email) {
+                this.dataStorageService.fetchDevices(v.id);
+              }
+            })
+          });  
+        }  
+      }
     })
     // this.dataStorageService.fetchDeviceTypes()?.then(v => {
     //   this.deviceTypeList = v;
@@ -236,6 +238,9 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
   onGridUsersCellDoubleClicked(e: any) {
     this.btnEditUserOnCLick(e);
   }
+  devicesGridCellDoubleClicked(e: any) {
+    this.btnEditDevicOnCLick(e);
+  }
   userGridFrameworkComponents = {
     checkRowRenderer: CheckRowRendererComponent
   }
@@ -246,6 +251,9 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     return !this.showBlockedUsers;
   }
   userGridFilterDisabledUser(rowNode: RowNode): boolean {
+    if(!this.showBlockedUsers && !rowNode.data.enabled) { //clearing checked mark for hidden rows
+      rowNode.data.rowChecked = false;
+    }
     return rowNode.data.enabled
   }
   gridUsersGetRowNodeId = (d: any) => {
@@ -392,7 +400,7 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     return result ? result[0]?.name : '?';
   }
   formatCreatedColumn(param: any) {
-    return new DatePipe('en_US').transform(param.value,"dd.MM.yyyy");
+    return new DatePipe('en_US').transform(param.value,"dd.MM.yyyy, hh:mm:ss");
   }
   booleanCellRenderer(params: any): any {
     let div = document.createElement('div');

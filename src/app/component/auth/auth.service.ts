@@ -160,12 +160,12 @@ export class AuthService {
       this.logout();
     }, expirationDuration);
     this.user.tokenExpirationDate = new Date(new Date().getTime() + Constants.INACTIVE_PERIOD_LOGOUT * 1000);
-    this.loginBus.next(this.user);
+    this.loginBus.next(this.user); //login event
   }
   firebaseLogout() {
     clearTimeout(this.tokenExpirationTimer);
     localStorage.removeItem('userData');
-    this.loginBus.next(null);
+    this.loginBus.next(null); //logout event
     this.messageService.showMessage(Constants.MSG_LOGGED_OUT, MessageColor.Green);
     this.router.navigate(['/map']);
   }

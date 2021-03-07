@@ -13,6 +13,8 @@ import { Constants } from '../../shared/constants';
 import { GeoJSONFeature } from 'src/app/model/geo-json-feature';
 import { GeoJSONGeometry } from 'src/app/model/geo-json-geometry';
 import { RowNode } from 'ag-grid-community';
+import { AuthService } from 'src/app/component/auth/auth.service';
+import { User } from 'src/app/component/auth/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class DataStorageService {
@@ -39,8 +41,14 @@ export class DataStorageService {
   firmwaresObervable: Promise<any[]>;
   configurationsObervable: Promise<any[]>;
   
-  constructor(private http: HttpClient, private messageService: MessageService) {
+  constructor(private http: HttpClient, private messageService: MessageService, auth: AuthService) {
     console.log('DataStorageService' + (++DataStorageService.i));
+    //logout
+    auth.loginBus.subscribe((user: User) => {
+      if(!user) { //logout user is null after logout
+        this.userDevicesBus.next([]);
+      }
+    });
   }
 
   getURL = (resource: string): string => this.noAccessControlAllowOriginProxy + this.serverURL + resource;
@@ -394,5 +402,4 @@ export class DataStorageService {
     }
     return this.configurationsObervable;
   }
-
 }

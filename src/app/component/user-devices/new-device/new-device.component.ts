@@ -76,9 +76,9 @@ export class NewDeviceComponent implements OnInit {
       this.form.controls['note'].setValue(this.note);
     }
     if(this.isMode(Mode.Add)) {
-      from(this.deviceTypeList).subscribe((v: any[]) => {
-        this.form.controls['type'].setValue(v[0].id);
-      });
+      // from(this.deviceTypeList).subscribe((v: any[]) => {
+      //   this.form.controls['type'].setValue(v[0].id);
+      // });
       from(this.firmwareList).subscribe((v: any[]) => {
         this.form.controls['firmware'].setValue(v[0].id);
       });
