@@ -54,6 +54,7 @@ import { CheckRowRendererComponent } from './component/check-row-renderer/check-
 import { AddUserComponent } from './component/user-devices/add-user/add-user.component';
 import { AddDevicesComponent } from './component/user-devices/add-devices/add-devices.component';
 import { NgApexchartsModule } from "ng-apexcharts";
+import { BlockUIModule } from 'ng-block-ui';
 
 @NgModule({
   declarations: [
@@ -111,7 +112,8 @@ import { NgApexchartsModule } from "ng-apexcharts";
     MatDialogModule,
     MatProgressSpinnerModule,
     AgGridModule.withComponents([]),
-    NgApexchartsModule
+    NgApexchartsModule,
+    BlockUIModule.forRoot()
   ],
   providers: [RemoteLoDService, AuthGuardService, FilterModel],
   bootstrap: [AppComponent]
