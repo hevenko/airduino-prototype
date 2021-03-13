@@ -57,6 +57,9 @@ export class GraphComponent implements OnInit, AfterViewInit {
 
   initCharts(data: DataSet[]) {
     if(!data || data.length == 0) {
+      this.chartConfig.forEach(ch => {
+        ch.series = [];
+      })
       return;
     }
     let configTemplate = {
