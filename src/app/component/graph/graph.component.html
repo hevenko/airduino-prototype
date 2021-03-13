@@ -1,7 +1,7 @@
 <block-ui>
   <div #graphComponent [style.height]="fullHeight" style="overflow: scroll;display: flex;flex-flow: row wrap;width: 100%;">
     <ng-container *ngFor="let d of chartConfig; let i = index">
-      <div *ngIf="(this.whichChart === this.chartTypes[1]) && chartOptions?.length > 0">
+      <div *ngIf="(this.whichChart === this.chartTypes[1]) && chartConfig?.length > 0">
         <apx-chart
           [series]="d?.series"
           [chart]="d?.chart"
