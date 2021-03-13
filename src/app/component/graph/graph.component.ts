@@ -1,21 +1,106 @@
 import { DataSource } from '@angular/cdk/collections';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { Chart } from 'node_modules/chart.js'
 import { RawData } from 'src/app/model/raw-data';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
 import { DataSet } from './data-set';
 import { DataSetPoint } from './data-set-point';
+import {
+  ChartComponent,
+  ApexAxisChartSeries,
+  ApexChart,
+  ApexXAxis,
+  ApexDataLabels,
+  ApexTitleSubtitle,
+  ApexStroke,
+  ApexGrid
+} from "ng-apexcharts";
+import { DatePipe } from '@angular/common';
+
+export type ChartOptions = {
+  series: ApexAxisChartSeries;
+  chart: ApexChart;
+  xaxis: ApexXAxis;
+  dataLabels: ApexDataLabels;
+  grid: ApexGrid;
+  stroke: ApexStroke;
+  title: ApexTitleSubtitle;
+};
 @Component({
   selector: 'app-graph',
   templateUrl: './graph.component.html',
   styleUrls: ['./graph.component.css']
 })
-export class GraphComponent implements OnInit {
+export class GraphComponent implements OnInit, AfterViewInit {
   chart: Chart;
   drillStart = 'Hrvatska';
-  drillPath: string[] = [];
+  drillPath: string[] = []; 
   isLoadingData = true;
-  constructor(private dataStorageService: DataStorageService) { }
+  public chartOptions: Partial<ChartOptions>[] = [];
+  @ViewChild('graphComponent') graphComponent: any;
+  chartTypes = ['chart.js', 'apexchart'];
+  whichChart = this.chartTypes[1];
+  fullHeight = document.body.offsetHeight - 45;
+  initCharts(data: DataSet[]) {
+    if(!data || data.length == 0) return;
+    
+    let optionTemplate = {
+      series: [],
+      chart: {
+        height : document.body.offsetHeight/7,
+        width : document.body.offsetWidth/2 - 40,
+        type: "line",
+        group: 'aqi',
+        zoom: {
+          type: "x",
+          enabled: false,
+          autoScaleYaxis: true
+        }
+      },
+      dataLabels: {
+        enabled: false
+      },
+      stroke: {
+        curve: "straight"
+      },
+      title: {
+        text: "Product Trends by Month",
+        align: "center"
+      },
+      grid: {
+        row: {
+          colors: ["#f3f3f3", "transparent"], // takes an array which will be repeated on columns
+          opacity: 0.5
+        }
+      },
+      yaxis: {
+        labels: {
+          minWidth: 40
+        }
+      },
+      xaxis: {
+        labels: {show : false}
+      }
+    };
+    data.forEach((element: any, i:number) => {
+      //if(i > 0) return;
+      this.chartOptions[i] = JSON.parse(JSON.stringify(optionTemplate));
+      this.chartOptions[i].chart.id = element.name;
+      this.chartOptions[i].series = [element];
+      this.chartOptions[i].title.text = element.name;
+      if(i == 0) {
+        this.chartOptions[i].chart.zoom. enabled = true;
+      }
+    });
+  }
+
+  constructor(private dataStorageService: DataStorageService) { 
+  }
+  ngAfterViewInit(): void {
+
+  }
+
+  
 
   dummyData = {
     Hrvatska: {
@@ -117,24 +202,61 @@ export class GraphComponent implements OnInit {
     }
     return result;
   }
+  initApexChart(data: DataSet[]) {
+    let s =   [{
+      name: "series A",
+      data: [{
+          x: "2018-09-10",
+          y: 120
+        }, {
+          x: "2018-09-11",
+          y: 480
+        }, {
+          x: "2018-09-12",
+          y: 330
+        }]
+      }, {
+        name: "series B",
+        data: [{
+          x: "2018-09-10",
+          y: 112
+        }, {
+          x: "2018-09-11",
+          y: 321
+        }, {
+          x: "2018-09-12",
+          y: 443
+        }]
+      }  
+    ]
+    let s1 = {
+      name: "Desktops",
+      data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
+    };
+    this.chartOptions[0].series = data;
+    this.chartOptions[1].series = data;
+    this.chartOptions[2].series = data;
+  }
   ngOnInit(): void {
     let colorIndex = 0;
-    this.chart = new Chart("chartCanvas", {
-      type: 'line',
-      data: {},
-      options: {
-        scales: {
-          xAxes: [{
-              type: 'time',
-              distribution: 'series'
-          }],
-          yAxes: [{
-            display: true,
-            type: 'logarithmic',
-          }]
-      }      
+    if(this.whichChart === this.chartTypes[0]) {
+      this.chart = new Chart("chartCanvas", {
+        type: 'line',
+        data: {},
+        options: {
+          scales: {
+            xAxes: [{
+                type: 'time',
+                distribution: 'series'
+            }],
+            yAxes: [{
+              display: true,
+              type: 'logarithmic',
+            }]
+        }      
+      }
+      });  
     }
-    });
     //this.goToLevel(this.drillStart);
     this.dataStorageService.loadingStatusBus.subscribe((isLoadingData : boolean) => { //this subscription ensures only all data is sent to graph
       this.isLoadingData = isLoadingData;
@@ -163,16 +285,22 @@ export class GraphComponent implements OnInit {
             seriesLabels.forEach(sensorName => {
               if('measured' !== sensorName && 'gps' !== sensorName) {
               //if('temp' === sensorName) {
-                  getDataSetForSensor(sensorName).data.push(new DataSetPoint(new Date(Date.parse(row['measured'])), row[sensorName]));
+                let readTime = this.whichChart === this.chartTypes[1] ? new DatePipe('en_US').transform(row['measured'],"dd.MM.yyyy, hh:mm:ss") : new Date(Date.parse(row['measured']));
+                getDataSetForSensor(sensorName).data.push(new DataSetPoint(readTime, row[sensorName]));
               }
             });
           });
           
           console.log(data);
-          let chartData = {datasets: data};
-          this.chart.data = chartData;
-          this.chart.update();
-
+          if(this.whichChart === this.chartTypes[0]) {
+            let chartData = {datasets: data};
+            this.chart.data = chartData;
+            this.chart.update();
+  
+          } else if(this.whichChart === this.chartTypes[1]) {
+            this.initCharts(data);
+            //this.initApexChart(data);
+          }
         })
       }
     });

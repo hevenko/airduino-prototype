@@ -53,6 +53,7 @@ import { UserDevicesComponent } from './component/user-devices/user-devices.comp
 import { CheckRowRendererComponent } from './component/check-row-renderer/check-row-renderer.component';
 import { AddUserComponent } from './component/user-devices/add-user/add-user.component';
 import { AddDevicesComponent } from './component/user-devices/add-devices/add-devices.component';
+import { NgApexchartsModule } from "ng-apexcharts";
 
 @NgModule({
   declarations: [
@@ -109,7 +110,8 @@ import { AddDevicesComponent } from './component/user-devices/add-devices/add-de
     HttpClientModule,
     MatDialogModule,
     MatProgressSpinnerModule,
-    AgGridModule.withComponents([])
+    AgGridModule.withComponents([]),
+    NgApexchartsModule
   ],
   providers: [RemoteLoDService, AuthGuardService, FilterModel],
   bootstrap: [AppComponent]
