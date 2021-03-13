@@ -41,10 +41,11 @@ export class GraphComponent implements OnInit, AfterViewInit {
   chartTypes = ['chart.js', 'apexchart'];
   whichChart = this.chartTypes[1];
   fullHeight = document.body.offsetHeight - 45;
+  
   initCharts(data: DataSet[]) {
     if(!data || data.length == 0) return;
     
-    let optionTemplate = {
+    let configTemplate = {
       series: [],
       chart: {
         height : document.body.offsetHeight/7,
@@ -55,7 +56,11 @@ export class GraphComponent implements OnInit, AfterViewInit {
           type: "x",
           enabled: false,
           autoScaleYaxis: true
-        }
+        },
+        // toolbar: {
+        //   autoSelected: "pan",
+        //   show: false
+        // }
       },
       dataLabels: {
         enabled: false
@@ -64,7 +69,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
         curve: "straight"
       },
       title: {
-        text: "Product Trends by Month",
+        text: "",
         align: "center"
       },
       grid: {
@@ -84,16 +89,59 @@ export class GraphComponent implements OnInit, AfterViewInit {
     };
     data.forEach((element: any, i:number) => {
       //if(i > 0) return;
-      this.chartOptions[i] = JSON.parse(JSON.stringify(optionTemplate));
+      this.chartOptions[i] = JSON.parse(JSON.stringify(configTemplate));
       this.chartOptions[i].chart.id = element.name;
       this.chartOptions[i].series = [element];
       this.chartOptions[i].title.text = element.name;
-      if(i == 0) {
-        this.chartOptions[i].chart.zoom. enabled = true;
-      }
+      this.chartOptions[i].chart.zoom. enabled = true;
     });
+    //this.chartOptions = this.addPanChart(0, this.chartOptions);
   }
-
+  addPanChart(panTargetChartInd :number, charts: Partial<ChartOptions>[]): Partial<ChartOptions>[] {
+    let result: Partial<ChartOptions>[] = [];
+    let panTargetChartIdInd = panTargetChartInd;
+    let configTemplate = {
+      series: [],
+      chart: {
+        height : document.body.offsetHeight/7,
+        width : document.body.offsetWidth/2 - 40,
+        type: "line",
+        group: 'aqi',
+        brush: {
+          target: "",
+          enabled: true
+        },
+        selection: {
+          enabled: true
+        }        
+      },
+      dataLabels: {
+        enabled: false
+      },
+      stroke: {
+        curve: "straight"
+      },
+      yaxis: {
+        labels: {
+          minWidth: 40
+        }
+      },
+      xaxis: {
+        labels: {show : false}
+      }
+    };
+    let chartForPaning: Partial<ChartOptions> = JSON.parse(JSON.stringify(configTemplate));
+    chartForPaning.chart.id = 'panChart';
+    chartForPaning.series = JSON.parse(JSON.stringify(charts[panTargetChartIdInd].series));
+    chartForPaning.chart.brush.target = charts[panTargetChartIdInd].chart.id;
+    chartForPaning.chart.brush.enabled = true;
+    result = charts.slice(0, panTargetChartIdInd+1);
+    result.push(chartForPaning);
+    if((panTargetChartIdInd+1) < charts.length ) {
+      result = result.concat(charts.slice(panTargetChartIdInd+1));
+    }
+    return result;
+  }
   constructor(private dataStorageService: DataStorageService) { 
   }
   ngAfterViewInit(): void {
