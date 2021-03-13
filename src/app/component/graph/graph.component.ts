@@ -16,6 +16,7 @@ import {
   ApexGrid
 } from "ng-apexcharts";
 import { DatePipe } from '@angular/common';
+import { BlockUI, NgBlockUI } from 'ng-block-ui';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -41,7 +42,19 @@ export class GraphComponent implements OnInit, AfterViewInit {
   chartTypes = ['chart.js', 'apexchart'];
   whichChart = this.chartTypes[1];
   fullHeight = document.body.offsetHeight - 45;
-  
+  @BlockUI() blockUI: NgBlockUI;
+
+  afterChartRendered = (chartContext: any, config?: any) => {
+    //console.log(chartContext);
+    //console.log(config.globals.chartID);
+    this.chartOptions.forEach(value => {
+      if (value.chart.id === config.config.chart.id) {
+        setTimeout(() => {value.series = [this.chartData[value.chart.id]]},300); //setTimeout to allow navigation to occur
+      }
+    });
+  }
+  chartData: DataSet[] = [];
+
   initCharts(data: DataSet[]) {
     if(!data || data.length == 0) return;
     
@@ -57,10 +70,9 @@ export class GraphComponent implements OnInit, AfterViewInit {
           enabled: false,
           autoScaleYaxis: true
         },
-        // toolbar: {
-        //   autoSelected: "pan",
-        //   show: false
-        // }
+        events: {
+          mounted: null
+        }
       },
       dataLabels: {
         enabled: false
@@ -85,150 +97,33 @@ export class GraphComponent implements OnInit, AfterViewInit {
       },
       xaxis: {
         labels: {show : false}
+      },
+      markers: {
+        size: 20,
+        strokeWidth: 20,
+        shape: 'circle',
+        color: 'rgb(123,123,133)'
       }
     };
     data.forEach((element: any, i:number) => {
       //if(i > 0) return;
       this.chartOptions[i] = JSON.parse(JSON.stringify(configTemplate));
       this.chartOptions[i].chart.id = element.name;
-      this.chartOptions[i].series = [element];
+      //this.chartOptions[i].series = [element];
       this.chartOptions[i].title.text = element.name;
       this.chartOptions[i].chart.zoom. enabled = true;
+      this.chartOptions[i].chart.events.mounted = this.afterChartRendered;
+
+      this.chartData[element.name] = element;
     });
     //this.chartOptions = this.addPanChart(0, this.chartOptions);
   }
-  addPanChart(panTargetChartInd :number, charts: Partial<ChartOptions>[]): Partial<ChartOptions>[] {
-    let result: Partial<ChartOptions>[] = [];
-    let panTargetChartIdInd = panTargetChartInd;
-    let configTemplate = {
-      series: [],
-      chart: {
-        height : document.body.offsetHeight/7,
-        width : document.body.offsetWidth/2 - 40,
-        type: "line",
-        group: 'aqi',
-        brush: {
-          target: "",
-          enabled: true
-        },
-        selection: {
-          enabled: true
-        }        
-      },
-      dataLabels: {
-        enabled: false
-      },
-      stroke: {
-        curve: "straight"
-      },
-      yaxis: {
-        labels: {
-          minWidth: 40
-        }
-      },
-      xaxis: {
-        labels: {show : false}
-      }
-    };
-    let chartForPaning: Partial<ChartOptions> = JSON.parse(JSON.stringify(configTemplate));
-    chartForPaning.chart.id = 'panChart';
-    chartForPaning.series = JSON.parse(JSON.stringify(charts[panTargetChartIdInd].series));
-    chartForPaning.chart.brush.target = charts[panTargetChartIdInd].chart.id;
-    chartForPaning.chart.brush.enabled = true;
-    result = charts.slice(0, panTargetChartIdInd+1);
-    result.push(chartForPaning);
-    if((panTargetChartIdInd+1) < charts.length ) {
-      result = result.concat(charts.slice(panTargetChartIdInd+1));
-    }
-    return result;
-  }
+
   constructor(private dataStorageService: DataStorageService) { 
   }
-  ngAfterViewInit(): void {
 
-  }
+  ngOnInit(): void {
 
-  
-
-  dummyData = {
-    Hrvatska: {
-      labels: ['Zagreb', 'Varaždin'],
-      datasets: [{
-        label: 'AQI',
-        data: [12, 19, 3],
-        backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)'],
-        borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)'],
-        borderWidth: 1
-      }]
-    },
-    Zagreb: {
-      labels: ['Dugave', 'Črnomerac', 'Trnsko'],
-      datasets: [{
-        label: 'AQI',
-        data: [12, 19, 3],
-        backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)'],
-        borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)'],
-        borderWidth: 1
-      }]
-    },
-    Dugave: {
-      labels: ['PM10', 'PM25', 'S02'], datasets: [{
-        label: 'Dugave', data: [3, 19, 12],
-        backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)'],
-        borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)'],
-        borderWidth: 1
-      }]
-    },
-    Črnomerac: {
-      labels: ['PM10', 'PM25', 'S02'], datasets: [{
-        label: 'Črnomerac', data: [9, 6, 3],
-        backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)'],
-        borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)'],
-        borderWidth: 1
-      }]
-    },
-    Trnsko: {
-      labels: ['PM10', 'PM25', 'S02'], datasets: [{
-        label: 'Trnsko', data: [5, 3, 1],
-        backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)'],
-        borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)'],
-        borderWidth: 1
-      }]
-    },
-    Varaždin: {
-      labels: ['Banfica', 'Bronx', 'Đurek'],
-      datasets: [{
-        label: 'AQI',
-        data: [12, 19, 3],
-        backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)'],
-        borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)'],
-        borderWidth: 1
-      }]
-    },
-    Banfica: {
-      labels: ['PM10', 'PM25', 'S02'], datasets: [{
-        label: 'Banfica', data: [12, 19, 3],
-        backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)'],
-        borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)'],
-        borderWidth: 1
-      }]
-    },
-    Bronx: {
-      labels: ['PM10', 'PM25', 'S02'], datasets: [{
-        label: 'Bronx', data: [3, 6, 9],
-        backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)'],
-        borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)'],
-        borderWidth: 1
-      }]
-    },
-    Đurek: {
-      labels: ['PM10', 'PM25', 'S02'], datasets: [{
-        label: 'Đurek', data: [1, 3, 5],
-        backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)'],
-        borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)'],
-        borderWidth: 1
-      }]
-    }
   }
   getColor(colorIndex: number): string { 
     let result = '';
@@ -250,42 +145,8 @@ export class GraphComponent implements OnInit, AfterViewInit {
     }
     return result;
   }
-  initApexChart(data: DataSet[]) {
-    let s =   [{
-      name: "series A",
-      data: [{
-          x: "2018-09-10",
-          y: 120
-        }, {
-          x: "2018-09-11",
-          y: 480
-        }, {
-          x: "2018-09-12",
-          y: 330
-        }]
-      }, {
-        name: "series B",
-        data: [{
-          x: "2018-09-10",
-          y: 112
-        }, {
-          x: "2018-09-11",
-          y: 321
-        }, {
-          x: "2018-09-12",
-          y: 443
-        }]
-      }  
-    ]
-    let s1 = {
-      name: "Desktops",
-      data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
-    };
-    this.chartOptions[0].series = data;
-    this.chartOptions[1].series = data;
-    this.chartOptions[2].series = data;
-  }
-  ngOnInit(): void {
+
+  ngAfterViewInit(): void {
     let colorIndex = 0;
     if(this.whichChart === this.chartTypes[0]) {
       this.chart = new Chart("chartCanvas", {
@@ -310,10 +171,12 @@ export class GraphComponent implements OnInit, AfterViewInit {
       this.isLoadingData = isLoadingData;
       if(!isLoadingData) {
         this.dataStorageService.availableDataBus.subscribe((d :RawData[]) => {
-          if(!d || !d.length || this.isLoadingData) return;
+          if(this.isLoadingData) {
+            return;
+          }
           console.log(d);
           let data: DataSet[] = [];
-          let seriesLabels = Object.keys(d[0]); //using first row to extract sensor names (used to name data series)
+          let seriesLabels = d.length > 0 ? Object.keys(d[0]) : []; //using first row to extract sensor names (used to name data series)
 
           let getDataSetForSensor = (sensorName: string): DataSet  => { //returns new/existing data set for sensor name
             let result;
@@ -347,45 +210,12 @@ export class GraphComponent implements OnInit, AfterViewInit {
   
           } else if(this.whichChart === this.chartTypes[1]) {
             this.initCharts(data);
-            //this.initApexChart(data);
           }
+          this.blockUI.stop();
         })
+      } else {
+        this.blockUI.start('Loading...');
       }
     });
-  }
-  canvasOnClick(evt: any) {
-    var firstPoint = this.chart.getElementAtEvent(evt)[0];
-
-    if (firstPoint) {
-      var label = this.chart.data.labels[firstPoint._index];
-      var value = this.chart.data.datasets[firstPoint._datasetIndex].data[firstPoint._index];
-      console.log(label);
-      console.log(value);
-      this.goToLevel(label);
-    }
-  }
-  goToLevel(segmentId: string) {
-    let childData = this.dummyData[segmentId];
-    if (!!childData) {
-      this.chart.data = childData
-      this.chart.update();
-      let segmentIndex = this.drillPath.indexOf(segmentId);
-      if (segmentIndex === -1) {
-        this.drillPath.push(segmentId);
-      } else {
-        let childIndex = segmentIndex + 1;
-        if (childIndex < this.drillPath.length) {
-          this.drillPath.splice(childIndex);
-        } else {
-          let parentIndex = segmentIndex - 1;
-          if(parentIndex > -1) {
-            this.goToLevel(this.drillPath[parentIndex]);
-          }
-
-        }
-      }
-      return true;
-    }
-    return false;
   }
 }

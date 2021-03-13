@@ -1,24 +1,17 @@
-<div #graphComponent [style.height]="fullHeight" style="overflow: scroll;display: flex;flex-flow: row wrap;width: 100%;">
-  <div id="canvasDiv" *ngIf="this.whichChart === this.chartTypes[0]">
-    <canvas #chartCanvas id="chartCanvas" (click)="canvasOnClick($event)"></canvas>
-  </div>
-  <div style="width: 100%;text-align: center;"  *ngIf="this.whichChart === this.chartTypes[0]">
-    <ng-container *ngFor="let segment of drillPath; let i = index">
-      <span *ngIf="i > 0" style="margin-left: 3px;margin-right: 3px;">-></span>
-      <a (click)="goToLevel(segment)" [style.cursor]="'pointer'">{{segment}}</a>
+<block-ui>
+  <div #graphComponent [style.height]="fullHeight" style="overflow: scroll;display: flex;flex-flow: row wrap;width: 100%;">
+    <ng-container *ngFor="let d of chartOptions; let i = index">
+      <div *ngIf="(this.whichChart === this.chartTypes[1]) && chartOptions?.length > 0">
+        <apx-chart
+          [series]="d?.series"
+          [chart]="d?.chart"
+          [xaxis]="d?.xaxis"
+          [dataLabels]="d?.dataLabels"
+          [grid]="d?.grid"
+          [stroke]="d?.stroke"
+          [title]="d?.title"
+        ></apx-chart>
+      </div>
     </ng-container>
   </div>
-  <ng-container *ngFor="let d of chartOptions; let i = index">
-    <div *ngIf="(this.whichChart === this.chartTypes[1]) && chartOptions?.length > 0">
-      <apx-chart
-        [series]="d?.series"
-        [chart]="d?.chart"
-        [xaxis]="d?.xaxis"
-        [dataLabels]="d?.dataLabels"
-        [grid]="d?.grid"
-        [stroke]="d?.stroke"
-        [title]="d?.title"
-      ></apx-chart>
-    </div>
-  </ng-container>
-</div>
+</block-ui>

@@ -29,6 +29,7 @@
     "date-fns": "^2.16.1",
     "jquery": "^3.5.1",
     "ng-apexcharts": "^1.5.8",
+    "ng-block-ui": "^3.0.2",
     "ol": "6.4.3",
     "rxjs": "~6.5.4",
     "saturn-datepicker": "8.0.5",
