@@ -37,7 +37,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
   drillStart = 'Hrvatska';
   drillPath: string[] = []; 
   isLoadingData = true;
-  public chartOptions: Partial<ChartOptions>[] = [];
+  public chartConfig: Partial<ChartOptions>[] = [];
   @ViewChild('graphComponent') graphComponent: any;
   chartTypes = ['chart.js', 'apexchart'];
   whichChart = this.chartTypes[1];
@@ -47,7 +47,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
   afterChartRendered = (chartContext: any, config?: any) => {
     //console.log(chartContext);
     //console.log(config.globals.chartID);
-    this.chartOptions.forEach(value => {
+    this.chartConfig.forEach(value => {
       if (value.chart.id === config.config.chart.id) {
         setTimeout(() => {value.series = [this.chartData[value.chart.id]]},300); //setTimeout to allow navigation to occur
       }
@@ -56,8 +56,9 @@ export class GraphComponent implements OnInit, AfterViewInit {
   chartData: DataSet[] = [];
 
   initCharts(data: DataSet[]) {
-    if(!data || data.length == 0) return;
-    
+    if(!data || data.length == 0) {
+      return;
+    }
     let configTemplate = {
       series: [],
       chart: {
@@ -107,12 +108,12 @@ export class GraphComponent implements OnInit, AfterViewInit {
     };
     data.forEach((element: any, i:number) => {
       //if(i > 0) return;
-      this.chartOptions[i] = JSON.parse(JSON.stringify(configTemplate));
-      this.chartOptions[i].chart.id = element.name;
+      this.chartConfig[i] = JSON.parse(JSON.stringify(configTemplate));
+      this.chartConfig[i].chart.id = element.name;
       //this.chartOptions[i].series = [element];
-      this.chartOptions[i].title.text = element.name;
-      this.chartOptions[i].chart.zoom. enabled = true;
-      this.chartOptions[i].chart.events.mounted = this.afterChartRendered;
+      this.chartConfig[i].title.text = element.name;
+      this.chartConfig[i].chart.zoom. enabled = true;
+      this.chartConfig[i].chart.events.mounted = this.afterChartRendered;
 
       this.chartData[element.name] = element;
     });
