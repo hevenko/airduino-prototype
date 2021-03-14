@@ -34,6 +34,7 @@ export class TimeComponent implements OnInit, AfterViewInit {
   hourRangeIsOpen: boolean = false;
   stayOpened = Constants.STAY_OPEN;
   subscription;
+  fetchDataSetTimeout;
 
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { }
 
@@ -62,7 +63,7 @@ export class TimeComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  fetchData() {
+  fetchData = () => {
     if (this.subscription) {
       this.subscription.unsubscribe();
       this.subscription = null;
@@ -83,7 +84,8 @@ export class TimeComponent implements OnInit, AfterViewInit {
       this.label = this.defaultLabel;
     }
     this.deleteOtherValues(false, true, true, false);
-    this.fetchData();
+    clearTimeout(this.fetchDataSetTimeout);
+    this.fetchDataSetTimeout = setTimeout(this.fetchData,1500);
   }
   setFixedRange(evt: any) {
     if (evt.target.value !== '') {
