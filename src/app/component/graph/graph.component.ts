@@ -1,12 +1,10 @@
 import { DataSource } from '@angular/cdk/collections';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { Chart } from 'node_modules/chart.js'
 import { RawData } from 'src/app/model/raw-data';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
 import { DataSet } from './data-set';
 import { DataSetPoint } from './data-set-point';
 import {
-  ChartComponent,
   ApexAxisChartSeries,
   ApexChart,
   ApexXAxis,
@@ -17,7 +15,6 @@ import {
   ApexTooltip,
   ApexYAxis
 } from "ng-apexcharts";
-import { DatePipe } from '@angular/common';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 
 export type ChartOptions = {
@@ -43,6 +40,8 @@ export class GraphComponent implements OnInit, AfterViewInit {
   public chartConfig: Partial<ChartOptions>[] = [];
   @ViewChild('graphComponent') graphComponent: any;
   fullHeight = document.body.offsetHeight - 45;
+  chartWidthReduction = 30;
+  chartHeightReduction = 10
   @BlockUI() blockUI: NgBlockUI;
 
   afterChartRendered = (chartContext: any, config?: any) => {
@@ -67,8 +66,8 @@ export class GraphComponent implements OnInit, AfterViewInit {
     let configTemplate: ChartOptions  = {
       series: [],
       chart: {
-        height : document.body.offsetHeight/7,
-        width : document.body.offsetWidth/2 - 40,
+        height : Math.round(document.body.offsetHeight/8) - this.chartHeightReduction,
+        width : Math.round(document.body.offsetWidth/2) - this.chartWidthReduction,
         type: "line",
         group: 'aqi',
         zoom: {
@@ -122,7 +121,15 @@ export class GraphComponent implements OnInit, AfterViewInit {
 
       this.chartData[element.name] = element;
     });
-  }
+    let dummyInd = 12//JSON.parse(JSON.stringify(this.chartConfig.length));
+    this.chartConfig[dummyInd] = JSON.parse(JSON.stringify(configTemplate));
+    this.chartConfig[dummyInd].chart.id = 'aqi';
+    this.chartConfig[dummyInd].chart.width = document.body.offsetWidth - this.chartWidthReduction*2;
+    this.chartConfig[dummyInd].title.text = 'aqi (dummy)';
+    this.chartConfig[dummyInd].chart.events.mounted = this.afterChartRendered;
+
+    this.chartData['aqi'] = data[0];
+}
 
   constructor(private dataStorageService: DataStorageService) { 
   }
