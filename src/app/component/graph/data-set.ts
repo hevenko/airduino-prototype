@@ -6,14 +6,14 @@ export class DataSet {
     name: string;
     fill: boolean = false;
     data: DataSetPoint[] = [];
-    backgroundColor: string;
+    color: string;
     borderColor: string;
     borderWidth = 0;
     pointRadius = 1;
-    constructor(label: string, backgroundColor: string)  {
+    constructor(label: string, color: string)  {
         this.label = label;
         this.name = label;
-        this.backgroundColor = backgroundColor;
-        this.borderColor = backgroundColor;
+        this.color = color;
+        this.borderColor = color;
     }
 }

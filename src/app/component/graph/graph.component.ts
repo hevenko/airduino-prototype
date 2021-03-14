@@ -49,7 +49,11 @@ export class GraphComponent implements OnInit, AfterViewInit {
     //console.log(config.globals.chartID);
     this.chartConfig.forEach(value => {
       if (value.chart.id === config.config.chart.id) {
-        setTimeout(() => {value.series = [this.chartData[value.chart.id]]},300); //setTimeout to allow navigation to occur
+        setTimeout(() => {
+          let chartSeries = this.chartData[value.chart.id];
+          chartSeries.color  = this.getColor(value.chart.id);
+          value.series = [chartSeries]}
+          ,300); //setTimeout to allow navigation to occur
       }
     });
   }
@@ -137,7 +141,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
 
   }
-  getColor(colorIndex: number): string { 
+  getColor(sensorName: string): string { 
     let result = '';
     let colors = ['rgb(0, 0, 102)', //used every trid color from color palete. started at top right corner (https://www.w3schools.com/colors/colors_picker.asp)
                 'rgb(0, 0, 153)',
@@ -149,11 +153,13 @@ export class GraphComponent implements OnInit, AfterViewInit {
                 'rgb(51, 102, 204)',
                 'rgb(51, 204, 204)',
                 'rgb(102, 255, 255)',
-                'rgb(0, 255, 153)']
-    if(colorIndex < colors.length) {
-      result = colors[colorIndex];
+                'rgb(0, 255, 153)',
+                '#43BCCD',
+                '#4CAF50']
+    if(sensorName === 'aqi') {
+      result = colors[colors.length-1];
     } else {
-      result = 'rgba('+Math.round((Math.random()*255))+','+(Math.random()*255)+','+(Math.random()*255)+','+'0.3)';
+      result = colors[colors.length-2];
     }
     return result;
   }
@@ -179,7 +185,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
 
             });
             if(!existingDs || !existingDs.length) {
-              result = new DataSet(sensorName,this.getColor(colorIndex++));
+              result = new DataSet(sensorName,this.getColor(sensorName));
               data.push(result);
             } else {
               result = existingDs[0];
