@@ -72,7 +72,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
         group: 'aqi',
         zoom: {
           type: "x",
-          enabled: false,
+          enabled: true,
           autoScaleYaxis: true
         },
         events: {
@@ -117,7 +117,6 @@ export class GraphComponent implements OnInit, AfterViewInit {
       this.chartConfig[i] = JSON.parse(JSON.stringify(configTemplate));
       this.chartConfig[i].chart.id = element.name;
       this.chartConfig[i].title.text = element.name;
-      this.chartConfig[i].chart.zoom. enabled = true;
       this.chartConfig[i].chart.events.mounted = this.afterChartRendered;
 
       this.chartData[element.name] = element;
@@ -182,8 +181,6 @@ export class GraphComponent implements OnInit, AfterViewInit {
           d.forEach((row: RawData) => {
             seriesLabels.forEach(sensorName => {
               if('measured' !== sensorName && 'gps' !== sensorName) {
-              //if('temp' === sensorName) {
-                //let readTime = this.whichChart === this.chartTypes[1] ? new DatePipe('en_US').transform(row['measured'],"dd.MM.yyyy, hh:mm:ss") : new Date(Date.parse(row['measured']));
                 let readTime = Date.parse(row['measured'])
                 getDataSetForSensor(sensorName).data.push(new DataSetPoint(readTime, row[sensorName]));
               }
