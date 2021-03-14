@@ -61,6 +61,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
       this.chartConfig.forEach(ch => {
         ch.series = [];
       })
+      this.blockUI.stop();
       return;
     }
     let configTemplate: ChartOptions  = {
