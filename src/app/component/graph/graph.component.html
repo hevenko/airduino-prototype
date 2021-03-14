@@ -2,6 +2,7 @@
   <div #graphComponent [style.height]="fullHeight" style="overflow: scroll;display: flex;flex-flow: row wrap;width: 100%;">
     <ng-container *ngFor="let d of chartConfig; let i = index">
       <apx-chart
+        [tooltip]="d?.tooltip" 
         [series]="d?.series"
         [chart]="d?.chart"
         [xaxis]="d?.xaxis"

@@ -13,7 +13,9 @@ import {
   ApexDataLabels,
   ApexTitleSubtitle,
   ApexStroke,
-  ApexGrid
+  ApexGrid,
+  ApexTooltip,
+  ApexYAxis
 } from "ng-apexcharts";
 import { DatePipe } from '@angular/common';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
@@ -22,10 +24,12 @@ export type ChartOptions = {
   series: ApexAxisChartSeries;
   chart: ApexChart;
   xaxis: ApexXAxis;
+  yaxis: ApexYAxis;
   dataLabels: ApexDataLabels;
   grid: ApexGrid;
   stroke: ApexStroke;
   title: ApexTitleSubtitle;
+  tooltip: ApexTooltip;
 };
 @Component({
   selector: 'app-graph',
@@ -33,7 +37,6 @@ export type ChartOptions = {
   styleUrls: ['./graph.component.css']
 })
 export class GraphComponent implements OnInit, AfterViewInit {
-  chart: Chart;
   drillStart = 'Hrvatska';
   drillPath: string[] = []; 
   isLoadingData = true;
@@ -60,7 +63,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
       })
       return;
     }
-    let configTemplate = {
+    let configTemplate: ChartOptions  = {
       series: [],
       chart: {
         height : document.body.offsetHeight/7,
@@ -98,15 +101,16 @@ export class GraphComponent implements OnInit, AfterViewInit {
         }
       },
       xaxis: {
-        labels: {show : false},
+        labels: {show : true},
         type : 'datetime'
       },
-      markers: {
-        size: 20,
-        strokeWidth: 20,
-        shape: 'circle',
-        color: 'rgb(123,123,133)'
+      tooltip: {
+        enabled: true,
+        x : {
+          format: 'dd.MM.yyyy HH:mm:ss'
+        }
       }
+
     };
     data.forEach((element: any, i:number) => {
       //if(i > 0) return;
@@ -149,22 +153,6 @@ export class GraphComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     let colorIndex = 0;
-    this.chart = new Chart("chartCanvas", {
-      type: 'line',
-      data: {},
-      options: {
-        scales: {
-          xAxes: [{
-              type: 'time',
-              distribution: 'series'
-          }],
-          yAxes: [{
-            display: true,
-            type: 'logarithmic',
-          }]
-        }      
-      }
-    });  
   //this.goToLevel(this.drillStart);
     this.dataStorageService.loadingStatusBus.subscribe((isLoadingData : boolean) => { //this subscription ensures only all data is sent to graph
       this.isLoadingData = isLoadingData;
