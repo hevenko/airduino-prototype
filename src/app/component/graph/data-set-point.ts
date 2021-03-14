@@ -1,8 +1,8 @@
 export class DataSetPoint {
-    x: Date | string;
+    x: number;
     y: string;
     
-    constructor(x: Date | string, y: string) {
+    constructor(x: number, y: string) {
         this.x = x;
         this.y = y;
     }

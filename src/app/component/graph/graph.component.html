@@ -1,17 +1,15 @@
 <block-ui>
   <div #graphComponent [style.height]="fullHeight" style="overflow: scroll;display: flex;flex-flow: row wrap;width: 100%;">
     <ng-container *ngFor="let d of chartConfig; let i = index">
-      <div *ngIf="(this.whichChart === this.chartTypes[1]) && chartConfig?.length > 0">
-        <apx-chart
-          [series]="d?.series"
-          [chart]="d?.chart"
-          [xaxis]="d?.xaxis"
-          [dataLabels]="d?.dataLabels"
-          [grid]="d?.grid"
-          [stroke]="d?.stroke"
-          [title]="d?.title"
-        ></apx-chart>
-      </div>
+      <apx-chart
+        [series]="d?.series"
+        [chart]="d?.chart"
+        [xaxis]="d?.xaxis"
+        [dataLabels]="d?.dataLabels"
+        [grid]="d?.grid"
+        [stroke]="d?.stroke"
+        [title]="d?.title"
+      ></apx-chart>
     </ng-container>
   </div>
 </block-ui>

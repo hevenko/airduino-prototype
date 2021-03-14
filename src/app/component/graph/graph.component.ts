@@ -39,8 +39,6 @@ export class GraphComponent implements OnInit, AfterViewInit {
   isLoadingData = true;
   public chartConfig: Partial<ChartOptions>[] = [];
   @ViewChild('graphComponent') graphComponent: any;
-  chartTypes = ['chart.js', 'apexchart'];
-  whichChart = this.chartTypes[1];
   fullHeight = document.body.offsetHeight - 45;
   @BlockUI() blockUI: NgBlockUI;
 
@@ -100,7 +98,8 @@ export class GraphComponent implements OnInit, AfterViewInit {
         }
       },
       xaxis: {
-        labels: {show : false}
+        labels: {show : false},
+        type : 'datetime'
       },
       markers: {
         size: 20,
@@ -113,14 +112,12 @@ export class GraphComponent implements OnInit, AfterViewInit {
       //if(i > 0) return;
       this.chartConfig[i] = JSON.parse(JSON.stringify(configTemplate));
       this.chartConfig[i].chart.id = element.name;
-      //this.chartOptions[i].series = [element];
       this.chartConfig[i].title.text = element.name;
       this.chartConfig[i].chart.zoom. enabled = true;
       this.chartConfig[i].chart.events.mounted = this.afterChartRendered;
 
       this.chartData[element.name] = element;
     });
-    //this.chartOptions = this.addPanChart(0, this.chartOptions);
   }
 
   constructor(private dataStorageService: DataStorageService) { 
@@ -152,25 +149,23 @@ export class GraphComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     let colorIndex = 0;
-    if(this.whichChart === this.chartTypes[0]) {
-      this.chart = new Chart("chartCanvas", {
-        type: 'line',
-        data: {},
-        options: {
-          scales: {
-            xAxes: [{
-                type: 'time',
-                distribution: 'series'
-            }],
-            yAxes: [{
-              display: true,
-              type: 'logarithmic',
-            }]
+    this.chart = new Chart("chartCanvas", {
+      type: 'line',
+      data: {},
+      options: {
+        scales: {
+          xAxes: [{
+              type: 'time',
+              distribution: 'series'
+          }],
+          yAxes: [{
+            display: true,
+            type: 'logarithmic',
+          }]
         }      
       }
-      });  
-    }
-    //this.goToLevel(this.drillStart);
+    });  
+  //this.goToLevel(this.drillStart);
     this.dataStorageService.loadingStatusBus.subscribe((isLoadingData : boolean) => { //this subscription ensures only all data is sent to graph
       this.isLoadingData = isLoadingData;
       if(!isLoadingData) {
@@ -200,21 +195,15 @@ export class GraphComponent implements OnInit, AfterViewInit {
             seriesLabels.forEach(sensorName => {
               if('measured' !== sensorName && 'gps' !== sensorName) {
               //if('temp' === sensorName) {
-                let readTime = this.whichChart === this.chartTypes[1] ? new DatePipe('en_US').transform(row['measured'],"dd.MM.yyyy, hh:mm:ss") : new Date(Date.parse(row['measured']));
+                //let readTime = this.whichChart === this.chartTypes[1] ? new DatePipe('en_US').transform(row['measured'],"dd.MM.yyyy, hh:mm:ss") : new Date(Date.parse(row['measured']));
+                let readTime = Date.parse(row['measured'])
                 getDataSetForSensor(sensorName).data.push(new DataSetPoint(readTime, row[sensorName]));
               }
             });
           });
           
           console.log(data);
-          if(this.whichChart === this.chartTypes[0]) {
-            let chartData = {datasets: data};
-            this.chart.data = chartData;
-            this.chart.update();
-  
-          } else if(this.whichChart === this.chartTypes[1]) {
-            this.initCharts(data);
-          }
+          this.initCharts(data);
           this.blockUI.stop();
         })
       } else {
