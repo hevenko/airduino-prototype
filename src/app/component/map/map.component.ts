@@ -365,6 +365,7 @@ export class MapComponent implements OnInit, OnDestroy {
     // delete this and there are no point features when returning back
     this.dataStorageService.availableDataBus
     .subscribe((data: RawData[]) => {
+      if(!data) return;
       if (this.sourcePoints.getFeatures().length == 0) {
         const features = data.map(p => new Feature({ geometry: new Point(fromLonLat(p.gps)) }));
         this.drawPoints(features);
