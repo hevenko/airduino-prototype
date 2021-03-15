@@ -41,7 +41,6 @@ export class GraphComponent implements OnInit, AfterViewInit {
   @ViewChild('graphComponent') graphComponent: any;
   fullHeight = document.body.offsetHeight - 25;
   chartWidthReduction = 30;
-  chartHeightReduction = 0
   @BlockUI() blockUI: NgBlockUI;
 
   afterChartRendered = (chartContext: any, config?: any) => {
@@ -70,7 +69,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
     let configTemplate: ChartOptions  = {
       series: [],
       chart: {
-        height : Math.round(document.body.offsetHeight/((8/12)*data.length)) - this.chartHeightReduction,
+        height : Math.round(this.fullHeight/Math.round(data.length/2)) - ((data.length > 5) ? 20 : 30),
         width : Math.round(document.body.offsetWidth/2) - this.chartWidthReduction,
         type: "line",
         group: 'aqi',
@@ -181,7 +180,8 @@ export class GraphComponent implements OnInit, AfterViewInit {
           }
           console.log(d);
           let data: DataSet[] = [];
-          let seriesLabels = d.length > 0 ? Object.keys(d[0]) : []; //using first row to extract sensor names (used to name data series)
+          if(!d) d = [];
+          let seriesLabels = d && d.length > 0 ? Object.keys(d[0]) : []; //using first row to extract sensor names (used to name data series)
 
           let getDataSetForSensor = (sensorName: string): DataSet  => { //returns new/existing data set for sensor name
             let result;
