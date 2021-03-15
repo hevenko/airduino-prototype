@@ -25,13 +25,13 @@ export class SensorComponent implements OnInit {
   compForm: FormGroup = new FormGroup({});
   defaultLabel = 'Sensors (?)';
   subscription;
-
+  fetchDataSetTimeout;
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { }
 
   ngOnInit(): void {
     this.initForm();
   }
-  fetchData() {
+  fetchData = () => {
     if (this.subscription) {
       this.subscription.unsubscribe();
       this.subscription = null;
@@ -48,7 +48,8 @@ export class SensorComponent implements OnInit {
     })
     this.compForm.valueChanges.subscribe(() => {
       this.filterModel.sensors = this.getComponentValue();
-      this.fetchData();
+      clearTimeout(this.fetchDataSetTimeout);
+      this.fetchDataSetTimeout = setTimeout(this.fetchData,2000);
     });
     this.compForm.patchValue({"sensors":[true,true,true,true,true,true,true,true,true,true,true]});
   }
