@@ -111,6 +111,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
       tooltip: {
         enabled: true,
         x : {
+          show: false,
           format: 'dd.MM.yyyy HH:mm:ss'
         }
       }
