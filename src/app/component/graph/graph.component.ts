@@ -39,9 +39,9 @@ export class GraphComponent implements OnInit, AfterViewInit {
   isLoadingData = true;
   public chartConfig: Partial<ChartOptions>[] = [];
   @ViewChild('graphComponent') graphComponent: any;
-  fullHeight = document.body.offsetHeight - 45;
+  fullHeight = document.body.offsetHeight - 25;
   chartWidthReduction = 30;
-  chartHeightReduction = 10
+  chartHeightReduction = 0
   @BlockUI() blockUI: NgBlockUI;
 
   afterChartRendered = (chartContext: any, config?: any) => {
@@ -81,6 +81,10 @@ export class GraphComponent implements OnInit, AfterViewInit {
         },
         events: {
           mounted: null
+        },
+        parentHeightOffset: 0,
+        toolbar: {
+          show: true
         }
       },
       dataLabels: {
