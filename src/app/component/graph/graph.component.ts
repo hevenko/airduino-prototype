@@ -70,7 +70,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
     let configTemplate: ChartOptions  = {
       series: [],
       chart: {
-        height : Math.round(document.body.offsetHeight/8) - this.chartHeightReduction,
+        height : Math.round(document.body.offsetHeight/((8/12)*data.length)) - this.chartHeightReduction,
         width : Math.round(document.body.offsetWidth/2) - this.chartWidthReduction,
         type: "line",
         group: 'aqi',
@@ -82,7 +82,6 @@ export class GraphComponent implements OnInit, AfterViewInit {
         events: {
           mounted: null
         },
-        parentHeightOffset: 0,
         toolbar: {
           show: true
         }
@@ -121,6 +120,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
       }
 
     };
+    this.chartConfig = [];
     data.forEach((element: any, i:number) => {
       //if(i > 0) return;
       this.chartConfig[i] = JSON.parse(JSON.stringify(configTemplate));
@@ -130,14 +130,14 @@ export class GraphComponent implements OnInit, AfterViewInit {
 
       this.chartData[element.name] = element;
     });
-    let dummyInd = 12//JSON.parse(JSON.stringify(this.chartConfig.length));
-    this.chartConfig[dummyInd] = JSON.parse(JSON.stringify(configTemplate));
-    this.chartConfig[dummyInd].chart.id = 'aqi';
-    this.chartConfig[dummyInd].chart.width = document.body.offsetWidth - this.chartWidthReduction*2;
-    this.chartConfig[dummyInd].title.text = 'aqi (dummy)';
-    this.chartConfig[dummyInd].chart.events.mounted = this.afterChartRendered;
+    // let dummyInd = 12//JSON.parse(JSON.stringify(this.chartConfig.length));
+    // this.chartConfig[dummyInd] = JSON.parse(JSON.stringify(configTemplate));
+    // this.chartConfig[dummyInd].chart.id = 'aqi';
+    // this.chartConfig[dummyInd].chart.width = document.body.offsetWidth - this.chartWidthReduction*2;
+    // this.chartConfig[dummyInd].title.text = 'aqi (dummy)';
+    // this.chartConfig[dummyInd].chart.events.mounted = this.afterChartRendered;
 
-    this.chartData['aqi'] = data[0];
+    // this.chartData['aqi'] = data[0];
 }
 
   constructor(private dataStorageService: DataStorageService) { 
