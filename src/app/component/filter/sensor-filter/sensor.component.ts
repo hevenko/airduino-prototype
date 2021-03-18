@@ -9,7 +9,7 @@ import { DataStorageService } from 'src/app/shared/service/data-storage.service'
   styleUrls: ['./sensor.component.css']
 })
 export class SensorComponent implements OnInit {
-  sensorList = [
+  static sensorList = [
     {value: 'temp', desc: 'Temperature', label: '<sup>o</sup>C'},
     {value: 'humidity', desc: 'Humidity', label: 'H%'},
     {value: 'so2', desc: 'Sulfur dioxide', label: 'SO<sub>2</sub>'},
@@ -20,14 +20,17 @@ export class SensorComponent implements OnInit {
     {value: 'co', desc: 'Carbon monoxyde', label: 'CO'},
     {value: 'pm10', desc: 'Pm10', label: 'pm10'},
     {value: 'pm2_5', desc: 'Pm2.5', label: 'pm2.5'},
-    {value: 'pb', desc: 'Lead', label: 'Lead'}
+    {value: 'pb', desc: 'Lead', label: 'Lead'},
+    {value: 'gps', desc: 'GPS', label: 'GPS'},
+    {value: 'battery', desc: 'Battery', label: 'Battery'}
+    
   ];
   compForm: FormGroup = new FormGroup({});
   defaultLabel = 'Sensors (?)';
   subscription;
   fetchDataSetTimeout;
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { }
-
+  sensorList = SensorComponent.sensorList;
   ngOnInit(): void {
     this.initForm();
   }
@@ -40,8 +43,8 @@ export class SensorComponent implements OnInit {
   }
   initForm() {
     const faSensors: FormArray = new FormArray([]);
-    for (const def of this.sensorList) {
-      faSensors.push(new FormControl(false));
+    for (const def of SensorComponent.sensorList) {
+      faSensors.push(new FormControl());
     }
     this.compForm = new FormGroup({
       sensors: faSensors
@@ -51,27 +54,26 @@ export class SensorComponent implements OnInit {
       clearTimeout(this.fetchDataSetTimeout);
       this.fetchDataSetTimeout = setTimeout(this.fetchData,2000);
     });
-    this.compForm.patchValue({"sensors":[true,true,true,true,true,true,true,true,true,true,true]});
+    this.compForm.patchValue({"sensors":[true,true,true,true,true,true,true,true,true,true,true]}); //this triggers onchange, constructor does not
   }
   getSensorControls() {
     return (this.compForm.get('sensors') as FormArray).controls;
   }
   getLabel() {
     const label = this.compForm.value.sensors
-      .map((v, i) => (v ? i === 0 ? this.sensorList[i].label :  ' ' + this.sensorList[i].label : null))
+      .map((v, i) => (v ? i === 0 ? SensorComponent.sensorList[i].label :  ' ' + SensorComponent.sensorList[i].label : null))
       .filter(v => v !== null);
     return !!label && label.length > 0  ? label : this.defaultLabel;
   }
   getComponentValue(): string[] {
     let result = [];
     result = this.compForm.value.sensors
-      .map((v, i) => (v ? this.sensorList[i].value :  null))
+      .map((v, i) => (v ? SensorComponent.sensorList[i].value :  null))
       .filter(v => v !== null);
     
-    if (!!result.length) {
-      result = result.concat(['measured','gps','battery']);
-    }
-    
-    return !!result ? result : null;
+      if (!!result.length) {
+        result = result.concat(['measured']); //user can't choose this sensor, it is required by the app
+      }
+       return !!result ? result : null;
   }
 }
