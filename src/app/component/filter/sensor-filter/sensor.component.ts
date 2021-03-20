@@ -54,7 +54,7 @@ export class SensorComponent implements OnInit {
       clearTimeout(this.fetchDataSetTimeout);
       this.fetchDataSetTimeout = setTimeout(this.fetchData,2000);
     });
-    this.compForm.patchValue({"sensors":[true,true,true,true,true,true,true,true,true,true,true]}); //this triggers onchange, constructor does not
+    this.compForm.patchValue({"sensors":[true,true,true,true,true,true,true,true,true,true,true,true,true]}); //this triggers onchange, constructor does not
   }
   getSensorControls() {
     return (this.compForm.get('sensors') as FormArray).controls;
