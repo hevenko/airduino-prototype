@@ -259,7 +259,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
     })
     this.compForm.valueChanges.subscribe(() => {
       clearTimeout(this.sensorSelectionChangedTimeout);
-      this.sensorSelectionChangedTimeout = setTimeout(this.sensorSelectionChanged, 2000)
+      this.sensorSelectionChangedTimeout = setTimeout(this.sensorSelectionChanged, 0)
     });
 }
   getSensorControls() {
