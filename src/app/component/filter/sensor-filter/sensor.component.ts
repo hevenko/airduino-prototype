@@ -22,6 +22,7 @@ export class SensorComponent implements OnInit {
     {value: 'pm2_5', desc: 'Pm2.5', label: 'pm2.5'},
     {value: 'pb', desc: 'Lead', label: 'Lead'},
     {value: 'battery', desc: 'Battery', label: 'Battery'},
+    {value: 'aqi', desc: 'Aqi', label: 'Aqi'},
     {value: 'gps', desc: 'GPS', label: 'GPS'},
     {value: 'measured', desc: 'Measured', label: 'Measured'}
     
