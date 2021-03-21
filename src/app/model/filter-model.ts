@@ -14,4 +14,7 @@ export class FilterModel {
   setLocations = (value: any) => {
     this.locations = value;
   }
+  isFilterSet(): boolean {
+    return !!this.locations && !!this.sensors && !!this.sensors.length && !!this.time;
+  }
 }

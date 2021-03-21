@@ -94,7 +94,8 @@ export class GraphComponent implements OnInit, AfterViewInit {
         },
         toolbar: {
           show: true
-        }
+        },
+        animations : {enabled: false}
       },
       dataLabels: {
         enabled: false

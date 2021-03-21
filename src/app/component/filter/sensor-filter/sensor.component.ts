@@ -21,8 +21,9 @@ export class SensorComponent implements OnInit {
     {value: 'pm10', desc: 'Pm10', label: 'pm10'},
     {value: 'pm2_5', desc: 'Pm2.5', label: 'pm2.5'},
     {value: 'pb', desc: 'Lead', label: 'Lead'},
+    {value: 'battery', desc: 'Battery', label: 'Battery'},
     {value: 'gps', desc: 'GPS', label: 'GPS'},
-    {value: 'battery', desc: 'Battery', label: 'Battery'}
+    {value: 'measured', desc: 'Measured', label: 'Measured'}
     
   ];
   compForm: FormGroup = new FormGroup({});
@@ -44,7 +45,7 @@ export class SensorComponent implements OnInit {
   initForm() {
     const faSensors: FormArray = new FormArray([]);
     for (const def of SensorComponent.sensorList) {
-      faSensors.push(new FormControl());
+      faSensors.push(new FormControl({value: true, disabled: (def.value === 'gps' || def.value === 'measured')}));
     }
     this.compForm = new FormGroup({
       sensors: faSensors
@@ -52,7 +53,7 @@ export class SensorComponent implements OnInit {
     this.compForm.valueChanges.subscribe(() => {
       this.filterModel.sensors = this.getComponentValue();
       clearTimeout(this.fetchDataSetTimeout);
-      this.fetchDataSetTimeout = setTimeout(this.fetchData,2000);
+      //this.fetchDataSetTimeout = setTimeout(this.fetchData,2000);
     });
     this.compForm.patchValue({"sensors":[true,true,true,true,true,true,true,true,true,true,true,true,true]}); //this triggers onchange, constructor does not
   }
@@ -60,20 +61,20 @@ export class SensorComponent implements OnInit {
     return (this.compForm.get('sensors') as FormArray).controls;
   }
   getLabel() {
-    const label = this.compForm.value.sensors
-      .map((v, i) => (v ? i === 0 ? SensorComponent.sensorList[i].label :  ' ' + SensorComponent.sensorList[i].label : null))
+    const label = (this.compForm.controls.sensors as FormArray).controls
+      .map((v, i) => (v.value ? i === 0 ? SensorComponent.sensorList[i].label :  ' ' + SensorComponent.sensorList[i].label : null))
       .filter(v => v !== null);
     return !!label && label.length > 0  ? label : this.defaultLabel;
   }
   getComponentValue(): string[] {
     let result = [];
-    result = this.compForm.value.sensors
-      .map((v, i) => (v ? SensorComponent.sensorList[i].value :  null))
+    result = (this.compForm.controls.sensors as FormArray).controls
+      .map((v, i) => (v.value ? SensorComponent.sensorList[i].value :  null))
       .filter(v => v !== null);
     
-      if (!!result.length) {
-        result = result.concat(['measured']); //user can't choose this sensor, it is required by the app
-      }
+      // if (!!result.length) {
+      //   result = result.concat(['measured', 'gps']); //user can't choose this sensor, it is required by the app
+      // }
        return !!result ? result : null;
   }
 }

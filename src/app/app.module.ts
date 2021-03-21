@@ -55,6 +55,7 @@ import { AddUserComponent } from './component/user-devices/add-user/add-user.com
 import { AddDevicesComponent } from './component/user-devices/add-devices/add-devices.component';
 import { NgApexchartsModule } from "ng-apexcharts";
 import { BlockUIModule } from 'ng-block-ui';
+import { GetDataComponent } from './component/get-data/get-data.component';
 
 @NgModule({
   declarations: [
@@ -82,7 +83,8 @@ import { BlockUIModule } from 'ng-block-ui';
     UserDevicesComponent,
     CheckRowRendererComponent,
     AddUserComponent,
-    AddDevicesComponent
+    AddDevicesComponent,
+    GetDataComponent
   ],
   imports: [
     FormsModule,

@@ -26,4 +26,5 @@ export class Constants {
   static TITLE_NEW_DEVICE = "New device";
   static TITLE_EDIT_DEVICE = "Edit device";
   static TITLE_ADD_DEVICES = "Add devices";
+  static MSG_MISSING_DATA_FILTER = "Choose filters to get data.";
 }
