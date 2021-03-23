@@ -23,8 +23,7 @@ export class SensorComponent implements OnInit {
     {value: 'pb', desc: 'Lead', label: 'Lead'},
     {value: 'battery', desc: 'Battery', label: 'Battery'},
     {value: 'aqi', desc: 'Aqi', label: 'Aqi'},
-    {value: 'gps', desc: 'GPS', label: 'GPS'},
-    {value: 'measured', desc: 'Measured', label: 'Measured'}
+    {value: 'gps', desc: 'GPS', label: 'GPS'}
     
   ];
   compForm: FormGroup = new FormGroup({});
@@ -73,9 +72,9 @@ export class SensorComponent implements OnInit {
       .map((v, i) => (v.value ? SensorComponent.sensorList[i].value :  null))
       .filter(v => v !== null);
     
-      // if (!!result.length) {
-      //   result = result.concat(['measured', 'gps']); //user can't choose this sensor, it is required by the app
-      // }
+      if (!!result.length) {
+        result = result.concat(['measured']); //user can't choose this sensor, it is required by the app
+      }
        return !!result ? result : null;
   }
 }

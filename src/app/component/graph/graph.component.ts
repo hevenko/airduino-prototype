@@ -45,31 +45,27 @@ export class GraphComponent implements OnInit, AfterViewInit {
   chartWidthReduction = 30;
   @BlockUI() blockUI: NgBlockUI;
   originalChartData: DataSet[] = [];
-  filteredChartData: DataSet[] = [];
   seriesLabels: string[]; //using first row to extract sensor names (used to name data series)
   compForm: FormGroup;
   sensorSelectionChangedTimeout;
-
+  activeSensors = [];
+  chartData: DataSet[] = [];
+  
   constructor(private dataStorageService: DataStorageService) { 
     this.initSelectSensorsForm([]);
   }
+  
+  renderChart(chartName: string) {
+    return this.activeSensors.indexOf(chartName) !== -1;
+  }
 
   afterChartRendered = (chartContext: any, config?: any) => {
-    //console.log(chartContext);
-    //console.log(config.globals.chartID);
-    this.chartConfig.forEach(value => {
-      if (value.chart.id === config.config.chart.id) {
-        setTimeout(() => {
-          let chartSeries = this.chartData[value.chart.id];
-          chartSeries.color  = this.getColor(value.chart.id);
-          value.series = [chartSeries]}
-          ,300); //setTimeout to allow navigation to occur
-      }
-    });
+    if(this.chartConfig[config.config.chart.id]) {
+      this.chartConfig[config.config.chart.id].series = [this.chartData[config.config.chart.id]];
+    }
   }
-  chartData: DataSet[] = [];
 
-  showCharts(data: DataSet[]) {
+  initCharts(data: DataSet[]) {
     if(!data || data.length == 0) {
       this.chartConfig.forEach(ch => {
         ch.series = [];
@@ -133,27 +129,13 @@ export class GraphComponent implements OnInit, AfterViewInit {
     };
     this.chartConfig = [];
     data.forEach((element: any, i:number) => {
-      //if(i > 0) return;
-      this.chartConfig[i] = JSON.parse(JSON.stringify(configTemplate));
-      this.chartConfig[i].chart.id = element.name;
-      this.chartConfig[i].title.text = element.name;
-      this.chartConfig[i].chart.events.mounted = this.afterChartRendered;
+      this.chartConfig[element.name] = JSON.parse(JSON.stringify(configTemplate));
+      this.chartConfig[element.name].chart.id = element.name;
+      this.chartConfig[element.name].title.text = element.name;
+      this.chartConfig[element.name].chart.events.mounted = this.afterChartRendered;
 
       this.chartData[element.name] = element;
     });
-    // if(this.chartConfig.length > 0 ) {
-    //   let dummyInd = JSON.parse(JSON.stringify(this.chartConfig.length));
-    //   this.chartConfig[dummyInd] = JSON.parse(JSON.stringify(configTemplate));
-    //   this.chartConfig[dummyInd].chart.id = 'aqi';
-    //   this.chartConfig[dummyInd].title.text = 'aqi (dummy)';
-    //   this.chartConfig[dummyInd].chart.events.mounted = this.afterChartRendered;
-  
-    //   let aqiFirst = [];//aqi chart fist in the list
-    //   aqiFirst[0] = this.chartConfig[dummyInd];
-    //   aqiFirst = aqiFirst.concat(this.chartConfig.slice(0, this.chartConfig.length -1));
-    //   this.chartConfig = aqiFirst;
-    //   this.chartData['aqi'] = data[0];
-    // }
 }
 
   ngAfterViewInit(): void {
@@ -184,7 +166,6 @@ export class GraphComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     let colorIndex = 0;
-  //this.goToLevel(this.drillStart);
     this.dataStorageService.loadingStatusBus.subscribe((isLoadingData : boolean) => { //this subscription ensures only all data is sent to graph
       this.isLoadingData = isLoadingData;
       if(!isLoadingData) {
@@ -195,9 +176,10 @@ export class GraphComponent implements OnInit, AfterViewInit {
           if(!d) d = [];
           console.log(d);
           this.originalChartData = [];
-          this.seriesLabels = d && d.length > 0 ? Object.keys(d[0]) : []; //using first row to extract sensor names (used to name data series)
+          this.seriesLabels = d && d.length > 0 ? Object.keys(d[0]) : []; //using first row to extract sensor names (used to name data series and set chart id's )
           this.seriesLabels = this.seriesLabels.filter(v => {return v != 'measured' && v != 'gps'})
           this.initSelectSensorsForm(this.seriesLabels);
+          
           let getDataSetForSensor = (sensorName: string): DataSet  => { //returns new/existing data set for sensor name
             let result;
             let existingDs = this.originalChartData.filter(ds => {
@@ -212,6 +194,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
             }
             return result;
           }
+          
           d.forEach((row: RawData) => {
             this.seriesLabels.forEach(sensorName => {
               if('measured' !== sensorName && 'gps' !== sensorName) {
@@ -222,6 +205,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
           });
           
           console.log(this.originalChartData);
+          this.initCharts(this.filterChartSensorData(this.getCheckedSensors()));
           this.sensorSelectionChanged();
           this.blockUI.stop();
         })
@@ -231,14 +215,15 @@ export class GraphComponent implements OnInit, AfterViewInit {
     });
   }
   sensorSelectionChanged = () => {
-    this.showCharts(this.filterChartSensorData(this.getCheckedSensors()));
+    clearTimeout(this.sensorSelectionChangedTimeout);
+    this.sensorSelectionChangedTimeout = setTimeout(() => {this.activeSensors = this.getCheckedSensors()},200);
   }
   filterChartSensorData(sensorNames: string[]): DataSet[] {
     return this.originalChartData.filter((v:DataSet) => {
       return sensorNames.indexOf(v.name) != -1
     })
   }
-  initSelectSensorsForm(sensorList: string[]) {
+  initSelectSensorsForm(sensorNames: string[]) {
     if(!this.compForm) {
       const faSensors: FormArray = new FormArray([]);
       for (const def of SensorComponent.sensorList) {
@@ -250,12 +235,12 @@ export class GraphComponent implements OnInit, AfterViewInit {
   
     }
     SensorComponent.sensorList.forEach((v, i) => {
-      if(sensorList.indexOf(v.value) === -1) {
-        this.getSensorControls()[i].disable({emitEvent: false}); // event would cause repeated graphs repaint
-        this.getSensorControls()[i].setValue(false, {emitEvent: false});
+      if(sensorNames.indexOf(v.value) === -1) {
+        this.getSensorFormControls()[i].disable({emitEvent: false}); // event would cause repeated graphs repaint
+        this.getSensorFormControls()[i].setValue(false, {emitEvent: false});
       } else {
-        this.getSensorControls()[i].enable({emitEvent: false}); // event would cause repeated graphs repaint
-        this.getSensorControls()[i].setValue(true, {emitEvent: false});
+        this.getSensorFormControls()[i].enable({emitEvent: false}); // event would cause repeated graphs repaint
+        this.getSensorFormControls()[i].setValue(true, {emitEvent: false});
       }
     })
     this.compForm.valueChanges.subscribe(() => {
@@ -263,14 +248,14 @@ export class GraphComponent implements OnInit, AfterViewInit {
       this.sensorSelectionChangedTimeout = setTimeout(this.sensorSelectionChanged, 0)
     });
 }
-  getSensorControls() {
+  getSensorFormControls() {
     let sensors = this.compForm.get('sensors') as FormArray;
     return sensors ? sensors.controls : [];
   }
   getCheckedSensors(): string[] {
     let result = [];
-    result = this.compForm.value.sensors
-      .map((v, i) => (v ? this.seriesLabels[i] :  null))
+    result = this.getSensorFormControls()
+      .map((v, i) => (v.value ? SensorComponent.sensorList[i].value :  null))
       .filter(v => v !== null);
        
     return !!result ? result : null;
