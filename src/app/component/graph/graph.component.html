@@ -1,6 +1,6 @@
 <block-ui>
   <div #graphComponent [style.height]="fullHeight" style="overflow: scroll;width: 100%;">
-      <form [formGroup]="compForm" style="margin-bottom:10PX;background-color: lightgray;">
+      <form [formGroup]="compForm" style="margin-bottom:10PX;">
         <ng-container formArrayName="sensors" *ngFor="let s of getSensorList();let i = index">
           <mat-checkbox formControlName="{{i}}" style="margin: 0px 10px 0px 10px;">{{getSensorDetails(s.value).desc}}</mat-checkbox>
         </ng-container>
