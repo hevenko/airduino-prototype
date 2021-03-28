@@ -19,7 +19,7 @@ import { Constants } from './app/shared/constants';
 
 @Injectable()
 export class AuthGuardService implements CanActivate, CanActivateChild {
-  restrictVist: string[] = ['UserListComponent', 'UserComponent', 'UserDevicesComponent']; // allowed only when logged in
+  restrictVist: string[] = ['/user', '/userDevices']; // allowed only when logged in
 
   constructor(private authService: AuthService, private router: Router, private messageService: MessageService) { }
 
@@ -31,7 +31,7 @@ export class AuthGuardService implements CanActivate, CanActivateChild {
     if (this.authService.loginBus.value) {        
       this.authService.setAutoLogoutTime();
     }
-    if ((<any>route.component).name === 'AuthComponent') {
+    if (state.url === '/auth') {
       if (this.authService.loginBus.value) {
         this.messageService.showMessage(Constants.MSG_ALREADY_LOGGED_IN, MessageColor.Green);
         return this.router.navigate(['map']);
@@ -42,7 +42,7 @@ export class AuthGuardService implements CanActivate, CanActivateChild {
       if (this.authService.loginBus.value) {        
         return true;
       } else {
-        if (this.restrictVist.includes((<any>route.component).name)) {          
+        if (this.restrictVist.includes(state.url)) {          
           this.messageService.showMessage(Constants.MSG_LOGIN_TO_ACCESS, MessageColor.Yellow);
           return this.router.navigate(['map']);
         } else {
@@ -52,7 +52,7 @@ export class AuthGuardService implements CanActivate, CanActivateChild {
     }
   }
   canActivateChild(childRoute: ActivatedRouteSnapshot, state: RouterStateSnapshot):
-    Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+    Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {     
       return this.canActivate(childRoute, state);
   }
 }
