@@ -1,20 +1,15 @@
 <block-ui>
   <div #graphComponent [style.height]="fullHeight" style="overflow: scroll;width: 100%;">
-      <form [formGroup]="compForm" style="margin-bottom:10PX;">
-        <ng-container formArrayName="sensors" *ngFor="let s of getSensorList();let i = index">
-          <mat-checkbox formControlName="{{i}}" style="margin: 0px 10px 0px 10px;">{{getSensorDetails(s.value).desc}}</mat-checkbox>
-        </ng-container>
-      </form>
     <ng-container *ngFor="let d of getSensorList(); let i = index">
       <apx-chart *ngIf="renderChart(d.value)"
-        [tooltip]="chartConfig[d.value]?.tooltip" 
-        [series]="chartConfig[d.value]?.series"
-        [chart]="chartConfig[d.value]?.chart"
-        [xaxis]="chartConfig[d.value]?.xaxis"
-        [dataLabels]="chartConfig[d.value]?.dataLabels"
-        [grid]="chartConfig[d.value]?.grid"
-        [stroke]="chartConfig[d.value]?.stroke"
-        [title]="chartConfig[d.value]?.title"
+        [tooltip]="getChartConfig(d.value)?.tooltip" 
+        [series]="getChartConfig(d.value)?.series"
+        [chart]="getChartConfig(d.value)?.chart"
+        [xaxis]="getChartConfig(d.value)?.xaxis"
+        [dataLabels]="getChartConfig(d.value)?.dataLabels"
+        [grid]="getChartConfig(d.value)?.grid"
+        [stroke]="getChartConfig(d.value)?.stroke"
+        [title]="getChartConfig(d.value)?.title"
       ></apx-chart>
     </ng-container>
   </div>

@@ -27,7 +27,7 @@ export class DataStorageService {
   pageOfDataBus: BehaviorSubject<RawData[]> = new BehaviorSubject<RawData[]>(null);
   availableDataBus: BehaviorSubject<RawData[]> = new BehaviorSubject<RawData[]>(null);
   drawDataBus: BehaviorSubject<GeoJSONFeature[]> = new BehaviorSubject<GeoJSONFeature[]>(null);
-  loadingStatusBus: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  loadingStatusBus: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
   highlightFeaturesBus: BehaviorSubject<GeoJSONGeometry[]> = new BehaviorSubject<GeoJSONGeometry[]>([]);
   locationsSelectorBus: BehaviorSubject<any> = new BehaviorSubject([]); //to redraw polygon or circle or... when returning to map
   userDevicesBus: BehaviorSubject<any> = new BehaviorSubject([]);
@@ -104,7 +104,14 @@ export class DataStorageService {
     }
   }
 
-  fetchSensors(filter: FilterModel){
+  fetchSensors(filterModel: FilterModel){
+    let filter: any = {}; //can't user FilterModel while it has _ in property names
+    let subs = [];;
+    filter.sensors = filterModel.sensors
+    filter.time = filterModel.time;
+    filter.locations = filterModel.locations;
+    filter.order = filterModel.order;
+
     this.http.post<Data>(this.getURL('data/'), filter, { headers: this.headers })
     .pipe(
       catchError(this.handleError),

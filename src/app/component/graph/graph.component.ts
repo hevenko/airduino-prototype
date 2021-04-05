@@ -18,6 +18,7 @@ import {
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { SensorComponent } from '../filter/sensor-filter/sensor.component';
+import { FilterModel } from 'src/app/model/filter-model';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -51,7 +52,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
   activeSensors = [];
   chartData: DataSet[] = [];
   
-  constructor(private dataStorageService: DataStorageService) { 
+  constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { 
     this.initSelectSensorsForm([]);
   }
   
@@ -64,19 +65,11 @@ export class GraphComponent implements OnInit, AfterViewInit {
       this.chartConfig[config.config.chart.id].series = [this.chartData[config.config.chart.id]];
     }
   }
-
-  initCharts(data: DataSet[]) {
-    if(!data || data.length == 0) {
-      this.chartConfig.forEach(ch => {
-        ch.series = [];
-      })
-      this.blockUI.stop();
-      return;
-    }
+  getChartConfigTemplate(): ChartOptions {
     let configTemplate: ChartOptions  = {
       series: [],
       chart: {
-        height : Math.trunc((this.fullHeight - 110)/(data.length <= 4 ? data.length : 4)),
+        height : 0,
         width : document.body.offsetWidth - this.chartWidthReduction,
         type: "line",
         group: 'aqi',
@@ -127,16 +120,39 @@ export class GraphComponent implements OnInit, AfterViewInit {
       }
 
     };
+    return configTemplate;
+  }
+  getChartConfig(chartId: string): ChartOptions {
+    let result: ChartOptions;
+    if(!this.chartConfig[chartId]) {
+        result = JSON.parse(JSON.stringify(this.getChartConfigTemplate()));
+        result.chart.height = 200;
+        result.title.text = chartId;
+        this.chartConfig[chartId] = result;
+    } else {
+      result = this.chartConfig[chartId];  
+    }
+    return result;
+  }
+  initCharts(data: DataSet[]) {
+    if(!data || data.length == 0) {
+      this.chartConfig.forEach(ch => {
+        ch.series = [];
+      })
+      this.blockUI.stop();
+      return;
+    }
     this.chartConfig = [];
     data.forEach((element: any, i:number) => {
-      this.chartConfig[element.name] = JSON.parse(JSON.stringify(configTemplate));
+      this.chartConfig[element.name] = JSON.parse(JSON.stringify(this.getChartConfigTemplate()));
       this.chartConfig[element.name].chart.id = element.name;
+      this.chartConfig[element.name].chart.height = 300 //Math.trunc((this.fullHeight - 110)/(data.length <= 4 ? data.length : 4))
       this.chartConfig[element.name].title.text = element.name;
       this.chartConfig[element.name].chart.events.mounted = this.afterChartRendered;
 
       this.chartData[element.name] = element;
     });
-}
+  }
 
   ngAfterViewInit(): void {
 
@@ -206,17 +222,16 @@ export class GraphComponent implements OnInit, AfterViewInit {
           
           console.log(this.originalChartData);
           this.initCharts(this.filterChartSensorData(this.getCheckedSensors()));
-          this.sensorSelectionChanged();
           this.blockUI.stop();
         })
       } else {
         this.blockUI.start('Loading...');
       }
     });
-  }
-  sensorSelectionChanged = () => {
-    clearTimeout(this.sensorSelectionChangedTimeout);
-    this.sensorSelectionChangedTimeout = setTimeout(() => {this.activeSensors = this.getCheckedSensors()},200);
+    this.filterModel.sensorFilterChangedBus.subscribe((sensorList: string[]) => {
+      clearTimeout(this.sensorSelectionChangedTimeout);
+      this.sensorSelectionChangedTimeout = setTimeout(() => {this.activeSensors = sensorList},200);
+    }); 
   }
   filterChartSensorData(sensorNames: string[]): DataSet[] {
     return this.originalChartData.filter((v:DataSet) => {
@@ -243,10 +258,6 @@ export class GraphComponent implements OnInit, AfterViewInit {
         this.getSensorFormControls()[i].setValue(true, {emitEvent: false});
       }
     })
-    this.compForm.valueChanges.subscribe(() => {
-      clearTimeout(this.sensorSelectionChangedTimeout);
-      this.sensorSelectionChangedTimeout = setTimeout(this.sensorSelectionChanged, 0)
-    });
 }
   getSensorFormControls() {
     let sensors = this.compForm.get('sensors') as FormArray;
