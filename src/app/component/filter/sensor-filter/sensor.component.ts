@@ -64,7 +64,7 @@ export class SensorComponent implements OnInit {
     const label = (this.compForm.controls.sensors as FormArray).controls
       .map((v, i) => (v.value ? i === 0 ? SensorComponent.sensorList[i].label :  ' ' + SensorComponent.sensorList[i].label : null))
       .filter(v => v !== null);
-    return !!label && label.length > 0  ? label : this.defaultLabel;
+    return !!label && label.length > 0  ? 'Sensors' : this.defaultLabel;
   }
   getComponentValue(): string[] {
     let result = [];
