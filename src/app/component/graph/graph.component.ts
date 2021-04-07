@@ -70,7 +70,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
       series: [],
       chart: {
         height : 0,
-        width : document.body.offsetWidth - this.chartWidthReduction,
+        width : '100%',
         type: "line",
         group: 'aqi',
         zoom: {
@@ -84,7 +84,9 @@ export class GraphComponent implements OnInit, AfterViewInit {
         toolbar: {
           show: true
         },
-        animations : {enabled: false}
+        animations : {enabled: false},
+        redrawOnWindowResize: true,
+        redrawOnParentResize: true
       },
       dataLabels: {
         enabled: false
