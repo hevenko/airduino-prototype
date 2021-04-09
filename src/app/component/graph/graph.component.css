@@ -1,4 +1,4 @@
-#canvasDiv {
+::ng-deep app-graph {
   height: 100%;
-  width: 100%;
+  position: relative; /* remoe this and y scroller will exit the screen bottom */
 }
