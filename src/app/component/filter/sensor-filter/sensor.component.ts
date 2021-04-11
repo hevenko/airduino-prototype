@@ -28,14 +28,18 @@ export class SensorComponent implements OnInit {
     
   ];
   compForm: FormGroup = new FormGroup({});
-  defaultLabel = 'Sensors (?)';
+  defaultLabel = '';
   subscription;
   fetchDataSetTimeout;
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { }
   sensorList = SensorComponent.sensorList;
   loadedSensors = []; //data are loaded for these sensors
+  static label: string | string[];
 
   ngOnInit(): void {
+    SensorComponent.label = this.defaultLabel;
+    this.filterModel.sensorFilterChangedBus.next(null); //to show default label on filter-info component
+
     this.initForm();
     this.dataStorageService.loadingStatusBus.subscribe((v: boolean) => {
       if(v != null && !v) {
@@ -60,7 +64,8 @@ export class SensorComponent implements OnInit {
     })
     this.compForm.valueChanges.subscribe(() => {
       let checkedSensors = this.getComponentValue();
-      this.filterModel.sensors = checkedSensors;
+      SensorComponent.label = this.makeLabel();
+      this.filterModel.sensors = checkedSensors; //triggers next on BehSubject
       let bMissingDataForSensor = false; //gets sensor data if false
       checkedSensors.forEach(s => {
         if(this.loadedSensors.indexOf(s) == -1) {
@@ -78,11 +83,11 @@ export class SensorComponent implements OnInit {
   getSensorControls() {
     return (this.compForm.get('sensors') as FormArray).controls;
   }
-  getLabel() {
+  makeLabel(): string | string[] {
     const label = (this.compForm.controls.sensors as FormArray).controls
       .map((v, i) => (v.value ? i === 0 ? SensorComponent.sensorList[i].label :  ' ' + SensorComponent.sensorList[i].label : null))
       .filter(v => v !== null);
-    return !!label && label.length > 0  ? 'Sensors' : this.defaultLabel;
+    return !!label && label.length > 0  ? label : '';
   }
   getComponentValue(): string[] {
     let result = [];

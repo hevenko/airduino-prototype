@@ -10,7 +10,11 @@ import { DataStorageService } from 'src/app/shared/service/data-storage.service'
   styleUrls: ['./time.component.css']
 })
 export class TimeComponent implements OnInit, AfterViewInit {
-  defaultLabel = 'Time period (?)';
+  static filterTypeSliding = "sliding_range";
+  static filterTypeCustom = "custom_range";
+  static filterTypeFixed = "fixed_range";
+
+  defaultLabel = '';
   hoursTime = [
     {value: '', desc: ''},
     {value: 'PT1H', desc: 'Last hour'},
@@ -27,7 +31,8 @@ export class TimeComponent implements OnInit, AfterViewInit {
     {value: 'P?Y', desc: 'Year'}
   ];
   timeForm: FormGroup = new FormGroup({});
-  label = this.defaultLabel;
+  _label;
+  static label;
   date: any;
   @ViewChild('customTime') customTime: ElementRef;
   calendarIsOpen: boolean = false;
@@ -39,6 +44,8 @@ export class TimeComponent implements OnInit, AfterViewInit {
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { }
 
   ngOnInit(): void {
+    this.label = this.defaultLabel;
+    this.filterModel.timeFiterChangedBus.next(null); //to show default label on filter-info component
     this.initForm();
     Constants
   }
@@ -71,12 +78,14 @@ export class TimeComponent implements OnInit, AfterViewInit {
     //this.subscription = this.dataStorageService.fetchData(this.filterModel);
   }
   setSlidingRange(e: any) {
+    this.filterModel.timeFilterType = TimeComponent.filterTypeSliding; // time filter type
     //default label when nothing selected
     this.label = this.hoursTime.filter((v) => {return v.value === e.value}).map((v, i) => {return v.desc !== '' ? v.desc : this.defaultLabel})[0];
     this.deleteOtherValues(true, false, false, false);
     this.fetchData();
   }
   setCustomRange(value: string, timeUnit: string) {
+    this.filterModel.timeFilterType = TimeComponent.filterTypeCustom; // time filter type
     // console.log(evt);
     if (!!value && !!timeUnit) {
       this.label = value + ' ' + this.customTimeUnits.filter((v)=>{return v.value === timeUnit})[0].desc;
@@ -88,6 +97,7 @@ export class TimeComponent implements OnInit, AfterViewInit {
     this.fetchDataSetTimeout = setTimeout(this.fetchData,1500);
   }
   setFixedRange(evt: any) {
+    this.filterModel.timeFilterType = TimeComponent.filterTypeFixed; // time filter type
     if (evt.target.value !== '') {
       this.label = evt.targetElement ? evt.targetElement.value : evt.target.value;
     } else {
@@ -121,5 +131,12 @@ export class TimeComponent implements OnInit, AfterViewInit {
   // prevents mat-select from closing menu upon value select
   hourRangeOnOpen(e: boolean): void {
     this.hourRangeIsOpen = e;
+  }
+  get label() {
+    return this._label;
+  }
+  set label(v: string) {
+    this._label = v;
+    TimeComponent.label = v;
   }
 }

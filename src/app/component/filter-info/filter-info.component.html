@@ -1,0 +1,7 @@
+<div style="margin-left: 0.7em;">
+    <ng-container *ngFor="let l of label; let i = index">
+        <span style="color: red;" *ngIf="i > 0 && !!label[i-1]">/</span>
+        <span [innerHTML]="label[i]" *ngIf="!!label[i]"></span>
+    </ng-container>
+</div>
+

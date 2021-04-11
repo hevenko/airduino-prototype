@@ -22,11 +22,15 @@ export class LocationComponent implements OnInit {
     {value: '3', desc: 'Circular perimeter'},
     {value: '4', desc: 'Region'}
   ];
-  defaultLabel = 'Locations (?)';
-  
+  defaultLabel = '';
+  static label: string;
+
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { }
 
   ngOnInit(): void {
+    LocationComponent.label = this.defaultLabel;
+    this.filterModel.locationFilterChangedBus.next(null); //to show default label on filter-info component
+
     this.lastItemValue = this.locationList[this.locationList.length -1].value;
 
     this.dataStorageService.fetchRegions().subscribe((data: Region[]) => {
@@ -39,6 +43,7 @@ export class LocationComponent implements OnInit {
     })
 
     this.locationForm.valueChanges.subscribe(() => {
+      LocationComponent.label = this.makeLabel();
       if(!!this.locationForm.value.selectedRegion) {
         console.log("region name:", this.locationForm.value);
         this.filterModel.setLocations({name : this.locationForm.value.selectedRegion});
@@ -65,7 +70,7 @@ export class LocationComponent implements OnInit {
     this.locationForm.controls.selectedDevices.setValue('1'); //mock My devices
   }
 
-  getLabel(): string {
+  makeLabel(): string {
     let result = this.locationList.filter((v) => {
       return v.value === this.locationForm.value.selectedDevices}).map((v, i) => {
         return !!v ? v.value === this.lastItemValue ? this.locationForm.value.selectedRegion : v.desc : this.defaultLabel})[0];
