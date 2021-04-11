@@ -1,4 +1,4 @@
 ::ng-deep app-graph {
   height: 100%;
-  position: relative; /* remoe this and y scroller will exit the screen bottom */
+  position: relative; /* remove this and y scroller will exit the screen bottom */
 }
