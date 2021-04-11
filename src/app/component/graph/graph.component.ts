@@ -47,13 +47,11 @@ export class GraphComponent implements OnInit, AfterViewInit {
   @BlockUI() blockUI: NgBlockUI;
   originalChartData: DataSet[] = [];
   seriesLabels: string[]; //using first row to extract sensor names (used to name data series)
-  compForm: FormGroup;
   sensorSelectionChangedTimeout;
   activeSensors = [];
   chartData: DataSet[] = [];
   
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { 
-    this.initSelectSensorsForm([]);
   }
   
   renderChart(chartName: string) {
@@ -196,7 +194,6 @@ export class GraphComponent implements OnInit, AfterViewInit {
           this.originalChartData = [];
           this.seriesLabels = d && d.length > 0 ? Object.keys(d[0]) : []; //using first row to extract sensor names (used to name data series and set chart id's )
           this.seriesLabels = this.seriesLabels.filter(v => {return v != 'measured' && v != 'gps'})
-          this.initSelectSensorsForm(this.seriesLabels);
           
           let getDataSetForSensor = (sensorName: string): DataSet  => { //returns new/existing data set for sensor name
             let result;
@@ -223,7 +220,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
           });
           
           console.log(this.originalChartData);
-          this.initCharts(this.filterChartSensorData(this.getCheckedSensors()));
+          this.initCharts(this.filterChartSensorData(this.activeSensors));
           this.blockUI.stop();
         })
       } else {
@@ -239,39 +236,6 @@ export class GraphComponent implements OnInit, AfterViewInit {
     return this.originalChartData.filter((v:DataSet) => {
       return sensorNames.indexOf(v.name) != -1
     })
-  }
-  initSelectSensorsForm(sensorNames: string[]) {
-    if(!this.compForm) {
-      const faSensors: FormArray = new FormArray([]);
-      for (const def of SensorComponent.sensorList) {
-        faSensors.push(new FormControl(false));
-      }
-      this.compForm = new FormGroup({
-        sensors: faSensors
-      })
-  
-    }
-    SensorComponent.sensorList.forEach((v, i) => {
-      if(sensorNames.indexOf(v.value) === -1) {
-        this.getSensorFormControls()[i].disable({emitEvent: false}); // event would cause repeated graphs repaint
-        this.getSensorFormControls()[i].setValue(false, {emitEvent: false});
-      } else {
-        this.getSensorFormControls()[i].enable({emitEvent: false}); // event would cause repeated graphs repaint
-        this.getSensorFormControls()[i].setValue(true, {emitEvent: false});
-      }
-    })
-}
-  getSensorFormControls() {
-    let sensors = this.compForm.get('sensors') as FormArray;
-    return sensors ? sensors.controls : [];
-  }
-  getCheckedSensors(): string[] {
-    let result = [];
-    result = this.getSensorFormControls()
-      .map((v, i) => (v.value ? SensorComponent.sensorList[i].value :  null))
-      .filter(v => v !== null);
-       
-    return !!result ? result : null;
   }
   getSensorDetails(s:string) {
     return SensorComponent.sensorList.filter(v =>{return v.value === s;})[0];    
