@@ -61,7 +61,7 @@ export class SensorComponent implements OnInit {
     this.compForm.valueChanges.subscribe(() => {
       let checkedSensors = this.getComponentValue();
       this.filterModel.sensors = checkedSensors;
-      let bMissingDataForSensor = false;
+      let bMissingDataForSensor = false; //gets sensor data if false
       checkedSensors.forEach(s => {
         if(this.loadedSensors.indexOf(s) == -1) {
           bMissingDataForSensor = true;
