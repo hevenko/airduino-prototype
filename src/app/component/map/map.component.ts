@@ -367,25 +367,16 @@ export class MapComponent implements OnInit, OnDestroy {
     .subscribe((data: RawData[]) => {
       if(!data) return;
       if (this.sourcePoints.getFeatures().length == 0) {
-        let features = data.map(p => {
-          if(!p.gps) {
-            console.error('map component: select gps sensor');
-          } else {
-            new Feature({ geometry: new Point(fromLonLat(p.gps)) })
-          }
-        });
-        features = features.filter(v => {return v != undefined && v != null})
+        const features = data.map(p => new Feature({ geometry: new Point(fromLonLat(p.gps)) }));
         this.drawPoints(features);
       }
   });
   }
 
   drawPoints(features: any[]) {
-    if(!!features && features.length > 0) {
       features.forEach((feature: any, index: number) => {
         //feature.set('selected', index == 2); // TODO: replace this with selected row in rawData
         this.vectorPoints.getSource().addFeature(feature);
       });
-    }
   }
 }
