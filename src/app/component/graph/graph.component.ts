@@ -220,7 +220,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
           });
           
           console.log(this.originalChartData);
-          this.initCharts(this.filterChartSensorData(this.activeSensors));
+          this.initCharts(this.filterChartSensorData(this.getSensorList().map(v => {return v.value}))); // fixed sensor list ensures chart population after navigation
           this.blockUI.stop();
         })
       } else {
