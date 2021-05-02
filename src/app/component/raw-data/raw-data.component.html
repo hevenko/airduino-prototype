@@ -2,7 +2,7 @@
   <div class="search">
     <label class="label-search" for="search">Search data:</label>
     <input class="input-search" #input id="search" name="search" matInput placeholder="search data in grid..." />
-    <button mat-raised-button (click)="selectBySearch(input.value)">Search</button>
+    <button style="margin-bottom: 1px;" mat-raised-button (click)="selectBySearch(input.value)">Search</button>
   </div>
     <div *ngIf="isLoadingData" class="loading">
       <mat-progress-spinner diameter="20" mode="indeterminate" value="100">abc</mat-progress-spinner>
