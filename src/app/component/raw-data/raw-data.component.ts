@@ -29,7 +29,7 @@ export class RawDataComponent implements OnInit, OnDestroy {
     { field: 'temp', headerName: "Temp", minWidth: 100 },
     { field: 'humidity', headerName: "Humidity", minWidth: 120 },
     { field: 'pressure', headerName: "Pressure", minWidth: 120 },
-    { field: 'gps', headerName: "GPS", minWidth: 200 },
+    { field: 'gps', headerName: "GPS", minWidth: 200, hide:true },
     { field: 'battery', headerName: "Battery", minWidth: 120 },
     { field: 'measured', headerName: "Measured", minWidth: 210, sort:'asc' },
     { field: 'aqi', headerName: "AQI", minWidth: 80 }
