@@ -107,7 +107,7 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
       { field: 'id', minWidth: 80},
       { field: 'name', minWidth: 100 },
       { field: 'email', minWidth: 120 },
-      { field: 'created', minWidth: 210, valueFormatter: this.formatCreatedColumn },
+      { field: 'created', minWidth: 210, valueFormatter: this.formatDateColumn },
       { field: 'enabled', minWidth: 50, cellRenderer: this.booleanCellRenderer },
       { field: 'groupowner', minWidth: 50, cellRenderer: this.booleanCellRenderer},
       { field: 'admin', minWidth: 50, cellRenderer: this.booleanCellRenderer}
@@ -409,7 +409,7 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
     });
     return result ? result[0]?.name : '?';
   }
-  formatCreatedColumn(param: any) {
+  formatDateColumn(param: any) {
     return new DatePipe('en_US').transform(param.value,"dd.MM.yyyy, hh:mm:ss");
   }
   booleanCellRenderer(params: any): any {
