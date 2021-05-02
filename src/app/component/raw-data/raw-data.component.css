@@ -60,3 +60,10 @@
 ::ng-deep [role=gridcell] {
    line-height: inherit !important;
 }
+::ng-deep [role=columnheader] {
+  height: 60%;
+}
+::ng-deep [ref=headerRoot] {
+  height: 29px !important;
+  min-height: 29px !important;
+}

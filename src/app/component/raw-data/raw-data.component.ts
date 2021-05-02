@@ -4,6 +4,7 @@ import { DataStorageService } from 'src/app/shared/service/data-storage.service'
 import { SelectionModel } from '@angular/cdk/collections';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { GeoJSONGeometry } from 'src/app/model/geo-json-geometry';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-raw-data',
@@ -31,7 +32,7 @@ export class RawDataComponent implements OnInit, OnDestroy {
     { field: 'pressure', headerName: "Pressure", minWidth: 120 },
     { field: 'gps', headerName: "GPS", minWidth: 200, hide:true },
     { field: 'battery', headerName: "Battery", minWidth: 120 },
-    { field: 'measured', headerName: "Measured", minWidth: 210, sort:'asc' },
+    { field: 'measured', headerName: "Measured", minWidth: 210, sort:'asc', valueFormatter: this.formatDateColumn },
     { field: 'aqi', headerName: "AQI", minWidth: 80 }
   ];
   defaultColDef = { resizable: true, filter: true, sortable: true };
@@ -136,4 +137,8 @@ export class RawDataComponent implements OnInit, OnDestroy {
     });
     this.dataStorageService.highlightFeatures(coords);
   }
+  formatDateColumn(param: any) {
+    return new DatePipe('en_US').transform(param.value,"dd.MM.yyyy, hh:mm:ss");
+  }
+
 }
