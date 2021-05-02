@@ -4,19 +4,19 @@
     <input class="input-search" #input id="search" name="search" matInput placeholder="search data in grid..." />
     <button mat-raised-button (click)="selectBySearch(input.value)">Search</button>
   </div>
-  <div *ngIf="isLoadingData" class="loading">
-    <mat-progress-spinner diameter="20" mode="indeterminate" value="100">abc</mat-progress-spinner>
-    <span *ngIf="currentRowCount" class="loadingText">loading data {{currentRowCount}}...</span>
-    <span *ngIf="!currentRowCount" class="loadingText">loading data...</span>
+    <div *ngIf="isLoadingData" class="loading">
+      <mat-progress-spinner diameter="20" mode="indeterminate" value="100">abc</mat-progress-spinner>
+      <span *ngIf="currentRowCount" class="loadingText">loading data {{currentRowCount}}...</span>
+      <span *ngIf="!currentRowCount" class="loadingText">loading data...</span>
+    </div>
+    <div *ngIf="!isLoadingData" class="loading">
+      <span *ngIf="!currentRowCount" class="loadingText">No rows found</span>
+      <span *ngIf="currentRowCount" class="loadingText">Total rows {{currentRowCount}}</span>
+    </div>
+    <div>
+      <button mat-raised-button (click)="onBtnExport()">Export to excel</button>
+    </div>
   </div>
-  <div *ngIf="!isLoadingData" class="loading">
-    <span *ngIf="!currentRowCount" class="loadingText">No rows found</span>
-    <span *ngIf="currentRowCount" class="loadingText">Total rows {{currentRowCount}}</span>
-  </div>
-  <div>
-    <button mat-raised-button (click)="onBtnExport()">Export to excel</button>
-  </div>
-</div>
 
 <ag-grid-angular
   style="width: 100%; height: 100%;flex: '1 1 auto'"
