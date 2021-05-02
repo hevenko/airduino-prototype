@@ -1,10 +1,10 @@
 <ng-container *ngIf="showUsersGrid">
   <div class="toolbar">
-    <div style="margin-right:25px;">
+    <div class="toolbarButtons" >
       <button mat-raised-button (click)="btnAddUserOnClick($event)">Add</button>
       <button mat-raised-button (click)="btnEditUserOnCLick($event)">Edit</button>
     </div>
-    <div style="margin-right:25px;">
+    <div class="toolbarButtons" >
       <button mat-raised-button (click)="setUsersEnabled(false)">Block</button>
       <button mat-raised-button (click)="setUsersEnabled(true)">Unblock</button>
     </div>
@@ -32,18 +32,18 @@
   </ag-grid-angular>
 </ng-container>
 <div class="toolbar">
-  <div style="margin-right:25px;">
+  <div class="toolbarButtons" >
     <button mat-raised-button (click)="btnAddDeviceOnClick($event)">Add</button>
     <button mat-raised-button (click)="btnEditDevicOnCLick($event)">Edit</button>
   </div>
-  <div style="margin-right:25px;">
+  <div class="toolbarButtons" >
     <button mat-raised-button (click)="setDevicesEnabled(false)">Block</button>
     <button mat-raised-button (click)="setDevicesEnabled(true)">Unblock</button>
   </div>
-  <div style="margin-right:25px;"  class="check-box-fix">
+  <div class="check-box-fix">
     <mat-checkbox class="example-margin" [(ngModel)]="showBlockedDevices" (change)="showBlockedDevicesOnChange($event)">Show blocked</mat-checkbox>
   </div>
-  <div style="margin-right:25px;">
+  <div>
     <button mat-raised-button (click)="btnAddDevicesOnClick($event)" [disabled]="disableAddDevices">Add devices...</button>
   </div>
 </div>
@@ -66,21 +66,21 @@
 >
 </ag-grid-angular>
 <div class="flex-container">
-  <div class="flex-item"><label >PM 10: </label><span >{{dsSensors?.pm10}}</span></div>
-  <div class="flex-item"><label>PM 2.5: </label><span>{{dsSensors?.pm25}}</span></div>
-  <div class="flex-item"><label>SO<sub>2</sub>: </label><span>{{dsSensors?.so2}}</span></div>
-  <div class="flex-item"><label>CO: </label><span>{{dsSensors?.co}}</span></div>
-  <div class="flex-item"><label>O<sub>3</sub>:</label><span>{{dsSensors?.o}}</span></div>
-  <div class="flex-item"><label>PB: </label><span>{{dsSensors?.pb}}</span></div>
-  <div class="flex-item"><label>HC: </label><span>{{dsSensors?.hc}}</span></div>
-  <div class="flex-item"><label>VOC: </label><span>{{dsSensors?.voc}}</span></div>
-  <div class="flex-item"><label>Temp: </label><span >{{dsSensors?.temp}}</span></div>
-  <div class="flex-item"><label>Humidity: </label><span>{{dsSensors?.humidity}}</span></div>
-  <div class="flex-item"><label>Pressure: </label><span>{{dsSensors?.pressure}}</span></div>
-  <div class="flex-item"><label>GPS: </label><span>{{dsSensors?.gps}}</span></div>
-  <div class="flex-item"><label>Battery: </label><span>{{dsSensors?.battery}}</span></div>
-  <div class="flex-item"><label>Measured: </label><span>{{dsSensors?.measured | date : 'd.M.yyyy, h:mm:ss'}}</span></div>
-  <div class="flex-item"><label>AQI: </label><span>{{dsSensors?.aqi}}</span></div>
+  <div class="flex-item"><label class="sensorLabel">PM 10:</label><span >{{dsSensors?.pm10}}</span></div>
+  <div class="flex-item"><label class="sensorLabel">PM 2.5:</label><span>{{dsSensors?.pm25}}</span></div>
+  <div class="flex-item"><label class="sensorLabel">SO<sub>2</sub>:</label><span>{{dsSensors?.so2}}</span></div>
+  <div class="flex-item"><label class="sensorLabel">CO:</label><span>{{dsSensors?.co}}</span></div>
+  <div class="flex-item"><label class="sensorLabel">O<sub>3</sub>:</label><span>{{dsSensors?.o}}</span></div>
+  <div class="flex-item"><label class="sensorLabel">PB:</label><span>{{dsSensors?.pb}}</span></div>
+  <div class="flex-item"><label class="sensorLabel">HC:</label><span>{{dsSensors?.hc}}</span></div>
+  <div class="flex-item"><label class="sensorLabel">VOC:</label><span>{{dsSensors?.voc}}</span></div>
+  <div class="flex-item"><label class="sensorLabel">Temp:</label><span >{{dsSensors?.temp}}</span></div>
+  <div class="flex-item"><label class="sensorLabel">Humidity:</label><span>{{dsSensors?.humidity}}</span></div>
+  <div class="flex-item"><label class="sensorLabel">Pressure:</label><span>{{dsSensors?.pressure}}</span></div>
+  <div class="flex-item"><label class="sensorLabel">GPS:</label><span>{{dsSensors?.gps}}</span></div>
+  <div class="flex-item"><label class="sensorLabel">Battery:</label><span>{{dsSensors?.battery}}</span></div>
+  <div class="flex-item"><label class="sensorLabel">Measured:</label><span>{{dsSensors?.measured | date : 'd.M.yyyy, h:mm:ss'}}</span></div>
+  <div class="flex-item"><label class="sensorLabel">AQI:</label><span>{{dsSensors?.aqi}}</span></div>
 </div>
 <!--
 <table>

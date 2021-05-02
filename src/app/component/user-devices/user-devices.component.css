@@ -8,12 +8,15 @@
   .toolbar {
     display: flex;
     justify-content: baseline;
-    padding: 0.5rem;
+    padding: 0 0.5rem 0 0.5rem;
     align-items: center;
+    flex-wrap: wrap;
+    margin-top: 2;
   }
   button {
     margin-left: 3px;
     margin-right: 3px;
+    line-height: inherit;
   }
   .flex-container {
     /* We first create a flex layout context */
@@ -31,24 +34,37 @@
     /* justify-content: space-between; */
     
     padding: 0;
-    margin: 10;
+    margin: 2;
     list-style: none;
   }
   .flex-item {
-    background: tomato;
-    padding: 5px;
-    
-    height: 40px;
-    margin: 2px;
-    color: white;
+    border-right: 1px solid grey;
+    padding: 0 4 0 4;
+    margin-bottom: 2px;
     font-weight: bold;
-    font-size: 1.5em;
+    font-size: 1em;
     flex-basis: auto;
+    color: gray;
   }
   div div label {
     display: inline;
-    color: black;
   }
+  mat-checkbox label {
+    margin-bottom: 0px;
+  }
+  div div span {
+    margin-left: 3px;
+  }
+
   .check-box-fix {
      margin-top: 5px; /* to contrast the bottom-marrgin of cbox inner class */
-  }  
+     margin-left: 3px;
+     margin-right: 15px;
+  } 
+  .toolbarButtons {
+    display: flex;
+    margin-right: 15px;
+  }
+  .sensorLabel {
+    color: gray;
+  }
