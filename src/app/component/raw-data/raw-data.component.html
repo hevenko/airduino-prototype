@@ -13,14 +13,15 @@
       <span *ngIf="!currentRowCount" class="loadingText">No rows found</span>
       <span *ngIf="currentRowCount" class="loadingText">Total rows {{currentRowCount}}</span>
     </div>
-    <div>
+    <div class="search">
       <button mat-raised-button (click)="onBtnExport()">Export to excel</button>
     </div>
   </div>
 
 <ag-grid-angular
-  style="width: 100%; height: 100%;flex: '1 1 auto'"
+  style="width: 100%; height: 100%;flex: '1 1 auto';line-height: inherit;"
   class="ag-theme-alpine"
+  [rowHeight]="20"
   [rowData]="dataSource"
   [columnDefs]="displayedColumns"
   [defaultColDef]="defaultColDef"

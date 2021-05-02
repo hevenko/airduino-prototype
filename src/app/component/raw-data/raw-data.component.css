@@ -30,7 +30,7 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  padding: 0 1rem 0 1rem;
+  padding: 0 0 0 1rem;
   align-items: center;
   margin-bottom: 5px;
 }
@@ -56,4 +56,7 @@
 
 .loadingText {
   padding: 0 1rem;
+}
+::ng-deep [role=gridcell] {
+   line-height: inherit !important;
 }
