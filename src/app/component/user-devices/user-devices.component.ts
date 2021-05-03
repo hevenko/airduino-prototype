@@ -91,7 +91,7 @@ export class UserDevicesComponent extends AirduinoComponent implements OnInit, O
       { field: 'rowChecked', cellRenderer: 'checkRowRenderer', headerName: "Check", maxWidth: 100},
       { field: 'id', headerName: "id", minWidth: 110},
       { field: 'type', headerName: "type", minWidth: 110, valueGetter: this.getDeviceType },
-      { field: 'owner', headerName: "owner", minWidth: 110 },
+      { field: 'owner', headerName: "owner", minWidth: 110, hide: true },
       { field: 'firmware', headerName: "firmware", minWidth: 110, valueGetter: this.getFirmware },
       { field: 'ffirmware', headerName: "ffirmware", minWidth: 110 },
       { field: 'configuration', headerName: "configuration", minWidth: 110, valueGetter: this.getConfiguration },
