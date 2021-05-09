@@ -40,6 +40,8 @@ export class DataStorageService {
   deviceTypesObervable: Promise<any[]>;
   firmwaresObervable: Promise<any[]>;
   configurationsObervable: Promise<any[]>;
+
+  usubscribeBroadcastBus: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   
   constructor(private http: HttpClient, private messageService: MessageService, auth: AuthService) {
     console.log('DataStorageService' + (++DataStorageService.i));
@@ -413,5 +415,8 @@ export class DataStorageService {
       ).toPromise();
     }
     return this.configurationsObervable;
+  }
+  unsubscribeBroadcast(initiator: string) {
+    this.usubscribeBroadcastBus.next(initiator);
   }
 }

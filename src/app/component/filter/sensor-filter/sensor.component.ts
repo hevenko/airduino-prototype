@@ -46,6 +46,9 @@ export class SensorComponent implements OnInit {
         this.loadedSensors = this.getComponentValue();
       }
     });
+    this.dataStorageService.usubscribeBroadcastBus.subscribe(v => { //prevents drawing feaures (dots) outside poligon
+      this.subscription?.unsubscribe();
+    });
   }
   fetchData = () => {
     if (this.subscription) {

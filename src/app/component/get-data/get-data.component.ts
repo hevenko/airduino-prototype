@@ -10,14 +10,17 @@ import { MessageService } from 'src/app/shared/service/message.service';
   styleUrls: ['./get-data.component.css']
 })
 export class GetDataComponent implements OnInit {
-
+  subscription;
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel, private messageService: MessageService) { }
 
   ngOnInit(): void {
+    this.dataStorageService.usubscribeBroadcastBus.subscribe(v => {
+      this.subscription?.unsubscribe();
+    });
   }
   getData() {
     if(this.filterModel.isFilterSet()) {
-      this.dataStorageService.fetchData(this.filterModel);
+      this.subscription = this.dataStorageService.fetchData(this.filterModel);
     } else {
       this.messageService.showWarningMessage(Constants.MSG_MISSING_DATA_FILTER);
     }
