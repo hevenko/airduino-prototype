@@ -47,6 +47,7 @@ export class LocationComponent implements OnInit {
       LocationComponent.label = this.makeLabel();
       if(!!this.locationForm.value.selectedRegion) {
         console.log("region name:", this.locationForm.value);
+        this.subscription?.unsubscribe();
         this.filterModel.setLocations({name : this.locationForm.value.selectedRegion});
         this.dataStorageService.locationsSelectorBus.next(this.filterModel.locations);
         //this.filterModel.locations = {name : this.locationForm.value.selectedRegion};
