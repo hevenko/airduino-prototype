@@ -75,8 +75,8 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit  
     let dialog = this.showConfirmationDialog(this.dialog, '"' + this.getLabel() + '"' + ' will be overwritten, continue?');
     this.setDialogIsOpen(true);
     dialog.afterClosed().subscribe(result => {
+      this.setDialogIsOpen(false);
       if (result) {
-        this.setDialogIsOpen(false);
         this.messageService.showMessage(Constants.MSG_FILTER_OVERWRITTEN, MessageColor.Green);
       }
     });
