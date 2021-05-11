@@ -24,6 +24,7 @@ export class LocationComponent implements OnInit {
   ];
   defaultLabel = '';
   static label: string;
+  subscription;
 
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { }
 
@@ -68,6 +69,12 @@ export class LocationComponent implements OnInit {
       }
     });
     this.locationForm.controls.selectedDevices.setValue('1'); //mock My devices
+    this.dataStorageService.usubscribeBroadcastBus.subscribe(v => { //prevents drawing feaures (dots) outside poligon
+      if("LocationComponent" !== v) {
+        this.subscription?.unsubscribe();
+      }
+    });
+
   }
 
   makeLabel(): string {
@@ -88,8 +95,9 @@ export class LocationComponent implements OnInit {
       let lastRadioBtnValue = e.currentTarget.children[radioBtnCount - 1].getElementsByTagName('input')[0].value;
       this.locationForm.controls.selectedDevices.setValue(lastRadioBtnValue, { emitEvent: false });
     }
-    if (!((this.locationForm.value == "2") || (this.locationForm.value == "3"))) {
-      this.dataStorageService.fetchData(this.filterModel);
+    if (!((this.locationForm.value.selectedDevices == "2") || (this.locationForm.value.selectedDevices == "3"))) {
+      this.subscription = this.dataStorageService.fetchData(this.filterModel);
+      this.dataStorageService.usubscribeBroadcastBus.next("LocationComponent");
     }
   }
 

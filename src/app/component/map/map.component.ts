@@ -313,6 +313,11 @@ export class MapComponent implements OnInit, OnDestroy {
       });
     });
     this.highlightFeaturesSubscribe();
+    this.dataStorageService.usubscribeBroadcastBus.subscribe(v => { //prevents drawing feaures (dots) outside poligon
+      if("mapComponent" !== v) {
+        this.subscription?.unsubscribe();
+      }
+    });
   }
   highlightFeaturesSubscribe(): Subscription {
     return this.dataStorageService.highlightFeaturesBus.subscribe((coords: GeoJSONGeometry[]) => {
