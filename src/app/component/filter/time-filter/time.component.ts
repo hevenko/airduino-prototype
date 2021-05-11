@@ -14,7 +14,7 @@ export class TimeComponent implements OnInit, AfterViewInit {
   static filterTypeCustom = "custom_range";
   static filterTypeFixed = "fixed_range";
 
-  defaultLabel = '';
+  defaultLabel = 'Time period';
   hoursTime = [
     {value: '', desc: ''},
     {value: 'PT1H', desc: 'Last hour'},

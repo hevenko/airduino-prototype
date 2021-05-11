@@ -2,7 +2,7 @@
   <div appDropdown class="dropdown pull-right filter">
     <a class="dropdown-toogle" data-toggle="collapse" href="#senssorComponentDropdown"
        role="button" aria-expanded="false" aria-controls="senssorComponentDropdown"  onclick="return false;">
-      <span>Sensors</span><span class="caret"></span>
+      <span  [innerHTML]="makeLabel()">Sensors</span><span class="caret"></span>
     </a>
     <div class="dropdown-menu filter-menu-expanded" style="padding: 15px;" id="senssorComponentDropdown">
       <ng-container formArrayName="sensors" *ngFor="let s of getSensorControls();let i = index">
