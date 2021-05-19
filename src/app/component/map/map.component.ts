@@ -260,6 +260,9 @@ export class MapComponent implements OnInit, OnDestroy {
     this.dataStorageService.locationsSelectorBus?.subscribe(value => {
       console.log("filterModel changed to:", value);
       const locations = this.filterModel.locations;
+      if(!!!locations) {
+        return;
+      }
       //console.log("location:", locations);
       this.createFeaturesFromLocation();
       
@@ -269,7 +272,7 @@ export class MapComponent implements OnInit, OnDestroy {
     });
     this.dataStorageService.drawDataBus.subscribe((region: any) => {
       console.log("named location:", region);
-      if (!region || (this.filterModel.locations && (this.filterModel.locations.polygon || this.filterModel.locations.circle))) {
+      if (!region || !region.length || (this.filterModel.locations && (this.filterModel.locations.polygon || this.filterModel.locations.circle))) {
         return;
       }
       let geometry;

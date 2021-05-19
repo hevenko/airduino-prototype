@@ -51,22 +51,25 @@ export class LocationComponent implements OnInit {
         this.filterModel.setLocations({name : this.locationForm.value.selectedRegion});
         this.dataStorageService.locationsSelectorBus.next(this.filterModel.locations);
         //this.filterModel.locations = {name : this.locationForm.value.selectedRegion};
-      } else if (this.locationForm.controls.selectedDevices.value === '1'){
-        this.filterModel.setLocations({devices : [1]}); //mock
-        this.dataStorageService.locationsSelectorBus.next(this.filterModel.locations);
-        //this.filterModel.locations = {devices : [1]}; //mock
-      } else if (this.locationForm.controls.selectedDevices.value === '2'){
-        this.filterModel.setLocations({ polygon: [] }); //mock
-        this.dataStorageService.locationsSelectorBus.next(this.filterModel.locations);
-        //this.filterModel.locations = "Polygon"; //mock
-      } else if (this.locationForm.controls.selectedDevices.value === '3'){
-        this.filterModel.setLocations({ circle: {} }); //mock
-        this.dataStorageService.locationsSelectorBus.next(this.filterModel.locations);
-        //this.filterModel.locations = "Circle"; //mock
       } else {
-        this.filterModel.setLocations(null);
-        this.dataStorageService.locationsSelectorBus.next(this.filterModel.locations);
-        //this.filterModel.locations = null;
+        this.regionOnChange();
+        if (this.locationForm.controls.selectedDevices.value === '1'){
+          this.filterModel.setLocations({devices : [1]}); //mock
+          this.dataStorageService.locationsSelectorBus.next(this.filterModel.locations);
+          //this.filterModel.locations = {devices : [1]}; //mock
+        } else if (this.locationForm.controls.selectedDevices.value === '2'){
+          this.filterModel.setLocations({ polygon: [] }); //mock
+          this.dataStorageService.locationsSelectorBus.next(this.filterModel.locations);
+          //this.filterModel.locations = "Polygon"; //mock
+        } else if (this.locationForm.controls.selectedDevices.value === '3'){
+          this.filterModel.setLocations({ circle: {} }); //mock
+          this.dataStorageService.locationsSelectorBus.next(this.filterModel.locations);
+          //this.filterModel.locations = "Circle"; //mock
+        } else {
+          this.filterModel.setLocations(null);
+          this.dataStorageService.locationsSelectorBus.next(this.filterModel.locations);
+          //this.filterModel.locations = null;
+        }        
       }
     });
     this.locationForm.controls.selectedDevices.setValue('1'); //mock My devices
@@ -103,7 +106,7 @@ export class LocationComponent implements OnInit {
   }
 
   regionOnChange(): void {
-    const region = this.regionList.filter((v) => v.id === this.locationForm.value.selectedRegion);
+    const region = this.regionList?.filter((v) => v.id === this.locationForm.value.selectedRegion);
     console.log("location.component region:", region);
     //MapComponent.deleteMap();
     //this.dataStorageService.sendLocationData(MapComponent.regionToGeoJSON(region));
