@@ -59,8 +59,9 @@ export class SensorComponent implements OnInit {
   }
   initForm() {
     const faSensors: FormArray = new FormArray([]);
-    for (const def of SensorComponent.sensorList) {
-      faSensors.push(new FormControl({value: true, disabled: (def.value === 'gps' || def.value === 'measured')}));
+    let selectableSensors = SensorComponent.sensorList.filter(v => {return v.value != 'measured' && v.value != 'gps'});
+    for (const def of selectableSensors) {
+      faSensors.push(new FormControl({value: true, disabled: false}));
     }
     this.compForm = new FormGroup({
       sensors: faSensors
@@ -99,7 +100,7 @@ export class SensorComponent implements OnInit {
       .filter(v => v !== null);
     
       if (!!result.length) {
-        result = result.concat(['measured']); //user can't choose this sensor, it is required by the app
+        result = result.concat(['measured','gps']); //user can't choose this sensor, it is required by the app
       }
        return !!result ? result : null;
   }
