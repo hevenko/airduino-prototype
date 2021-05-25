@@ -1,6 +1,7 @@
 a {
     font-size: 14px;
     font-weight: normal;
+    text-decoration: none;
 }
 .locationitem {
     padding: 0 2px!important;
