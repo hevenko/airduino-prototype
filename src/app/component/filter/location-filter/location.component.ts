@@ -3,6 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FilterModel } from 'src/app/model/filter-model';
 import { Region } from 'src/app/model/region';
+import { Constants } from 'src/app/shared/constants';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
 import { MapComponent } from '../../map/map.component';
 
@@ -26,7 +27,8 @@ export class LocationComponent implements OnInit {
   defaultLabel = '';
   static label: string;
   subscription;
-
+  stayOpened = Constants.STAY_OPEN;
+  regionIsOpen;
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel, private router: Router) { }
 
   ngOnInit(): void {
@@ -116,4 +118,11 @@ export class LocationComponent implements OnInit {
     //this.dataStorageService.sendLocationData(MapComponent.regionToGeoJSON(region));
     this.dataStorageService.sendLocationData(region);
   }
+  setRegionIsOpen(open: boolean) {
+    this.regionIsOpen = open;
+  }
+  shouldStayOpen(): boolean {
+    return this.regionIsOpen;
+  }
+
 }

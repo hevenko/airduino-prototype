@@ -6,3 +6,7 @@ a {
 .locationitem {
     padding: 0 2px!important;
 }
+:host ::ng-deep .mat-select-value {
+    max-width: 100%
+}
+  

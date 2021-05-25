@@ -1,5 +1,5 @@
 <form [formGroup]="locationForm">
-    <div appDropdown class="dropdown pull-right filter">
+    <div appDropdown [ngClass]="shouldStayOpen() ? stayOpened :''" class="dropdown pull-right filter">
         <a class="dropdown-toogle" data-toggle="collapse" href="#locationComponentDropdown" onclick="return false;"
             role="button" aria-expanded="false" aria-controls="locationComponentDropdown">
             <span [innerHTML]="makeLabel()"></span>
@@ -11,12 +11,12 @@
                 <div class="locationitem" *ngFor="let k of locationList; let i = index;">
                     <mat-radio-button value="{{k.value}}">
                         <ng-container *ngIf="i !== locationList.length - 1">{{k.desc}}</ng-container>
+                        <mat-select  formControlName="selectedRegion" *ngIf="i === locationList.length - 1" (selectionChange)="regionOnChange()" (openedChange)="setRegionIsOpen($event)" >
+                            <ng-container *ngFor="let r of regionList">
+                                <mat-option value="{{r.id}}">{{r.id}}</mat-option>
+                            </ng-container>
+                        </mat-select>
                     </mat-radio-button>
-                    <select formControlName="selectedRegion" *ngIf="i === locationList.length - 1" (change)="regionOnChange()">
-                        <ng-container *ngFor="let r of regionList">
-                            <option value="{{r.id}}">{{r.id}}</option>
-                        </ng-container>
-                    </select>
                 </div>
             </mat-radio-group>
         </div>
