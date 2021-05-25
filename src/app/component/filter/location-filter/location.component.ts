@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 import { FilterModel } from 'src/app/model/filter-model';
 import { Region } from 'src/app/model/region';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
@@ -26,7 +27,7 @@ export class LocationComponent implements OnInit {
   static label: string;
   subscription;
 
-  constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { }
+  constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel, private router: Router) { }
 
   ngOnInit(): void {
     LocationComponent.label = this.defaultLabel;
@@ -102,6 +103,9 @@ export class LocationComponent implements OnInit {
     if (!((this.locationForm.value.selectedDevices == "2") || (this.locationForm.value.selectedDevices == "3"))) {
       this.subscription = this.dataStorageService.fetchData(this.filterModel);
       this.dataStorageService.usubscribeBroadcastBus.next("LocationComponent");
+    }
+    if(this.locationForm.value.selectedDevices == "2" || this.locationForm.value.selectedDevices == "3") {
+      this.router.navigate(['/map']);
     }
   }
 
