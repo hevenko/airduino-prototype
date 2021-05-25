@@ -23,7 +23,7 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { TimeComponent } from './component/filter/time-filter/time.component';
 import { MatInputModule } from '@angular/material/input';
-import { SatDatepickerModule, SatNativeDateModule } from 'saturn-datepicker';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, SatDatepickerModule, SatNativeDateModule } from 'saturn-datepicker';
 import {MatDatepickerModule} from "@angular/material/datepicker";
 import { PresetFilterComponent } from './component/filter/preset-filter/preset-filter.component';
 import { AlertComponent } from './component/filter/preset-filter/alert/alert.component';
@@ -57,6 +57,20 @@ import { NgApexchartsModule } from "ng-apexcharts";
 import { BlockUIModule } from 'ng-block-ui';
 import { GetDataComponent } from './component/get-data/get-data.component';
 import { FilterInfoComponent } from './component/filter-info/filter-info.component';
+import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
+
+export const DATE_FORMATS = {
+  parse: {
+    dateInput: 'LL',
+  },
+  display: {
+    dateInput: 'DD.MM.YYYY.',
+    monthYearLabel: 'MM YYYY',
+    dateA11yLabel: 'DD.MM.YYYY.',
+    monthYearA11yLabel: 'MM YYYY',
+  },
+};
+
 
 @NgModule({
   declarations: [
@@ -119,7 +133,8 @@ import { FilterInfoComponent } from './component/filter-info/filter-info.compone
     NgApexchartsModule,
     BlockUIModule.forRoot()
   ],
-  providers: [RemoteLoDService, AuthGuardService, FilterModel],
+  providers: [RemoteLoDService, AuthGuardService, FilterModel, {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS]},
+  {provide: MAT_DATE_FORMATS, useValue: DATE_FORMATS}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
