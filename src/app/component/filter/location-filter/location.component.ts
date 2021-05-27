@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { MatRadioChange } from '@angular/material/radio';
 import { Router } from '@angular/router';
 import { FilterModel } from 'src/app/model/filter-model';
 import { Region } from 'src/app/model/region';
@@ -29,6 +30,8 @@ export class LocationComponent implements OnInit {
   subscription;
   stayOpened = Constants.STAY_OPEN;
   regionIsOpen;
+  locationIsSelected;
+
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel, private router: Router) { }
 
   ngOnInit(): void {
@@ -117,6 +120,7 @@ export class LocationComponent implements OnInit {
     //MapComponent.deleteMap();
     //this.dataStorageService.sendLocationData(MapComponent.regionToGeoJSON(region));
     this.dataStorageService.sendLocationData(region);
+    this.regionIsOpen = false;
   }
   setRegionIsOpen(open: boolean) {
     this.regionIsOpen = open;
@@ -124,5 +128,14 @@ export class LocationComponent implements OnInit {
   shouldStayOpen(): boolean {
     return this.regionIsOpen;
   }
-
+  locationSelected(): boolean {
+    return this.locationIsSelected;
+  }
+  setLocationSelected(e:number) {
+    if(["0","1","2",].indexOf(e+'') !== -1) {
+      this.locationIsSelected = true;
+    } else {
+      this.locationIsSelected = false;
+    }
+  }
 }

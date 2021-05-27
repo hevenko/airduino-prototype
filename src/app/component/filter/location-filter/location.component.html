@@ -1,15 +1,15 @@
 <form [formGroup]="locationForm">
     <div appDropdown [ngClass]="shouldStayOpen() ? stayOpened :''" class="dropdown pull-right filter">
-        <a class="dropdown-toogle" data-toggle="collapse" href="#locationComponentDropdown" onclick="return false;"
+        <a class="dropdown-toogle" data-toggle="collapse" href="#locationComponentDropdown" (click)="locationIsSelected = false;"
             role="button" aria-expanded="false" aria-controls="locationComponentDropdown">
             <span [innerHTML]="makeLabel()"></span>
             <span class="caret"></span>
         </a>
-        <div class="dropdown-menu filter-menu-expanded" style="padding: 5px;" id="locationComponentDropdown">
+        <div [ngClass]="locationSelected() ? 'closeMenu' : ''" class="dropdown-menu filter-menu-expanded" style="padding: 5px;" id="locationComponentDropdown">
             <mat-radio-group aria-label="Select an option" formControlName="selectedDevices"
                 (change)="locationOnChange($event)">
                 <div class="locationitem" *ngFor="let k of locationList; let i = index;">
-                    <mat-radio-button value="{{k.value}}">
+                    <mat-radio-button value="{{k.value}}" (click)="setLocationSelected(i)"> 
                         <ng-container *ngIf="i !== locationList.length - 1">{{k.desc}}</ng-container>
                         <mat-select  formControlName="selectedRegion" *ngIf="i === locationList.length - 1" (selectionChange)="regionOnChange()" (openedChange)="setRegionIsOpen($event)" >
                             <ng-container *ngFor="let r of regionList">
