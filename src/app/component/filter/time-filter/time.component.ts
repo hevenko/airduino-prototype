@@ -40,6 +40,7 @@ export class TimeComponent implements OnInit, AfterViewInit {
   stayOpened = Constants.STAY_OPEN;
   subscription;
   fetchDataSetTimeout;
+  setCloseMenuClass = false;
 
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { }
 
@@ -138,5 +139,8 @@ export class TimeComponent implements OnInit, AfterViewInit {
   set label(v: string) {
     this._label = v;
     TimeComponent.label = v;
+  }
+  closeMenuClass(doClose: boolean) {
+    this.setCloseMenuClass = doClose;
   }
 }

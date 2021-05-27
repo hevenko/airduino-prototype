@@ -1,16 +1,16 @@
 <form [formGroup]="timeForm">
-  <div appDropdown [ngClass]="shouldStayOpen() ? stayOpened :''" class="dropdown pull-right filter">
+  <div appDropdown [ngClass]="shouldStayOpen() && !setCloseMenuClass ? stayOpened :''" class="dropdown pull-right filter">
     <a class="dropdown-toogle" data-toggle="collapse" href="#timeCoponentDropdown" role="button" aria-expanded="false"
-       aria-controls="timeCoponentDropdown"  onclick="return false;">
+       aria-controls="timeCoponentDropdown"  (click)="closeMenuClass(false);false;">
       <span [innerHTML]="label"></span><span class="caret"></span>
     </a>
-    <div class="dropdown-menu filter-menu-expanded" style="padding: 15px;" id="timeCoponentDropdown">
+    <div [ngClass]="setCloseMenuClass ? 'closeMenu' : ''" class="dropdown-menu filter-menu-expanded" style="padding: 15px;" id="timeCoponentDropdown">
       <mat-form-field>
         <mat-label>Sliding range</mat-label>
         <mat-select #predefinedSelect matNativeControl formControlName="slidingRange" (openedChange)="hourRangeOnOpen($event)" 
         (selectionChange)="setSlidingRange($event)">
           <ng-container *ngFor="let s of hoursTime">
-            <mat-option [value]="s.value">
+            <mat-option [value]="s.value" (click)="closeMenuClass(true);">
               {{s.desc}}
             </mat-option>
           </ng-container>
@@ -27,8 +27,8 @@
     <hr>
         <mat-form-field>
         <input formControlName="fixedRange" matInput placeholder="fixed date range"
-               (change)="setFixedRange($event)"
-               (dateInput)="setFixedRange($event)"
+               (change)="setFixedRange($event);"
+               (dateInput)="setFixedRange($event);closeMenuClass(true);"
                [satDatepicker]="picker"
                [value]="date">
         </mat-form-field>
