@@ -31,7 +31,7 @@ export class LocationComponent implements OnInit {
   stayOpened = Constants.STAY_OPEN;
   regionIsOpen;
   locationIsSelected;
-
+  clickedOptionInd = 0;
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel, private router: Router) { }
 
   ngOnInit(): void {
@@ -80,9 +80,19 @@ export class LocationComponent implements OnInit {
     });
     this.locationForm.controls.selectedDevices.setValue('1'); //mock My devices
     this.dataStorageService.usubscribeBroadcastBus.subscribe(v => { //prevents drawing feaures (dots) outside poligon
-      if("LocationComponent" !== v) {
+      if(Constants.UNSUB_SRC_LOCACTION_COMPONENT !== v) {
         this.subscription?.unsubscribe();
       }
+    });
+    this.dataStorageService.allMenusClosedBus.subscribe(b => {
+      if(Constants.LOCATION_MENU_LAST_CLOSED === b) {
+          if([0, 3].indexOf(this.clickedOptionInd) !== -1) { //My devices, region
+            this.subscription = this.dataStorageService.fetchData(this.filterModel);
+          } else {
+            this.subscription?.unsubscribe();
+            this.dataStorageService.usubscribeBroadcastBus.next(Constants.UNSUB_SRC_LOCACTION_COMPONENT);
+          }
+       }
     });
 
   }
@@ -107,7 +117,7 @@ export class LocationComponent implements OnInit {
     }
     if (!((this.locationForm.value.selectedDevices == "2") || (this.locationForm.value.selectedDevices == "3"))) {
       this.subscription = this.dataStorageService.fetchData(this.filterModel);
-      this.dataStorageService.usubscribeBroadcastBus.next("LocationComponent");
+      this.dataStorageService.usubscribeBroadcastBus.next(Constants.UNSUB_SRC_LOCACTION_COMPONENT);
     }
     if(this.locationForm.value.selectedDevices == "2" || this.locationForm.value.selectedDevices == "3") {
       this.router.navigate(['/map']);
@@ -132,6 +142,9 @@ export class LocationComponent implements OnInit {
     return this.locationIsSelected;
   }
   setLocationSelected(e:number) {
+    if(e !== -1) {
+      this.clickedOptionInd = e;
+    }
     if(["0","1","2",].indexOf(e+'') !== -1) {
       this.locationIsSelected = true;
     } else {

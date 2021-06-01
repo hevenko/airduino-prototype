@@ -27,4 +27,10 @@ export class Constants {
   static TITLE_EDIT_DEVICE = "Edit device";
   static TITLE_ADD_DEVICES = "Add devices";
   static MSG_MISSING_DATA_FILTER = "Choose filters to get data.";
+  static UNSUB_SRC_LOCACTION_COMPONENT = "unsubSrcLocationComponent";
+  static UNSUB_SRC_MAP_COMPONENT = "unsubSrcMapComponent";
+  static UNSUB_SRC_TIME_COMPONENT = "unsubSrcTimeComponent";
+  static TIME_MENU_LAST_CLOSED = "timeMenu";
+  static SENSOR_MENU_LAST_CLOSED = "sensorMenu";
+  static LOCATION_MENU_LAST_CLOSED = "locationMenu";
 }

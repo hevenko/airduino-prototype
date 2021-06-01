@@ -43,6 +43,10 @@ export class DataStorageService {
 
   usubscribeBroadcastBus: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   
+  allMenusClosedBus: BehaviorSubject<string> = new BehaviorSubject<string>('');
+
+  fetchDataSubscription: Subscription;
+
   constructor(private http: HttpClient, private messageService: MessageService, auth: AuthService) {
     console.log('DataStorageService' + (++DataStorageService.i));
     //logout
@@ -164,6 +168,11 @@ export class DataStorageService {
   }
   
   fetchData(filterModel: FilterModel): Subscription {
+    this.fetchDataSubscription?.unsubscribe();
+    this.fetchDataSubscription = this.unusbscribeAndfetchData(filterModel);
+    return this.fetchDataSubscription
+  }
+  unusbscribeAndfetchData(filterModel: FilterModel): Subscription {
     let availableData: RawData[] = [];
     let filter: any = {};
     let subs = [];;

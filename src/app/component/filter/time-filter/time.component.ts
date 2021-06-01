@@ -70,20 +70,31 @@ export class TimeComponent implements OnInit, AfterViewInit {
         this.filterModel.time = null;
       }
     });
+    this.dataStorageService.allMenusClosedBus.subscribe(b => {
+      if(Constants.TIME_MENU_LAST_CLOSED === b) {
+        this.fetchData();
+      }
+    });
+    this.dataStorageService.usubscribeBroadcastBus.subscribe(v => { //prevents drawing feaures (dots) outside poligon
+      if(Constants.UNSUB_SRC_TIME_COMPONENT !== v) {
+        this.subscription?.unsubscribe();
+      }
+    });
+
   }
   fetchData = () => {
     if (this.subscription) {
       this.subscription.unsubscribe();
       this.subscription = null;
     }
-    //this.subscription = this.dataStorageService.fetchData(this.filterModel);
+    this.subscription = this.dataStorageService.fetchData(this.filterModel);
   }
   setSlidingRange(e: any) {
     this.filterModel.timeFilterType = TimeComponent.filterTypeSliding; // time filter type
     //default label when nothing selected
     this.label = this.hoursTime.filter((v) => {return v.value === e.value}).map((v, i) => {return v.desc !== '' ? v.desc : this.defaultLabel})[0];
     this.deleteOtherValues(true, false, false, false);
-    this.fetchData();
+    //this.fetchData();
   }
   setCustomRange(value: string, timeUnit: string) {
     this.filterModel.timeFilterType = TimeComponent.filterTypeCustom; // time filter type
@@ -95,7 +106,7 @@ export class TimeComponent implements OnInit, AfterViewInit {
     }
     this.deleteOtherValues(false, true, true, false);
     clearTimeout(this.fetchDataSetTimeout);
-    this.fetchDataSetTimeout = setTimeout(this.fetchData,1500);
+    //this.fetchDataSetTimeout = setTimeout(this.fetchData,1500);
   }
   setFixedRange(evt: any) {
     this.filterModel.timeFilterType = TimeComponent.filterTypeFixed; // time filter type
@@ -105,7 +116,7 @@ export class TimeComponent implements OnInit, AfterViewInit {
       this.label = this.defaultLabel;
     }
     this.deleteOtherValues(false, false, false, true);
-    this.fetchData();
+    //this.fetchData();
   }
   /**
    * deletes form control values whose coresponding param is set to false

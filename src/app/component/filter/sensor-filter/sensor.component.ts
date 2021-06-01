@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import { exit } from 'process';
 import { FilterModel } from 'src/app/model/filter-model';
+import { Constants } from 'src/app/shared/constants';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
 
 @Component({
@@ -35,6 +36,7 @@ export class SensorComponent implements OnInit {
   sensorList = SensorComponent.sensorList;
   loadedSensors = []; //data are loaded for these sensors
   static label: string | string[];
+  bMissingDataForSensor = false; //gets sensor data if false
 
   ngOnInit(): void {
     SensorComponent.label = this.defaultLabel;
@@ -44,10 +46,18 @@ export class SensorComponent implements OnInit {
     this.dataStorageService.loadingStatusBus.subscribe((v: boolean) => {
       if(v != null && !v) {
         this.loadedSensors = this.getComponentValue();
+        this.bMissingDataForSensor = false;
       }
     });
     this.dataStorageService.usubscribeBroadcastBus.subscribe(v => { //prevents drawing feaures (dots) outside poligon
       this.subscription?.unsubscribe();
+    });
+    this.dataStorageService.allMenusClosedBus.subscribe(b => {
+      if(Constants.SENSOR_MENU_LAST_CLOSED === b) {
+        if(this.bMissingDataForSensor) {
+          this.fetchData();
+        }
+       }
     });
   }
   fetchData = () => {
@@ -70,17 +80,12 @@ export class SensorComponent implements OnInit {
       let checkedSensors = this.getComponentValue();
       SensorComponent.label = this.makeLabel();
       this.filterModel.sensors = checkedSensors; //triggers next on BehSubject
-      let bMissingDataForSensor = false; //gets sensor data if false
       checkedSensors.forEach(s => {
         if(this.loadedSensors.indexOf(s) == -1) {
-          bMissingDataForSensor = true;
+          this.bMissingDataForSensor = true;
           return;
         }
       });
-      if(bMissingDataForSensor) {
-        clearTimeout(this.fetchDataSetTimeout);
-        this.fetchDataSetTimeout = setTimeout(this.fetchData,2000);
-      }
     });
     this.compForm.patchValue({"sensors":[true,true,true,true,true,true,true,true,true,true,true,true,true]}); //this triggers onchange, constructor does not
   }

@@ -1,5 +1,6 @@
 import { KeyValue } from '@angular/common';
 import {Directive, ElementRef, HostBinding, HostListener, Renderer2} from '@angular/core';
+import { Subscription } from 'rxjs';
 import { FilterModel } from '../model/filter-model';
 import { Constants } from '../shared/constants';
 import { DataStorageService } from '../shared/service/data-storage.service';
@@ -14,11 +15,10 @@ export class DropdownDirective {
   static fetchDataTriggerList = ['locationMenu','sensorMenu','timeMenu'];
   static fetchDataState: Map<string, string> = new Map();
   openMenuCounter = 0;
-  subscription;
+
   constructor(private elRef: ElementRef, private dataStorageService: DataStorageService, private filterModel: FilterModel) { 
     this.menuId = elRef.nativeElement.id;
   }
-
   //closeMenu flag may be set on clicked item or higher up the DOM
   shouldParentCloseTheMenu(target: any): boolean {
     let result = false;
@@ -58,25 +58,30 @@ export class DropdownDirective {
         } else {
           DropdownDirective.fetchDataState.set(this.menuId, 'same'); 
         }
-        /* outputs open/closed (changed) state of menus
+        ///* outputs open/closed (changed) state of menus
         console.log(this.menuId +"\ntimeMenu:"+ DropdownDirective.fetchDataState.get('timeMenu')+"\n"+
         "sensorMenu:"+ DropdownDirective.fetchDataState.get('sensorMenu')+"\n"+
         "locationMenu:"+ DropdownDirective.fetchDataState.get('locationMenu')+"\n");
-        */
+        //*/
+        let allMenusClosed = false;
         if('locationMenu' === this.menuId) { // locationMenu appDropdown directive instance is always last to process a click so it knows if a menu is opened
-          let fetchDataTrigger = '';
+          let fetchDataTrigger = [];
+          let sequence = [Constants.TIME_MENU_LAST_CLOSED, Constants.SENSOR_MENU_LAST_CLOSED, Constants.LOCATION_MENU_LAST_CLOSED];
           DropdownDirective.fetchDataState.forEach((k:string, v: string) => {
-            fetchDataTrigger += k;
+            fetchDataTrigger.push(k);
           });
-          fetchDataTrigger = fetchDataTrigger.replace('same',''); //get data only if open state changed on a menu (at least one menu is not 'same')
-          if(fetchDataTrigger.length !== 0) {
-            if(fetchDataTrigger.indexOf('opened') === -1 && fetchDataTrigger.indexOf('closed') !== -1) { //get data when a menu was closed and no menu has been opened
-              this.subscription?.unsubscribe();
-              this.subscription = this.dataStorageService.fetchData(this.filterModel);
-  
-            }
+          //get data only if open state changed on a menu (at least one menu is not 'same')
+          let indOfClosedMenu = fetchDataTrigger.indexOf('closed');
+          let indOfOpenedMenu = fetchDataTrigger.indexOf('opened');
+          if(indOfOpenedMenu === -1 && indOfClosedMenu !== -1) { //get data when a menu was closed and no menu has been opened
+            console.log('all menus closed');
+            allMenusClosed = true;
+          }
+          if(allMenusClosed && indOfClosedMenu !== -1) {
+            this.dataStorageService.allMenusClosedBus.next(sequence[indOfClosedMenu]); //brodcasting last closed menu name
           }
         }
+
       }
       this.isOpen = isOpenNewValue;
   }

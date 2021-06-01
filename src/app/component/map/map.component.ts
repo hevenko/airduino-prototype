@@ -27,6 +27,7 @@ import { RawData } from 'src/app/model/raw-data';
 import { FilterModel } from 'src/app/model/filter-model';
 import { easeIn, easeOut, inAndOut, linear, upAndDown } from 'ol/easing';
 import { GeoJSONGeometry } from 'src/app/model/geo-json-geometry';
+import { Constants } from 'src/app/shared/constants';
 
 @Component({
   selector: 'app-map',
@@ -124,7 +125,6 @@ export class MapComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.clearMap();
-    this.unsubscribeData();
     const center = this.map.getView().getCenter();
     localStorage.setItem('center0', center[0]);
     localStorage.setItem('center1', center[1]);
@@ -317,8 +317,9 @@ export class MapComponent implements OnInit, OnDestroy {
     });
     this.highlightFeaturesSubscribe();
     this.dataStorageService.usubscribeBroadcastBus.subscribe(v => { //prevents drawing feaures (dots) outside poligon
-      if("mapComponent" !== v) {
+      if(Constants.UNSUB_SRC_MAP_COMPONENT !== v) {
         this.subscription?.unsubscribe();
+        this.clearPoints();
       }
     });
   }
@@ -349,7 +350,7 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   fetchData() {
-    this.dataStorageService.usubscribeBroadcastBus.next("mapComponent");
+    this.dataStorageService.usubscribeBroadcastBus.next(Constants.UNSUB_SRC_MAP_COMPONENT);
     this.clearPoints();
     this.subscribeData();
     this.subscription = this.dataStorageService.fetchData(this.filterModel);
