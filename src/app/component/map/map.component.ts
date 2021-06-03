@@ -319,7 +319,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.dataStorageService.usubscribeBroadcastBus.subscribe(v => { //prevents drawing feaures (dots) outside poligon
       if(Constants.UNSUB_SRC_MAP_COMPONENT !== v) {
         this.subscription?.unsubscribe();
-        this.clearPoints();
+        this.clearMap();
       }
     });
   }

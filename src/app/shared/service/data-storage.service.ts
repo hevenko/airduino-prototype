@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular
 import { Injectable } from '@angular/core';
 import { catchError, concatMap, map, shareReplay } from 'rxjs/operators';
 import { MessageColor, MessageService } from './message.service';
-import { BehaviorSubject, EMPTY, Observable, of, Subscription, throwError } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, of, Subject, Subscription, throwError } from 'rxjs';
 import { Owner } from 'src/app/model/owner';
 import { Device } from 'src/app/model/device';
 import { Region } from 'src/app/model/region';
@@ -41,7 +41,7 @@ export class DataStorageService {
   firmwaresObervable: Promise<any[]>;
   configurationsObervable: Promise<any[]>;
 
-  usubscribeBroadcastBus: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+  usubscribeBroadcastBus: Subject<any> = new Subject<any>();
   
   allMenusClosedBus: BehaviorSubject<string> = new BehaviorSubject<string>('');
 

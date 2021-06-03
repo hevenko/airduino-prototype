@@ -58,7 +58,7 @@ export class DropdownDirective {
         } else {
           DropdownDirective.fetchDataState.set(this.menuId, 'same'); 
         }
-        ///* outputs open/closed (changed) state of menus
+        /* outputs open/closed (changed) state of menus
         console.log(this.menuId +"\ntimeMenu:"+ DropdownDirective.fetchDataState.get('timeMenu')+"\n"+
         "sensorMenu:"+ DropdownDirective.fetchDataState.get('sensorMenu')+"\n"+
         "locationMenu:"+ DropdownDirective.fetchDataState.get('locationMenu')+"\n");
