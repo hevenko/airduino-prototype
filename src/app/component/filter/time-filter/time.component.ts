@@ -16,7 +16,6 @@ export class TimeComponent implements OnInit, AfterViewInit {
 
   defaultLabel = 'Time period';
   hoursTime = [
-    {value: '', desc: ''},
     {value: 'PT1H', desc: 'Last hour'},
     {value: 'PT3H', desc: 'Last 3 hours'},
     {value: 'PT12H', desc: 'Last 12 hours'},
@@ -70,6 +69,9 @@ export class TimeComponent implements OnInit, AfterViewInit {
         this.filterModel.time = null;
       }
     });
+    let initValue = this.hoursTime[0];
+    this.timeForm.controls.slidingRange.setValue(initValue.value);
+    this.setSlidingRange(initValue);
     this.dataStorageService.allMenusClosedBus.subscribe(b => {
       if(Constants.TIME_MENU_LAST_CLOSED === b) {
         this.fetchData();
