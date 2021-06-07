@@ -4,7 +4,7 @@
        role="button" aria-expanded="false" aria-controls="senssorComponentDropdown"  onclick="return false;">
       <span  [innerHTML]="makeLabel()">Sensors</span><span class="caret"></span>
     </a>
-    <div class="dropdown-menu filter-menu-expanded" style="padding: 15px;" id="senssorComponentDropdown">
+    <div class="dropdown-menu filter-menu-expanded" style="padding: 15px;max-height: 80vh;overflow: auto;" id="senssorComponentDropdown">
       <ng-container formArrayName="sensors" *ngFor="let s of getSensorControls();let i = index">
         <mat-checkbox formControlName="{{i}}">{{sensorList[i].desc}}</mat-checkbox>
         <br>
