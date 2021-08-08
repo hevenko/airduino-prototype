@@ -25,7 +25,8 @@ export class SensorComponent implements OnInit {
     {value: 'pb', desc: 'Lead', label: 'Pb'},
     {value: 'battery', desc: 'Battery', label: 'Battery'},
     {value: 'aqi', desc: 'Aqi', label: 'Aqi'},
-    {value: 'gps', desc: 'GPS', label: 'GPS'}
+    {value: 'gps', desc: 'GPS', label: 'GPS', hidden:true},
+    {value: 'measured', desc: 'Measured', label: 'Msrd', hidden:true}
     
   ];
   compForm: FormGroup = new FormGroup({});
@@ -33,12 +34,13 @@ export class SensorComponent implements OnInit {
   subscription;
   fetchDataSetTimeout;
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { }
-  sensorList = SensorComponent.sensorList;
+  sensorList;// = SensorComponent.sensorList;
   loadedSensors = []; //data are loaded for these sensors
   static label: string | string[];
   bMissingDataForSensor = false; //gets sensor data if false
 
   ngOnInit(): void {
+    this.sensorList = SensorComponent.sensorList.filter(s => {return !s.hidden});
     SensorComponent.label = this.defaultLabel;
     this.filterModel.sensorFilterChangedBus.next(null); //to show default label on filter-info component
 
@@ -69,7 +71,7 @@ export class SensorComponent implements OnInit {
   }
   initForm() {
     const faSensors: FormArray = new FormArray([]);
-    let selectableSensors = SensorComponent.sensorList.filter(v => {return v.value != 'measured' && v.value != 'gps'});
+    let selectableSensors = SensorComponent.sensorList.filter(v => {return !v.hidden});
     for (const def of selectableSensors) {
       faSensors.push(new FormControl({value: true, disabled: false}));
     }
