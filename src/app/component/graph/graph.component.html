@@ -1,6 +1,17 @@
 <block-ui>
   <div #graphComponent style="position:absolute;overflow-y: scroll;width: 100%;height:100%;">
-    <ng-container *ngFor="let d of getSensorList(); let i = index">
+    <form [formGroup]="compForm">
+      <mat-form-field style="padding-left: 30px;">
+        <mat-select matNativeControl formControlName="showChartSelect" >
+          <ng-container *ngFor="let s of activeSensors">
+            <mat-option [value]="getSensorDetails(s).value">
+              {{getSensorDetails(s).desc}}
+            </mat-option>
+          </ng-container>
+        </mat-select>
+      </mat-form-field>
+    </form>
+      <ng-container *ngFor="let d of getSensorList(); let i = index">
       <apx-chart *ngIf="renderChart(d.value)"
         [tooltip]="getChartConfig(d.value)?.tooltip" 
         [series]="getChartConfig(d.value)?.series"
@@ -9,7 +20,7 @@
         [dataLabels]="getChartConfig(d.value)?.dataLabels"
         [grid]="getChartConfig(d.value)?.grid"
         [stroke]="getChartConfig(d.value)?.stroke"
-        [title]="getChartConfig(d.value)?.title"
+        
       ></apx-chart>
     </ng-container>
   </div>

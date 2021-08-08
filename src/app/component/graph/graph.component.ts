@@ -50,12 +50,13 @@ export class GraphComponent implements OnInit, AfterViewInit {
   sensorSelectionChangedTimeout;
   activeSensors = [];
   chartData: DataSet[] = [];
-  
+  compForm: FormGroup;
+
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { 
   }
   
   renderChart(chartName: string) {
-    return this.activeSensors.indexOf(chartName) !== -1;
+    return this.activeSensors.indexOf(chartName) !== -1 && this.compForm.value['showChartSelect'] === chartName;
   }
 
   afterChartRendered = (chartContext: any, config?: any) => {
@@ -67,7 +68,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
     let configTemplate: ChartOptions  = {
       series: [],
       chart: {
-        height : 0,
+        height : '500',
         width : '100%',
         type: "line",
         group: 'aqi',
@@ -126,7 +127,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
     let result: ChartOptions;
     if(!this.chartConfig[chartId]) {
         result = JSON.parse(JSON.stringify(this.getChartConfigTemplate()));
-        result.chart.height = 200;
+        //result.chart.height = 200;
         result.title.text = chartId;
         this.chartConfig[chartId] = result;
     } else {
@@ -146,7 +147,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
     data.forEach((element: any, i:number) => {
       this.chartConfig[element.name] = JSON.parse(JSON.stringify(this.getChartConfigTemplate()));
       this.chartConfig[element.name].chart.id = element.name;
-      this.chartConfig[element.name].chart.height = 300 //Math.trunc((this.fullHeight - 110)/(data.length <= 4 ? data.length : 4))
+      //this.chartConfig[element.name].chart.height = 300 //Math.trunc((this.fullHeight - 110)/(data.length <= 4 ? data.length : 4))
       this.chartConfig[element.name].title.text = element.name;
       this.chartConfig[element.name].chart.events.mounted = this.afterChartRendered;
 
@@ -230,7 +231,11 @@ export class GraphComponent implements OnInit, AfterViewInit {
     this.filterModel.sensorFilterChangedBus.subscribe((sensorList: string[]) => {
       clearTimeout(this.sensorSelectionChangedTimeout);
       this.sensorSelectionChangedTimeout = setTimeout(() => {this.activeSensors = sensorList},200);
-    }); 
+    });
+    this.compForm = new FormGroup({
+      showChartSelect: new FormControl()
+    })
+    this.compForm.controls.showChartSelect.setValue('temp');
   }
   filterChartSensorData(sensorNames: string[]): DataSet[] {
     return this.originalChartData.filter((v:DataSet) => {
