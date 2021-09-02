@@ -6,6 +6,7 @@ import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog
 import {AlertComponent} from './alert/alert.component';
 import {AirduinoComponent} from '../../airduino/airduino.component';
 import {MessageService, MessageColor} from 'src/app/shared/service/message.service';
+import { DataStorageService } from 'src/app/shared/service/data-storage.service';
 
 @Component({
   selector: 'app-preset-filter',
@@ -15,16 +16,16 @@ import {MessageService, MessageColor} from 'src/app/shared/service/message.servi
 export class PresetFilterComponent extends AirduinoComponent implements OnInit  {
   stayOpened = Constants.STAY_OPEN;
   filters = [
-    {value: '1', desc: 'Filter A'},
-    {value: '2', desc: 'Filter B'},
-    {value: '3', desc: 'Da li sused kuri kakvu plastiku'},
-    {value: '4', desc: 'Long named filter'},
-    {value: '5', desc: 'Prijatelu sam hakiral uređaje, daj njih'},
-    {value: '6', desc: 'Svi uređaji'},
-    {value: '7', desc: 'Samo tam gdi je fejst vruće'},
-    {value: '8', desc: 'Pravni slučaj jedan'},
-    {value: '9', desc: 'Skladište'},
-    {value: '10', desc: 'Autobusni'},
+    {id: '1', name: 'Filter A'},
+    {id: '2', name: 'Filter B'},
+    {id: '3', name: 'Da li sused kuri kakvu plastiku'},
+    {id: '4', name: 'Long named filter'},
+    {id: '5', name: 'Prijatelu sam hakiral uređaje, daj njih'},
+    {id: '6', name: 'Svi uređaji'},
+    {id: '7', name: 'Samo tam gdi je fejst vruće'},
+    {id: '8', name: 'Pravni slučaj jedan'},
+    {id: '9', name: 'Skladište'},
+    {id: '10', name: 'Autobusni'},
   ];
   dialogIsOpen = false;
   presetForm: FormGroup = new FormGroup({});
@@ -33,7 +34,7 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit  
   showSaveAsNewFilterBtn = false;
   newFilterName = '';
 
-  constructor(public dialog: MatDialog, private messageService: MessageService) {
+  constructor(public dialog: MatDialog, private messageService: MessageService, private dataStorageService: DataStorageService) {
     super();
   }
 
@@ -44,6 +45,9 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit  
   }
   ngOnInit(): void {
     this.initForm();
+    this.dataStorageService.fetchFilters().then(l => { // filter list
+      this.filters = l;
+    });
   }
   applyFilter(f: any) {
     this.appliedFilter = f;
@@ -51,8 +55,8 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit  
   searchPresetFilters() {
     alert('ya')
   }
-  openAlertSettingsDialog(): void {
-    const dialogRef = this.dialog.open(AlertComponent);
+  openAlertSettingsDialog(filter: any): void {
+    const dialogRef = this.dialog.open(AlertComponent, {data : filter});
     this.setDialogIsOpen(true);
     dialogRef.afterClosed().subscribe(result => {
       this.setDialogIsOpen(false);
@@ -62,7 +66,7 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit  
     this.dialogIsOpen = isOpen;
   }
   getLabel(): string {
-    return !!this.appliedFilter ? this.appliedFilter.desc : 'Presets';
+    return !!this.appliedFilter ? this.appliedFilter.name : 'Presets';
   }
   saveAsCurrentFilter(): void {
     if (!!!this.appliedFilter) {

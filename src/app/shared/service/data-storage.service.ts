@@ -428,4 +428,19 @@ export class DataStorageService {
   unsubscribeBroadcast(initiator: string) {
     this.usubscribeBroadcastBus.next(initiator);
   }
+  fetchFilters(): Promise<any[]> {
+    return this.deviceTypesObervable = this.http.get<Data>(this.getURL('filters/'))
+    .pipe(
+      catchError(this.handleError),
+      map(res => res.data)
+    ).toPromise();
+  }
+  fetchFilterDetail(filterId: string): Promise<any[]> {
+    return this.deviceTypesObervable = this.http.get<Data>(this.getURL('filter-items/' + filterId))
+    .pipe(
+      catchError(this.handleError),
+      map(res => res.data)
+    ).toPromise();
+  }
+
 }

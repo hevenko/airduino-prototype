@@ -14,10 +14,10 @@
           <ng-container *ngFor="let f of filters;let i = index">
             <tr>
               <td>
-                <span (click)="applyFilter(f)" style="cursor:pointer">{{f.desc}}</span>
+                <span (click)="applyFilter(f)" style="cursor:pointer">{{f.name}}</span>
               </td>
               <td style="padding-left: 10px;">
-                <button type="button" mat-stroked-button class="pull-right" (click)="openAlertSettingsDialog()">
+                <button type="button" mat-stroked-button class="pull-right" (click)="openAlertSettingsDialog(f)">
                   <mat-icon style="color: warn;">{{filterEnabledIcon}}</mat-icon>
                 </button>
               </td>
