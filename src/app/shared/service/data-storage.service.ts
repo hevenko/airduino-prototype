@@ -428,18 +428,45 @@ export class DataStorageService {
   unsubscribeBroadcast(initiator: string) {
     this.usubscribeBroadcastBus.next(initiator);
   }
-  fetchFilters(): Promise<any[]> {
-    return this.deviceTypesObervable = this.http.get<Data>(this.getURL('filters/'))
+  fetchFilter(filterId: string): Promise<any> {
+    let params: any = {};
+    params.ids = [{id: filterId}];    
+    return this.http.request('post', this.getURL('filters/'), {body: params})
+    .pipe(
+      catchError(this.handleError)
+    ).toPromise();
+  }
+  fetchFilterList(): Promise<any[]> {
+    return this.http.get<Data>(this.getURL('filters/'))
     .pipe(
       catchError(this.handleError),
       map(res => res.data)
     ).toPromise();
   }
-  fetchFilterDetail(filterId: string): Promise<any[]> {
-    return this.deviceTypesObervable = this.http.get<Data>(this.getURL('filter-items/' + filterId))
+  fetchFilterDetail(filterId: string): Promise<any> {
+    return  this.http.get<Data>(this.getURL('filter-items/' + filterId))
     .pipe(
       catchError(this.handleError),
       map(res => res.data)
+    ).toPromise();
+  }
+  updateFilterMetaData(filterId: string, enabled: boolean, action: string): Promise<any> {
+    let params: any = {};
+    params.ids = [{id: filterId}];    
+    params.values = {enabled: enabled, action: action};
+
+    return this.http.request('put', this.getURL('filters/fast'), {body: params})
+    .pipe(
+      catchError(this.handleError)
+    ).toPromise();
+  }
+  updateFilterSensor(filterId: string, sensorName: string, sensorValue: string, minMax: string): Promise<any> {
+    let params: any = {};
+    params.ids = [{filter: filterId, sensor: sensorName}];    
+    params.values = {value: sensorValue, min_max: minMax};
+    return this.http.request('put', this.getURL('filter-items/fast'), {body: params})
+    .pipe(
+      catchError(this.handleError)
     ).toPromise();
   }
 

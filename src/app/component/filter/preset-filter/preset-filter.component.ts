@@ -43,11 +43,14 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit  
       newFilterName: new FormControl()
     });
   }
-  ngOnInit(): void {
-    this.initForm();
-    this.dataStorageService.fetchFilters().then(l => { // filter list
+  fetchFilterList(): void {
+    this.dataStorageService.fetchFilterList().then(l => { // filter list
       this.filters = l;
     });
+  }
+  ngOnInit(): void {
+    this.initForm();
+    this.fetchFilterList();
   }
   applyFilter(f: any) {
     this.appliedFilter = f;

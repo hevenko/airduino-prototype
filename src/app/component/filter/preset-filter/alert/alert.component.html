@@ -21,7 +21,7 @@
       </tr>
     </thead>
     <tbody formArrayName="sensors">
-      <ng-container *ngFor="let s of sensorArray.controls;let i = index">
+      <ng-container *ngFor="let s of sensorArray?.controls;let i = index">
         <tr [formGroupName]="i" class="flex-container">
           <td style="padding-bottom: 5px; vertical-align: bottom;">
             <mat-label style="margin-right:30px">{{filterSensors[i].sensor}}</mat-label>
@@ -47,10 +47,18 @@
             <!-- <input class="mat-radio-button" type="radio" id="female" name="gender" value="female"> -->
         </tr>
       </ng-container>
+      <!--       <tr>
+        <td colspan="3">
+          <button type="button" mat-stroked-button class="pull-right" style="margin-top: 5px;">
+            New
+          </button>
+        </td>
+      </tr>
+ -->
     </tbody>
   </table>
   <div style="display: flex; align-items: center; margin-top: 25px; margin-bottom: 25px">
-    <mat-slide-toggle formControlName="enabled" labelPosition='before' >
+    <mat-slide-toggle formControlName="enabled" labelPosition='before'>
       Enabled
     </mat-slide-toggle>
     <span class="spacer"></span>
@@ -64,5 +72,5 @@
 </form>
 <div mat-dialog-actions>
   <button mat-stroked-button mat-dialog-close style="margin-right: 5px;">Cancel</button>
-  <button mat-stroked-button mat-dialog-close>Confirm</button>
+  <button mat-stroked-button (click)="saveFilter($event)">Save</button>
 </div>
