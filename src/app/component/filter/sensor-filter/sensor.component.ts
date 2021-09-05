@@ -12,21 +12,21 @@ import { DataStorageService } from 'src/app/shared/service/data-storage.service'
 })
 export class SensorComponent implements OnInit {
   static sensorList = [
-    {value: 'temp', desc: 'Temperature', label: '<sup>o</sup>C'},
-    {value: 'humidity', desc: 'Humidity', label: 'H%'},
-    {value: 'so2', desc: 'Sulfur dioxide', label: 'SO<sub>2</sub>'},
-    {value: 'o3', desc: 'Ozone', label: 'O<sub>3</sub>'},
-    {value: 'hc', desc: 'hc', label: 'Hc'},
-    {value: 'voc', desc: 'voc', label: 'Voc'},
-    {value: 'pressure', desc: 'Pressure', label: 'Pa'},
-    {value: 'co', desc: 'Carbon monoxyde', label: 'CO'},
-    {value: 'pm10', desc: 'Pm10', label: 'pm10'},
-    {value: 'pm2_5', desc: 'Pm2.5', label: 'pm2.5'},
-    {value: 'pb', desc: 'Lead', label: 'Pb'},
-    {value: 'battery', desc: 'Battery', label: 'Battery'},
-    {value: 'aqi', desc: 'Aqi', label: 'Aqi'},
-    {value: 'gps', desc: 'GPS', label: 'GPS', hidden:true},
-    {value: 'measured', desc: 'Measured', label: 'Msrd', hidden:true}
+    {sensor: 'temp', desc: 'Temperature', label: '<sup>o</sup>C'},
+    {sensor: 'humidity', desc: 'Humidity', label: 'H%'},
+    {sensor: 'so2', desc: 'Sulfur dioxide', label: 'SO<sub>2</sub>'},
+    {sensor: 'o3', desc: 'Ozone', label: 'O<sub>3</sub>'},
+    {sensor: 'hc', desc: 'hc', label: 'Hc'},
+    {sensor: 'voc', desc: 'voc', label: 'Voc'},
+    {sensor: 'pressure', desc: 'Pressure', label: 'Pa'},
+    {sensor: 'co', desc: 'Carbon monoxyde', label: 'CO'},
+    {sensor: 'pm10', desc: 'Pm10', label: 'pm10'},
+    {sensor: 'pm2_5', desc: 'Pm2.5', label: 'pm2.5'},
+    {sensor: 'pb', desc: 'Lead', label: 'Pb'},
+    {sensor: 'battery', desc: 'Battery', label: 'Battery'},
+    {sensor: 'aqi', desc: 'Aqi', label: 'Aqi'},
+    {sensor: 'gps', desc: 'GPS', label: 'GPS', hidden:true},
+    {sensor: 'measured', desc: 'Measured', label: 'Msrd', hidden:true}
     
   ];
   compForm: FormGroup = new FormGroup({});
@@ -103,7 +103,7 @@ export class SensorComponent implements OnInit {
   getComponentValue(): string[] {
     let result = [];
     result = (this.compForm.controls.sensors as FormArray).controls
-      .map((v, i) => (v.value ? SensorComponent.sensorList[i].value :  null))
+      .map((v, i) => (v.value ? SensorComponent.sensorList[i].sensor :  null))
       .filter(v => v !== null);
     
       if (!!result.length) {

@@ -4,7 +4,7 @@
       <mat-form-field style="padding-left: 30px;">
         <mat-select matNativeControl formControlName="showChartSelect" >
           <ng-container *ngFor="let s of activeSensors">
-            <mat-option [value]="getSensorDetails(s).value">
+            <mat-option [value]="getSensorDetails(s).sensor">
               {{getSensorDetails(s).desc}}
             </mat-option>
           </ng-container>
@@ -12,14 +12,14 @@
       </mat-form-field>
     </form>
       <ng-container *ngFor="let d of getSensorList(); let i = index">
-      <apx-chart *ngIf="renderChart(d.value)"
-        [tooltip]="getChartConfig(d.value)?.tooltip" 
-        [series]="getChartConfig(d.value)?.series"
-        [chart]="getChartConfig(d.value)?.chart"
-        [xaxis]="getChartConfig(d.value)?.xaxis"
-        [dataLabels]="getChartConfig(d.value)?.dataLabels"
-        [grid]="getChartConfig(d.value)?.grid"
-        [stroke]="getChartConfig(d.value)?.stroke"
+      <apx-chart *ngIf="renderChart(d.sensor)"
+        [tooltip]="getChartConfig(d.sensor)?.tooltip" 
+        [series]="getChartConfig(d.sensor)?.series"
+        [chart]="getChartConfig(d.sensor)?.chart"
+        [xaxis]="getChartConfig(d.sensor)?.xaxis"
+        [dataLabels]="getChartConfig(d.sensor)?.dataLabels"
+        [grid]="getChartConfig(d.sensor)?.grid"
+        [stroke]="getChartConfig(d.sensor)?.stroke"
         
       ></apx-chart>
     </ng-container>

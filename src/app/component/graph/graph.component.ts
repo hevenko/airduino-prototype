@@ -221,7 +221,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
           });
           
           console.log(this.originalChartData);
-          this.initCharts(this.filterChartSensorData(this.getSensorList().map(v => {return v.value}))); // fixed sensor list ensures chart population after navigation
+          this.initCharts(this.filterChartSensorData(this.getSensorList().map(v => {return v.sensor}))); // fixed sensor list ensures chart population after navigation
           this.blockUI.stop();
         })
       } else {
@@ -243,7 +243,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
     })
   }
   getSensorDetails(s:string) {
-    return SensorComponent.sensorList.filter(v =>{return v.value === s;})[0];    
+    return SensorComponent.sensorList.filter(v =>{return v.sensor === s;})[0];    
   }
   getSensorList() {
     return SensorComponent.sensorList;
