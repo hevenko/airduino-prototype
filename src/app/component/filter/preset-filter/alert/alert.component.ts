@@ -31,6 +31,7 @@ export class AlertComponent implements OnInit {
   form: FormGroup;
   sensorArray: FormArray;
   allSensors: Array<any> = SensorComponent.sensorList;
+  fetchedSensorValues: any[]; // fetched from data base
 
   constructor(private dialogRef: MatDialogRef<AlertComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private dataStorageService: DataStorageService, private fb: FormBuilder, private messageService: MessageService) {
 
@@ -52,8 +53,8 @@ export class AlertComponent implements OnInit {
       let j: any = (v as any);
       this.form.controls['enabled'].setValue(j[0].data[0].enabled);
       this.form.controls['action'].setValue(j[0].data[0].action);
-      let sensorValues = j[1];
-      this.makeSensorList(this.allSensors, sensorValues);
+      this.fetchedSensorValues = j[1];
+      this.makeSensorList(this.allSensors, this.fetchedSensorValues);
 
     });
   }
@@ -88,6 +89,16 @@ export class AlertComponent implements OnInit {
     })
     return result;
   }
+  sensorExists(sensorName: string): boolean {
+    let result = false;
+    this.fetchedSensorValues.forEach(v => {
+      if (sensorName === v.sensor) {
+        result = true;
+        return;
+      }
+    });
+    return result;
+  }
   saveFilter(e: any): void {
     let obsList = [];
 
@@ -95,7 +106,15 @@ export class AlertComponent implements OnInit {
 
     this.sensorArray.controls.map((v, i) => { // sensor data
       //console.log(v.value);
-      obsList.push(this.dataStorageService.updateFilterSensor(this.data.id, v.value.sensor, v.value.value, v.value.minMax));
+      if(v.value.value) { // handles !!0 beeing false
+        if(this.sensorExists(v.value.sensor)) {
+          obsList.push(this.dataStorageService.updateFilterSensor(this.data.id, v.value.sensor, v.value.value, v.value.minMax));
+        } else {
+          obsList.push(this.dataStorageService.createFilterSensor(this.data.id, v.value.sensor, v.value.value, v.value.minMax));
+        }
+      } else {
+        obsList.push(this.dataStorageService.deleteFilterSensor(this.data.id, v.value.sensor));
+      }
 
     });
     forkJoin(obsList).subscribe(a => {

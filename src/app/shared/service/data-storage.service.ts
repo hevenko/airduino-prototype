@@ -460,11 +460,37 @@ export class DataStorageService {
       catchError(this.handleError)
     ).toPromise();
   }
+  createFilterSensor(filterId: string, sensorName: string, sensorValue: string, minMax: string): Promise<any> {
+    let params: any = {};
+    params = {filter: filterId, sensor: sensorName, value: sensorValue, min_max: minMax};    
+    return this.http.request('post', this.getURL('filter-items/fast'), {body: params})
+    .pipe(
+      catchError(this.handleError),
+      map((v: any) => {
+        if(v.error) {
+          throw (v.error);
+        }
+      })
+    ).toPromise();
+  }
   updateFilterSensor(filterId: string, sensorName: string, sensorValue: string, minMax: string): Promise<any> {
     let params: any = {};
     params.ids = [{filter: filterId, sensor: sensorName}];    
     params.values = {value: sensorValue, min_max: minMax};
     return this.http.request('put', this.getURL('filter-items/fast'), {body: params})
+    .pipe(
+      catchError(this.handleError),
+      map((v: any) => {
+        if(v.error) {
+          throw (v.error);
+        }
+      })
+    ).toPromise();
+  }
+  deleteFilterSensor(filterId: string, sensorName: string): Promise<any> {
+    let params: any = {};
+    params.ids = [{filter: filterId, sensor: sensorName}];    
+    return this.http.request('delete', this.getURL('filter-items'), {body: params})
     .pipe(
       catchError(this.handleError),
       map((v: any) => {
