@@ -466,7 +466,12 @@ export class DataStorageService {
     params.values = {value: sensorValue, min_max: minMax};
     return this.http.request('put', this.getURL('filter-items/fast'), {body: params})
     .pipe(
-      catchError(this.handleError)
+      catchError(this.handleError),
+      map((v: any) => {
+        if(v.error) {
+          throw (v.error);
+        }
+      })
     ).toPromise();
   }
 

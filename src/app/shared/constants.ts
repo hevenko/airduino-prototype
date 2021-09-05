@@ -33,4 +33,5 @@ export class Constants {
   static TIME_MENU_LAST_CLOSED = "timeMenu";
   static SENSOR_MENU_LAST_CLOSED = "sensorMenu";
   static LOCATION_MENU_LAST_CLOSED = "locationMenu";
+  static SAVE_ERROR = "Save failed";
 }
