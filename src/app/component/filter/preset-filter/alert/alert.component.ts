@@ -43,7 +43,8 @@ export class AlertComponent implements OnInit {
     this.form = this.fb.group({
       sensors: this.sensorArray,
       enabled: this.fb.control(null),
-      action: this.fb.control(null)
+      action: this.fb.control(null),
+      visibility: this.fb.control('private')
     });
     observables.push(this.dataStorageService.fetchFilter(this.data.id));
     observables.push(this.dataStorageService.fetchFilterDetail(this.data.id));
@@ -102,12 +103,12 @@ export class AlertComponent implements OnInit {
   saveFilter(e: any): void {
     let obsList = [];
 
-    obsList.push(this.dataStorageService.updateFilterMetaData(this.data.id, this.form.value.enabled, this.form.value.action));    // general data like enabled, action
+    obsList.push(this.dataStorageService.updateFilterMetaData(this.data.id, this.form.value.enabled, this.form.value.action, this.form.value.visibility));    // general data like enabled, action
 
     this.sensorArray.controls.map((v, i) => { // sensor data
       //console.log(v.value);
       if(v.value.value) { // handles !!0 beeing false
-        if(this.sensorExists(v.value.sensor)) {
+        if(true) {
           obsList.push(this.dataStorageService.updateFilterSensor(this.data.id, v.value.sensor, v.value.value, v.value.minMax));
         } else {
           obsList.push(this.dataStorageService.createFilterSensor(this.data.id, v.value.sensor, v.value.value, v.value.minMax));

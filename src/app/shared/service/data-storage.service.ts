@@ -450,14 +450,19 @@ export class DataStorageService {
       map(res => res.data)
     ).toPromise();
   }
-  updateFilterMetaData(filterId: string, enabled: boolean, action: string): Promise<any> {
+  updateFilterMetaData(filterId: string, enabled: boolean, action: string, visibility: string): Promise<any> {
     let params: any = {};
     params.ids = [{id: filterId}];    
-    params.values = {enabled: enabled, action: action};
+    params.values = {enabled: enabled, action: action, visible: visibility};
 
     return this.http.request('put', this.getURL('filters/fast'), {body: params})
     .pipe(
-      catchError(this.handleError)
+      catchError(this.handleError),
+      map((v: any) => {
+        if(v.error) {
+          throw (v.error);
+        }
+      })
     ).toPromise();
   }
   createFilterSensor(filterId: string, sensorName: string, sensorValue: string, minMax: string): Promise<any> {

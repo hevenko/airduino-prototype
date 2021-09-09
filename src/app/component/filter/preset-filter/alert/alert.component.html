@@ -1,5 +1,5 @@
-<h1 mat-dialog-title>{{data.name}}</h1>
 <form [formGroup]="form">
+  <h1 mat-dialog-title>{{data.name}}</h1>
   <div style="max-height:500px;overflow:auto;">
     <table id="sensors">
       <thead>
@@ -69,6 +69,13 @@
       <mat-option *ngFor="let act of actions" [value]="act.value">
         {{act.desc}}
       </mat-option>
+    </mat-select>
+  </div>
+  <div style="display: flex; align-items: center; margin-top: 25px; margin-bottom: 25px">
+    <label class="example-label" for="visible" style="margin-right: 10px;margin-bottom: 0px;">Visibility</label>
+    <mat-select formControlName="visibility" style="width: 70px;border-bottom: 1px solid;">
+      <mat-option value="private">private</mat-option>
+      <mat-option value="public">public</mat-option>
     </mat-select>
   </div>
 </form>
