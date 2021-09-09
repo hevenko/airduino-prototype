@@ -95,4 +95,8 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit  
     });
     this.setDialogIsOpen(true);
   }
+  markAppliedFilterRow(rowFilter: any): boolean {
+    let result = rowFilter === this.appliedFilter;
+    return result;
+  }
 }

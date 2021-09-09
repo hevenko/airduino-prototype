@@ -37,3 +37,6 @@ table tr td {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+.markAppliedFilter {
+  color: red;
+}
