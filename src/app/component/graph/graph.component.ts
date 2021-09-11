@@ -230,7 +230,11 @@ export class GraphComponent implements OnInit, AfterViewInit {
     });
     this.filterModel.sensorFilterChangedBus.subscribe((sensorList: string[]) => {
       clearTimeout(this.sensorSelectionChangedTimeout);
-      this.sensorSelectionChangedTimeout = setTimeout(() => {this.activeSensors = sensorList},200);
+      this.sensorSelectionChangedTimeout = setTimeout(() => {
+        this.activeSensors = sensorList.filter(v => {
+          return !this.getSensorDetails(v).hidden;
+        });
+      },200);
     });
     this.compForm = new FormGroup({
       showChartSelect: new FormControl()
