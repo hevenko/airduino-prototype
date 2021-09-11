@@ -3,6 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { FilterModel } from 'src/app/model/filter-model';
 import { Constants } from 'src/app/shared/constants';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
+import { MessageService } from 'src/app/shared/service/message.service';
 
 @Component({
   selector: 'app-time',
@@ -16,18 +17,21 @@ export class TimeComponent implements OnInit, AfterViewInit {
 
   defaultLabel = 'Time period';
   hoursTime = [
-    {value: 'PT1H', desc: 'Last hour'},
-    {value: 'PT3H', desc: 'Last 3 hours'},
-    {value: 'PT12H', desc: 'Last 12 hours'},
-    {value: 'PT14H', desc: 'Last 24 hours'},
-    {value: 'P1W', desc: 'Last week'},
-    {value: 'P5Y', desc: 'Last 5 years'}
+    { value: 'PT1H', desc: 'Last hour' },
+    { value: 'PT3H', desc: 'Last 3 hours' },
+    { value: 'PT12H', desc: 'Last 12 hours' },
+    { value: 'PT14H', desc: 'Last 24 hours' },
+    { value: 'P1W', desc: 'Last week' },
+    { value: 'P5Y', desc: 'Last 5 years' }
   ];
+  
+  intervalEnd = { 'interval': 'PT0S' };
+
   customTimeUnits = [
-    {value: 'PT?H', desc: 'Hour'},
-    {value: 'P?D', desc: 'Day'},
-    {value: 'P?W', desc: 'Week'},
-    {value: 'P?Y', desc: 'Year'}
+    { value: 'PT?H', desc: 'Hour' },
+    { value: 'P?D', desc: 'Day' },
+    { value: 'P?W', desc: 'Week' },
+    { value: 'P?Y', desc: 'Year' }
   ];
   timeForm: FormGroup = new FormGroup({});
   _label;
@@ -41,13 +45,16 @@ export class TimeComponent implements OnInit, AfterViewInit {
   fetchDataSetTimeout;
   setCloseMenuClass = false;
 
-  constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { }
+  @ViewChild('pickerInput') pickerInput: any;
+
+  constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel, private messageService: MessageService) { }
 
   ngOnInit(): void {
     this.label = this.defaultLabel;
     this.filterModel.timeFiterChangedBus.next(null); //to show default label on filter-info component
     this.initForm();
-    Constants
+    Constants;
+    this.subscribeToPreseting();
   }
   ngAfterViewInit() {
   }
@@ -60,11 +67,11 @@ export class TimeComponent implements OnInit, AfterViewInit {
     })
     this.timeForm.valueChanges.subscribe((v: any) => {
       if (!!this.timeForm.value.slidingRange) {
-        this.filterModel.time = {from : {interval : this.timeForm.value.slidingRange}, to: {'interval':'PT0S'}};
+        this.filterModel.time = { from: { interval: this.timeForm.value.slidingRange }, to: this.intervalEnd };
       } else if (!!this.timeForm.value.customRange && !!this.timeForm.value.customRangeUnits) {
-        this.filterModel.time = {from: {interval : (this.timeForm.value.customRangeUnits as string).replace('?',this.timeForm.value.customRange)}};
+        this.filterModel.time = { from: { interval: (this.timeForm.value.customRangeUnits as string).replace('?', this.timeForm.value.customRange) } };
       } else if (!!this.timeForm.value.fixedRange && !!this.timeForm.value.fixedRange.begin && !!this.timeForm.value.fixedRange.end) {
-        this.filterModel.time = {from: {date :this.timeForm.value.fixedRange.begin}, to: { date: this.timeForm.value.fixedRange.end} }
+        this.filterModel.time = { from: { date: this.timeForm.value.fixedRange.begin }, to: { date: this.timeForm.value.fixedRange.end } }
       } else {
         this.filterModel.time = null;
       }
@@ -73,16 +80,15 @@ export class TimeComponent implements OnInit, AfterViewInit {
     this.timeForm.controls.slidingRange.setValue(initValue.value);
     this.setSlidingRange(initValue);
     this.dataStorageService.allMenusClosedBus.subscribe(b => {
-      if(Constants.TIME_MENU_LAST_CLOSED === b) {
+      if (Constants.TIME_MENU_LAST_CLOSED === b) {
         this.fetchData();
       }
     });
     this.dataStorageService.usubscribeBroadcastBus.subscribe(v => { //prevents drawing feaures (dots) outside poligon
-      if(Constants.UNSUB_SRC_TIME_COMPONENT !== v) {
+      if (Constants.UNSUB_SRC_TIME_COMPONENT !== v) {
         this.subscription?.unsubscribe();
       }
     });
-
   }
   fetchData = () => {
     if (this.subscription) {
@@ -94,7 +100,7 @@ export class TimeComponent implements OnInit, AfterViewInit {
   setSlidingRange(e: any) {
     this.filterModel.timeFilterType = TimeComponent.filterTypeSliding; // time filter type
     //default label when nothing selected
-    this.label = this.hoursTime.filter((v) => {return v.value === e.value}).map((v, i) => {return v.desc !== '' ? v.desc : this.defaultLabel})[0];
+    this.label = this.hoursTime.filter((v) => { return v.value === e.value }).map((v, i) => { return v.desc !== '' ? v.desc : this.defaultLabel })[0];
     this.deleteOtherValues(true, false, false, false);
     //this.fetchData();
   }
@@ -102,7 +108,7 @@ export class TimeComponent implements OnInit, AfterViewInit {
     this.filterModel.timeFilterType = TimeComponent.filterTypeCustom; // time filter type
     // console.log(evt);
     if (!!value && !!timeUnit) {
-      this.label = value + ' ' + this.customTimeUnits.filter((v)=>{return v.value === timeUnit})[0].desc;
+      this.label = value + ' ' + this.customTimeUnits.filter((v) => { return v.value === timeUnit })[0].desc;
     } else {
       this.label = this.defaultLabel;
     }
@@ -110,10 +116,14 @@ export class TimeComponent implements OnInit, AfterViewInit {
     clearTimeout(this.fetchDataSetTimeout);
     //this.fetchDataSetTimeout = setTimeout(this.fetchData,1500);
   }
-  setFixedRange(evt: any) {
+  fixedRangeChanged(evt: any) {
+    let newRange = evt.targetElement ? evt.targetElement.value : evt.target.value;
+    this.setFixedRange(newRange);
+  }
+  setFixedRange(newRange: any) {
     this.filterModel.timeFilterType = TimeComponent.filterTypeFixed; // time filter type
-    if (evt.target.value !== '') {
-      this.label = evt.targetElement ? evt.targetElement.value : evt.target.value;
+    if (newRange !== '') {
+      this.label = newRange
     } else {
       this.label = this.defaultLabel;
     }
@@ -155,5 +165,69 @@ export class TimeComponent implements OnInit, AfterViewInit {
   }
   closeMenuClass(doClose: boolean) {
     this.setCloseMenuClass = doClose;
+  }
+  extractCustomInterval(isoRange: string): string[] {
+    let result = [];
+    isoRange = isoRange.replace('P','');
+    if(isoRange.indexOf('H') !== -1) {
+      result[0] = this.customTimeUnits[0].value;
+      result[1] = isoRange.replace('T','').replace('H','');
+    }
+    if(isoRange.indexOf('D') !== -1) {
+      result[0] = this.customTimeUnits[1].value;
+      result[1] = isoRange.replace('D','');
+    }
+    if(isoRange.indexOf('W') !== -1) {
+      result[0] = this.customTimeUnits[2].value;
+      result[1] = isoRange.replace('W','');
+    }
+    if(isoRange.indexOf('Y') !== -1) {
+      result[0] = this.customTimeUnits[3].value;
+      result[1] = isoRange.replace('Y','');
+    }
+
+    return result;
+  }
+  subscribeToPreseting() {
+    this.dataStorageService.presetChangedBus.subscribe(v => {
+      let filterTypesAreSupported = false;
+      let isFixedRange = v.time_from_type === 'date' && v.time_to_type === 'date';
+      let isSlidingRange = v.time_from_type === 'interval' && v.time_to_type === 'interval';
+      let isCustomRange = v.time_from_type === 'interval' && !!!v.time_to_type;
+
+      if (isFixedRange || isSlidingRange || isCustomRange) {
+        if (isSlidingRange) {
+          let intervalTo = v.time?.to?.interval;
+          let intervalFrom = v.time?.from?.interval;
+          console.log(this.extractCustomInterval(intervalTo));
+          if (intervalTo && intervalFrom) {
+            let filter = this.hoursTime.filter(ht => {
+              return ht.value === intervalFrom;
+            });
+            if (filter && filter.length == 1 && this.intervalEnd.interval === intervalTo) {
+              this.setSlidingRange(filter[0]);
+              this.timeForm.controls['slidingRange'].setValue(filter[0].value);
+            } else {
+              this.messageService.showErrorMessage("Unsuported time interval: " + intervalFrom + " - " + intervalTo);
+            }
+          } else {
+            this.messageService.showErrorMessage("No from - to interval in preset: " + v.id);
+          }  
+        }
+        if (isFixedRange) {
+          let dateFrom = v.time.from.date;
+          let dateTo = v.time.to.date;
+          this.timeForm.controls['fixedRange'].setValue({'begin': dateFrom, 'end': dateTo});
+          this.setFixedRange(this.pickerInput.nativeElement.value);
+        }
+        if (isCustomRange) {
+          let intervalFrom = v.time?.from?.interval;
+          let parts = this.extractCustomInterval(intervalFrom);
+          this.setCustomRange(parts[1], parts[0]);
+        }
+      } else {
+        this.messageService.showErrorMessage("Usuported time preset combination: " + v.time_from_type + '  ' + v.time_to_type);
+      }
+    });
   }
 }

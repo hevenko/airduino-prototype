@@ -54,6 +54,7 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit  
   }
   applyFilter(f: any) {
     this.appliedFilter = f;
+    this.dataStorageService.presetChangedBus.next(f);
   }
   searchPresetFilters() {
     alert('ya')

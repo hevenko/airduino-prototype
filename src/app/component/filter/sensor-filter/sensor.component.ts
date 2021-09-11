@@ -111,4 +111,11 @@ export class SensorComponent implements OnInit {
       }
        return !!result ? result : null;
   }
+  subscribeToPreseting() {
+    this.dataStorageService.presetChangedBus.subscribe(v => {
+      let sensorList = v.sensors;
+
+    });
+  }
+
 }
