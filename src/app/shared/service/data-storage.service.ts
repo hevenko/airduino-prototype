@@ -453,7 +453,7 @@ export class DataStorageService {
   updateFilterMetaData(filterId: string, enabled: boolean, action: string, visibility: string): Promise<any> {
     let params: any = {};
     params.ids = [{id: filterId}];    
-    params.values = {enabled: enabled, action: action, visible: visibility};
+    params.values = {enabled: enabled, action: action, visibility: visibility};
 
     return this.http.request('put', this.getURL('filters/fast'), {body: params})
     .pipe(

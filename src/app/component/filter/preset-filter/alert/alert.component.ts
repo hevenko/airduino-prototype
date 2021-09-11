@@ -54,6 +54,7 @@ export class AlertComponent implements OnInit {
       let j: any = (v as any);
       this.form.controls['enabled'].setValue(j[0].data[0].enabled);
       this.form.controls['action'].setValue(j[0].data[0].action);
+      this.form.controls['visibility'].setValue(j[0].data[0].visibility);
       this.fetchedSensorValues = j[1];
       this.makeSensorList(this.allSensors, this.fetchedSensorValues);
 
@@ -108,7 +109,7 @@ export class AlertComponent implements OnInit {
     this.sensorArray.controls.map((v, i) => { // sensor data
       //console.log(v.value);
       if(v.value.value) { // handles !!0 beeing false
-        if(true) {
+        if(this.sensorExists(v.value.sensor)) {
           obsList.push(this.dataStorageService.updateFilterSensor(this.data.id, v.value.sensor, v.value.value, v.value.minMax));
         } else {
           obsList.push(this.dataStorageService.createFilterSensor(this.data.id, v.value.sensor, v.value.value, v.value.minMax));
