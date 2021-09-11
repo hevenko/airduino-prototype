@@ -462,6 +462,7 @@ export class DataStorageService {
         if(v.error) {
           throw (v.error);
         }
+        return v;
       })
     ).toPromise();
   }
@@ -475,6 +476,7 @@ export class DataStorageService {
         if(v.error) {
           throw (v.error);
         }
+        return v;
       })
     ).toPromise();
   }
@@ -482,13 +484,14 @@ export class DataStorageService {
     let params: any = {};
     params.ids = [{filter: filterId, sensor: sensorName}];    
     params.values = {value: sensorValue, min_max: minMax};
-    return this.http.request('put', this.getURL('filter-items/fast'), {body: params})
+    return this.http.request('put', this.getURL('filter-items/full'), {body: params})
     .pipe(
       catchError(this.handleError),
       map((v: any) => {
         if(v.error) {
           throw (v.error);
         }
+        return v;
       })
     ).toPromise();
   }
@@ -502,6 +505,7 @@ export class DataStorageService {
         if(v.error) {
           throw (v.error);
         }
+        return v;
       })
     ).toPromise();
   }
