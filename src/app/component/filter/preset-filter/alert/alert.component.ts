@@ -108,7 +108,7 @@ export class AlertComponent implements OnInit {
 
     this.sensorArray.controls.map((v, i) => { // sensor data
       //console.log(v.value);
-      if(v.value.value) { // handles !!0 beeing false
+      if(v.value.value) {
         if(this.sensorExists(v.value.sensor)) {
           obsList.push(this.dataStorageService.updateFilterSensor(this.data.id, v.value.sensor, v.value.value, v.value.minMax));
         } else {
