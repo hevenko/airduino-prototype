@@ -11,6 +11,7 @@ import { DataStorageService } from 'src/app/shared/service/data-storage.service'
   styleUrls: ['./sensor.component.css']
 })
 export class SensorComponent implements OnInit {
+  //TODO when  hidden: true apears not last in the list it will messup referencing by index
   static sensorList = [
     {sensor: 'temp', desc: 'Temperature', label: '<sup>o</sup>C'},
     {sensor: 'humidity', desc: 'Humidity', label: 'H%'},
@@ -30,6 +31,7 @@ export class SensorComponent implements OnInit {
     
   ];
   compForm: FormGroup = new FormGroup({});
+  faSensors: FormArray = new FormArray([]);
   defaultLabel = '';
   subscription;
   fetchDataSetTimeout;
@@ -61,6 +63,7 @@ export class SensorComponent implements OnInit {
         }
        }
     });
+    this.subscribeToPreseting();
   }
   fetchData = () => {
     if (this.subscription) {
@@ -70,13 +73,13 @@ export class SensorComponent implements OnInit {
     this.subscription = this.dataStorageService.fetchData(this.filterModel);
   }
   initForm() {
-    const faSensors: FormArray = new FormArray([]);
+    
     let selectableSensors = SensorComponent.sensorList.filter(v => {return !v.hidden});
     for (const def of selectableSensors) {
-      faSensors.push(new FormControl({value: true, disabled: false}));
+      this.faSensors.push(new FormControl({value: true, disabled: false}));
     }
     this.compForm = new FormGroup({
-      sensors: faSensors
+      sensors: this.faSensors
     })
     this.compForm.valueChanges.subscribe(() => {
       let checkedSensors = this.getComponentValue();
@@ -113,8 +116,11 @@ export class SensorComponent implements OnInit {
   }
   subscribeToPreseting() {
     this.dataStorageService.presetChangedBus.subscribe(v => {
-      let sensorList = v.sensors;
-
+      let sensorList: string[] = v.sensors;
+      SensorComponent.sensorList.filter(v => {return !v.hidden}).map((v, i) => { // assuming hidden: true sensors at the sensor list end
+          let checked = sensorList.indexOf(v.sensor) != -1;
+          this.faSensors.controls[i].setValue(checked);
+      });
     });
   }
 
