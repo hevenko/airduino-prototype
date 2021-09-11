@@ -36,7 +36,8 @@ export class DataStorageService {
   editUserBus: BehaviorSubject<any> = new BehaviorSubject([]);
   newDeviceBus: BehaviorSubject<any> = new BehaviorSubject([]);
   editDeviceBus: BehaviorSubject<any> = new BehaviorSubject([]);
-  
+  presetChangedBus: Subject<any> = new Subject<any>();
+
   deviceTypesObervable: Promise<any[]>;
   firmwaresObervable: Promise<any[]>;
   configurationsObervable: Promise<any[]>;
@@ -440,7 +441,12 @@ export class DataStorageService {
     return this.http.get<Data>(this.getURL('filters/'))
     .pipe(
       catchError(this.handleError),
-      map(res => res.data)
+      map((v: any) => {
+        if(v.error) {
+          throw (v.error);
+        }
+        return v.data;
+      })
     ).toPromise();
   }
   fetchFilterDetail(filterId: string): Promise<any> {
