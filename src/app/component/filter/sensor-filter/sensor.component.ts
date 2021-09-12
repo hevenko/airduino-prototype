@@ -117,7 +117,7 @@ export class SensorComponent implements OnInit {
   subscribeToPreseting() {
     this.dataStorageService.presetChangedBus.subscribe(v => {
       let sensorList: string[] = v.sensors;
-      SensorComponent.sensorList.filter(v => {return !v.hidden}).map((v, i) => { // assuming hidden: true sensors at the sensor list end
+      SensorComponent.sensorList.filter(v => {return !v.hidden}).map((v, i) => { // assuming "hidden: true" sensors at the sensor list end
           let checked = sensorList.indexOf(v.sensor) != -1;
           this.faSensors.controls[i].setValue(checked);
       });
