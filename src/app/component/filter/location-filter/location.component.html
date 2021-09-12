@@ -7,7 +7,7 @@
         </a>
         <div [ngClass]="locationSelected() ? 'closeMenu' : ''" class="dropdown-menu filter-menu-expanded" style="padding: 5px;" id="locationComponentDropdown">
             <mat-radio-group aria-label="Select an option" formControlName="selectedDevices"
-                (change)="locationOnChange($event)">
+                (change)="locationOnChange()">
                 <div class="locationitem" *ngFor="let k of locationList; let i = index;">
                     <mat-radio-button value="{{k.value}}" (click)="setLocationSelected(i)"> 
                         <ng-container *ngIf="i !== locationList.length - 1">{{k.desc}}</ng-container>

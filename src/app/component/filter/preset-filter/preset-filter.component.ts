@@ -7,6 +7,7 @@ import {AlertComponent} from './alert/alert.component';
 import {AirduinoComponent} from '../../airduino/airduino.component';
 import {MessageService, MessageColor} from 'src/app/shared/service/message.service';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
+import { FilterModel } from 'src/app/model/filter-model';
 
 @Component({
   selector: 'app-preset-filter',
@@ -33,8 +34,8 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit  
   appliedFilter = null;
   showSaveAsNewFilterBtn = false;
   newFilterName = '';
-
-  constructor(public dialog: MatDialog, private messageService: MessageService, private dataStorageService: DataStorageService) {
+  subscription;
+  constructor(public dialog: MatDialog, private messageService: MessageService, private dataStorageService: DataStorageService, private filterModel: FilterModel ) {
     super();
   }
 
@@ -48,13 +49,21 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit  
       this.filters = l;
     });
   }
+  
   ngOnInit(): void {
     this.initForm();
     this.fetchFilterList();
+    this.dataStorageService.usubscribeBroadcastBus.subscribe(v => { //prevents drawing feaures (dots) outside poligon
+      this.subscription?.unsubscribe();
+    });
+  }
+  delayFetchData() {
+    this.subscription = this.dataStorageService.fetchData(this.filterModel);
   }
   applyFilter(f: any) {
     this.appliedFilter = f;
     this.dataStorageService.presetChangedBus.next(f);
+    setTimeout(() => {this.delayFetchData()}, 1000); // setting presets is async so ill just wait a little before getting data, hope Tihomir doesen't see this hack :)
   }
   searchPresetFilters() {
     alert('ya')

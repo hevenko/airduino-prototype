@@ -181,7 +181,6 @@ export class DataStorageService {
     filter.time = filterModel.time;
     filter.locations = filterModel.locations;
     filter.order = ["measured"];
-    //console.log(JSON.stringify(filter));
     this.sendPageOfData([]);
     this.sendAvailableData([]);     
     if (!!filter.sensors && !!filter.sensors.length && !!filter.time && !!filter.locations &&
@@ -189,6 +188,7 @@ export class DataStorageService {
         (filter.locations.polygon && filter.locations.polygon.length) ||
         (filter.locations.devices && filter.locations.devices.length) ||
         (filter.locations.name))) {
+        console.log("FETCH:\n" + JSON.stringify(filter));
           //RawDataComponent.clearRawData();
         this.sendLoadingStatus(true);
         let res = this.fetchPages(filter, 1, availableData).subscribe((p: RawData[]) => {
@@ -199,6 +199,8 @@ export class DataStorageService {
         })
     
         return res;
+    } else {
+      console.log("NOFETCH:\n" + JSON.stringify(filter));
     }
   }
   newUser(userName: string, email: string, password: string){

@@ -272,7 +272,7 @@ export class MapComponent implements OnInit, OnDestroy {
     });
     this.dataStorageService.drawDataBus.subscribe((region: any) => {
       console.log("named location:", region);
-      if (!region || !region.length || (this.filterModel.locations && (this.filterModel.locations.polygon || this.filterModel.locations.circle))) {
+      if (!region || !region.length /* || (this.filterModel.locations && (this.filterModel.locations.polygon || this.filterModel.locations.circle)) */) {
         return;
       }
       let geometry;
