@@ -1,5 +1,5 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, FormGroupName } from '@angular/forms';
+import { AfterViewInit, Component, Inject, OnInit } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { forkJoin } from 'rxjs';
 import { Constants } from 'src/app/shared/constants';
@@ -13,7 +13,7 @@ import { SensorComponent } from '../../sensor-filter/sensor.component';
   templateUrl: './alert.component.html',
   styleUrls: ['./alert.component.css']
 })
-export class AlertComponent implements OnInit {
+export class AlertComponent implements OnInit, AfterViewInit {
 
   title = 'Filter E';
 
@@ -30,8 +30,13 @@ export class AlertComponent implements OnInit {
   ];
   form: FormGroup;
   sensorArray: FormArray;
-  allSensors: Array<any> = SensorComponent.sensorList;
+  allSensors: Array<any>;
   fetchedSensorValues: any[]; // fetched from data base
+  selectedRow: FormGroup;
+  sensorList: any[];
+  CRUD_CREATED = 'C'; // stored in db
+  CRUD_INSERTED = "I"; // newly inserted
+  CRUD_DELETED = 'D'; // should be deleted from db
 
   constructor(private dialogRef: MatDialogRef<AlertComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private dataStorageService: DataStorageService, private fb: FormBuilder, private messageService: MessageService) {
 
@@ -56,10 +61,17 @@ export class AlertComponent implements OnInit {
       this.form.controls['action'].setValue(j[0].data[0].action);
       this.form.controls['visibility'].setValue(j[0].data[0].visibility);
       this.fetchedSensorValues = j[1];
-      this.makeSensorList(this.allSensors, this.fetchedSensorValues);
-
+      this.allSensors = j[1];
+      this.makeSensorList(j[1]);
+    });
+    this.sensorList = SensorComponent.sensorList.filter(v => {
+      return !v.hidden;
     });
   }
+
+  ngAfterViewInit(): void {
+  }
+
   findSensorValue(sensorName: string, sensorValues: Array<any>) {
     let result = sensorValues.map((v) => {
       return v.sensor === sensorName ? v : null
@@ -68,38 +80,21 @@ export class AlertComponent implements OnInit {
     });
     return result[0];
   }
-  makeSensorList(sensorList: Array<any>, sensorValues: Array<any>): void {
+  makeSensorList(sensorList: Array<any>): void {
     const list = <FormArray>this.form.get('sensors');
-    sensorList.forEach(s => {
-      this.sensorArray.push(this.makeSensor(s, this.findSensorValue(s.sensor, sensorValues)));
+    sensorList.forEach((s, i) => {
+      this.sensorArray.push(this.makeSensor(s, this.CRUD_CREATED, i));
     })
   }
-  makeSensor(sensorDetail: any, sensorValue: any): FormGroup {
-    let result: FormGroup = this.fb.group({
+  makeSensor(sensorDetail: any, crud: string, localId: number): FormGroup {
+    return this.fb.group({
+      localId: [localId],
+      crud: [crud],
+      primKey: [sensorDetail],
       sensor: [sensorDetail.sensor],
-      value: [!!sensorValue ? sensorValue.value : null],
-      minMax: [!!sensorValue ? sensorValue.min_max : null]
-    });
-    result.controls['value'].valueChanges.subscribe(v => {
-      if (!v) {
-        result.controls['minMax'].setValue(null);
-        result.controls['minMax'].disable();
-      } else if (!result.controls['minMax'].value) {
-        result.controls['minMax'].enable();
-        result.controls['minMax'].setValue('min');
-      }
+      value: [sensorDetail.value],
+      minMax: [sensorDetail.min_max]
     })
-    return result;
-  }
-  sensorExists(sensorName: string): boolean {
-    let result = false;
-    this.fetchedSensorValues.forEach(v => {
-      if (sensorName === v.sensor) {
-        result = true;
-        return;
-      }
-    });
-    return result;
   }
   saveFilter(e: any): void {
     let obsList = [];
@@ -107,16 +102,8 @@ export class AlertComponent implements OnInit {
     obsList.push(this.dataStorageService.updateFilterMetaData(this.data.id, this.form.value.enabled, this.form.value.action, this.form.value.visibility));    // general data like enabled, action
 
     this.sensorArray.controls.map((v, i) => { // sensor data
-      //console.log(v.value);
-      if (v.value.value) {
-        if (this.sensorExists(v.value.sensor)) {
-          obsList.push(this.dataStorageService.updateFilterSensor(this.data.id, v.value.sensor, v.value.value, v.value.minMax));
-        } else {
-          obsList.push(this.dataStorageService.createFilterSensor(this.data.id, v.value.sensor, v.value.value, v.value.minMax));
-        }
-      } else {
-        obsList.push(this.dataStorageService.deleteFilterSensor(this.data.id, v.value.sensor));
-      }
+      console.log(JSON.stringify(v.value));
+      //obsList.push(this.dataStorageService.updateFilterSensor(this.data.id, v.value.sensor, v.value.value, v.value.minMax));
 
     });
     forkJoin(obsList).subscribe(a => {
@@ -127,5 +114,31 @@ export class AlertComponent implements OnInit {
         console.error(e)
         this.messageService.showErrorMessage(Constants.SAVE_ERROR);
       });
+  }
+  setSelectedRow(r: any):void {
+    this.selectedRow = r;
+  }
+  isSelectedRow(r: any): boolean {
+    return r === this.selectedRow;
+  }
+  addNewSensor(): void {
+    this.selectedRow = this.makeSensor({filter: this.data.id, sensor: '', value: '', min_max: ''}, this.CRUD_INSERTED, this.sensorArray.length);
+    this.sensorArray.insert(0, this.selectedRow);
+
+    this.sensorArray.controls.forEach((v: FormGroup, i) =>{
+      v.controls['localId'].setValue(i); // new sensor was added first so localId's (index) are reset 
+    });
+  }
+  deleteSensor(): void {
+    if (this.selectedRow.value.crud === this.CRUD_CREATED) {
+      this.selectedRow.controls['crud'].setValue(this.CRUD_DELETED);
+    } else {
+      this.sensorArray?.controls.splice(this.selectedRow.value.localId, 1);
+    }
+  }
+  getSensorList(): any[] {
+    return this.sensorArray?.controls.filter(v => {
+      return v.value.crud !== this.CRUD_DELETED;
+    })
   }
 }

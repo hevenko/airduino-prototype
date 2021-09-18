@@ -47,3 +47,6 @@ mat-radio-button label {
   background-color: red !important;
   align-items: flex-start !important;
 }
+button {
+  margin-left: 6px;
+}

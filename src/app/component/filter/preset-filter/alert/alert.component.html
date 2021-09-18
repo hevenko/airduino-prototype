@@ -1,7 +1,11 @@
 <form [formGroup]="form">
   <h1 mat-dialog-title>{{data.name}}</h1>
+  <div style="display: flex;justify-content: flex-end;margin-bottom: 7px;">
+    <button (click)="addNewSensor()">Add</button>
+    <button (click)="deleteSensor()">Delete</button>
+  </div>
   <div style="max-height:300px;overflow:auto;">
-    <table id="sensors">
+    <table id="sensors" #tblsensors onblur="setSelectedRow(null)">
       <thead>
         <tr>
           <td></td>
@@ -22,13 +26,21 @@
         </tr>
       </thead>
       <tbody formArrayName="sensors">
-        <ng-container *ngFor="let s of sensorArray?.controls;let i = index">
-          <tr [formGroupName]="i" class="flex-container">
+        <ng-container *ngFor="let s of getSensorList();let i = index">
+          <tr [formGroupName]="i" class="flex-container" (click)="setSelectedRow(s)">
             <td style="padding-bottom: 5px; vertical-align: bottom;">
-              <mat-label style="margin-right:30px">{{allSensors[i].sensor}}</mat-label>
+              <mat-label style="margin-right:30px" *ngIf="!isSelectedRow(s)">{{s.value.sensor}}</mat-label>
+              <mat-select matNativeControl formControlName="sensor" *ngIf="isSelectedRow(s)">
+                <ng-container *ngFor="let s of sensorList">
+                  <mat-option [value]="s.sensor">
+                    {{s.sensor}}
+                  </mat-option>
+                </ng-container>
+              </mat-select>      
             </td>
             <td style="padding-bottom: 5px; vertical-align: bottom;">
               <input formControlName="value" matInput style="text-align: center;" type="text" placeholder="Treshold">
+
             </td>
             <td>
               <mat-radio-group aria-label="Select an option" class="radio-label-above" formControlName="minMax">
