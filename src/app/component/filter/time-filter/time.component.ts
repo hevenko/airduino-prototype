@@ -226,7 +226,7 @@ export class TimeComponent implements OnInit, AfterViewInit {
           this.setCustomRange(parts[1], parts[0]);
         }
       } else {
-        this.messageService.showErrorMessage("Usuported time preset combination: " + v.time_from_type + '  ' + v.time_to_type);
+        this.messageService.showErrorMessage("Unsuported time preset combination: " + v.time_from_type + ', ' + v.time_to_type);
       }
     });
   }
