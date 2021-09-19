@@ -32,7 +32,7 @@ export class SensorComponent implements OnInit {
   ];
   compForm: FormGroup = new FormGroup({});
   faSensors: FormArray = new FormArray([]);
-  defaultLabel = '';
+  defaultLabel = 'Sensors';
   subscription;
   fetchDataSetTimeout;
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { }
@@ -101,7 +101,7 @@ export class SensorComponent implements OnInit {
     const label = (this.compForm.controls.sensors as FormArray).controls
       .map((v, i) => (v.value ? i === 0 ? SensorComponent.sensorList[i].label :  ' ' + SensorComponent.sensorList[i].label : null))
       .filter(v => v !== null);
-    return !!label && label.length > 0  ? label : '';
+    return !!label && label.length > 0  ? label : this.defaultLabel;
   }
   getComponentValue(): string[] {
     let result = [];
@@ -118,7 +118,7 @@ export class SensorComponent implements OnInit {
     this.dataStorageService.presetChangedBus.subscribe(v => {
       let sensorList: string[] = v.sensors;
       SensorComponent.sensorList.filter(v => {return !v.hidden}).map((v, i) => { // assuming "hidden: true" sensors at the sensor list end
-          let checked = sensorList.indexOf(v.sensor) != -1;
+          let checked = sensorList?.indexOf(v.sensor) != -1;
           this.faSensors.controls[i].setValue(checked);
       });
     });
