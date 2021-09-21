@@ -113,10 +113,8 @@ export class AlertComponent implements OnInit, AfterViewInit {
     obsList.push(this.dataStorageService.updateFilterMetaData(this.data.id, this.form.value.enabled, this.form.value.action, this.form.value.visibility));    // general data like enabled, action
 
     this.sensorArray.controls.map((v, i) => { // sensor data
-      console.log(JSON.stringify(v.value));
       if (v.value.crud === this.CRUD_INSERTED) {
         insertList.push(this.dataStorageService.createFilterSensor(v.value.primKey.filter, v.value.sensor, v.value.value, v.value.minMax));
-        //deleteList.push(this.dataStorageService.deleteFilterSensor(v.value.primKey.filter, v.value.primKey.sensor));
       } else if (v.value.crud === this.CRUD_DELETED) {
         deleteList.push(this.dataStorageService.deleteFilterSensor(v.value.primKey.filter, v.value.primKey.sensor, v.value.primKey.min_max).pipe(catchError(this.handleError)));
       } else if (v.value.crud === this.CRUD_STORED) { // fetched  from db
@@ -127,8 +125,6 @@ export class AlertComponent implements OnInit, AfterViewInit {
           // sensor was not changed by user
         }
       }
-      //obsList.push(this.dataStorageService.updateFilterSensor(this.data.id, v.value.sensor, v.value.value, v.value.minMax));
-
     });
     let all = [];
     all = all.concat(obsList, deleteList, insertList);
@@ -169,6 +165,7 @@ export class AlertComponent implements OnInit, AfterViewInit {
         this.sensorArray?.controls.splice(this.selectedRow.value.sensorInd, 1);
         this.resetInd();
       }
+      this.sensorArray.updateValueAndValidity();
     } else {
       this.messageService.showErrorMessage(Constants.SELECT_SENSOR_ERROR);
     }
