@@ -34,4 +34,5 @@ export class Constants {
   static SENSOR_MENU_LAST_CLOSED = "sensorMenu";
   static LOCATION_MENU_LAST_CLOSED = "locationMenu";
   static SAVE_ERROR = "Save failed";
+  static SELECT_SENSOR_ERROR = "Select sensor";
 }

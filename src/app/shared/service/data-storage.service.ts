@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, concatMap, map, shareReplay } from 'rxjs/operators';
+import { catchError, concatMap, delay, map, shareReplay } from 'rxjs/operators';
 import { MessageColor, MessageService } from './message.service';
 import { BehaviorSubject, EMPTY, Observable, of, Subject, Subscription, throwError } from 'rxjs';
 import { Owner } from 'src/app/model/owner';
@@ -458,7 +458,7 @@ export class DataStorageService {
       map(res => res.data)
     ).toPromise();
   }
-  updateFilterMetaData(filterId: string, enabled: boolean, action: string, visibility: string): Promise<any> {
+  updateFilterMetaData(filterId: string, enabled: boolean, action: string, visibility: string): Observable<any> {
     let params: any = {};
     params.ids = [{id: filterId}];    
     params.values = {enabled: enabled, action: action, visibility: visibility};
@@ -472,11 +472,11 @@ export class DataStorageService {
         }
         return v;
       })
-    ).toPromise();
+    );
   }
-  createFilterSensor(filterId: string, sensorName: string, sensorValue: string, minMax: string): Promise<any> {
+  createFilterSensor(filterId: string, sensorName: string, sensorValue: string, minMax: string): Observable<any> {
     let params: any = {};
-    params = {filter: filterId, sensor: sensorName, value: sensorValue, min_max: minMax};    
+    params = {filter: filterId, sensor: sensorName, value: Number.parseFloat(sensorValue), min_max: minMax};    
     return this.http.request('post', this.getURL('filter-items/fast'), {body: params})
     .pipe(
       catchError(this.handleError),
@@ -486,9 +486,9 @@ export class DataStorageService {
         }
         return v;
       })
-    ).toPromise();
+    );
   }
-  updateFilterSensor(filterId: string, sensorName: string, sensorValue: string, minMax: string): Promise<any> {
+  updateFilterSensor(filterId: string, sensorName: string, sensorValue: string, minMax: string): Observable<any> {
     let params: any = {};
     params.ids = [{filter: filterId, sensor: sensorName, min_max: minMax}];    
     params.values = {value: sensorValue, min_max: minMax};
@@ -501,11 +501,11 @@ export class DataStorageService {
         }
         return v;
       })
-    ).toPromise();
+    );
   }
-  deleteFilterSensor(filterId: string, sensorName: string): Promise<any> {
+  deleteFilterSensor(filterId: string, sensorName: string, minMax: string): Observable<any> {
     let params: any = {};
-    params.ids = [{filter: filterId, sensor: sensorName}];    
+    params.ids = [{filter: filterId, sensor: sensorName, min_max: minMax}];    
     return this.http.request('delete', this.getURL('filter-items'), {body: params})
     .pipe(
       catchError(this.handleError),
@@ -515,7 +515,7 @@ export class DataStorageService {
         }
         return v;
       })
-    ).toPromise();
+    );
   }
 
 }

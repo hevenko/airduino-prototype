@@ -30,7 +30,7 @@
           <tr [formGroupName]="i" class="flex-container" (click)="setSelectedRow(s)">
             <td style="padding-bottom: 5px; vertical-align: bottom;">
               <mat-label style="margin-right:30px" *ngIf="!isSelectedRow(s)">{{s.value.sensor}}</mat-label>
-              <mat-select matNativeControl formControlName="sensor" *ngIf="isSelectedRow(s)">
+              <mat-select matNativeControl formControlName="sensor" *ngIf="isSelectedRow(s)" style="min-width: 100px;">
                 <ng-container *ngFor="let s of sensorList">
                   <mat-option [value]="s.sensor">
                     {{s.sensor}}
@@ -93,5 +93,5 @@
 </form>
 <div mat-dialog-actions>
   <button mat-stroked-button mat-dialog-close style="margin-right: 5px;">Cancel</button>
-  <button mat-stroked-button (click)="saveFilter($event)">Save</button>
+  <button mat-stroked-button (click)="saveFilter($event)" [disabled]="form.invalid">Save</button>
 </div>
