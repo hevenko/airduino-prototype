@@ -49,9 +49,9 @@ export class AlertComponent implements OnInit, AfterViewInit {
     this.sensorArray = this.fb.array([]);
     this.form = this.fb.group({
       sensors: this.sensorArray,
-      enabled: this.fb.control(null),
-      action: this.fb.control(null),
-      visibility: this.fb.control('private')
+      enabled: this.fb.control(null, Validators.required),
+      action: this.fb.control(null, Validators.required),
+      visibility: this.fb.control('private', Validators.required)
     });
     observables.push(this.dataStorageService.fetchFilter(this.data.id));
     observables.push(this.dataStorageService.fetchFilterDetail(this.data.id));
