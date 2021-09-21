@@ -69,7 +69,7 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit  
     alert('ya')
   }
   openAlertSettingsDialog(filter: any): void {
-    const dialogRef = this.dialog.open(AlertComponent, {data : filter});
+    const dialogRef = this.dialog.open(AlertComponent, {data : filter, minWidth: '340px'});
     this.setDialogIsOpen(true);
     dialogRef.afterClosed().subscribe(result => {
       this.setDialogIsOpen(false);
