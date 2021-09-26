@@ -1,7 +1,7 @@
 <form [formGroup]="presetForm">
   <div appDropdown [ngClass]="dialogIsOpen ? stayOpened :''" class="dropdown pull-right filter dropright">
-    <a class="dropdown-toogle" data-toggle="collapse" href="#presetCoponentDropdown" onclick="return false" role="button" aria-expanded="false"
-      aria-controls="presetCoponentDropdown">
+    <a class="dropdown-toogle" data-toggle="collapse" href="#presetCoponentDropdown" onclick="return false"
+      role="button" aria-expanded="false" aria-controls="presetCoponentDropdown">
       <span [innerHTML]="getLabel()"></span><span class="caret"></span>
     </a>
     <div class="dropdown-menu filter-menu-expanded" style="padding: 15px" id="presetCoponentDropdown">
@@ -10,19 +10,21 @@
         <mat-icon matSuffix (click)="searchPresetFilters()">search</mat-icon>
       </mat-form-field>
       <div style="height:140px;overflow:auto;">
-        <table style="width: 100%;white-space: nowrap;margin-bottom: 10px;">
-          <ng-container *ngFor="let f of filters;let i = index">
+        <table style="width: 100%;white-space: nowrap;margin-bottom: 10px;" formArrayName="nameArray">
+          <ng-container *ngFor="let f of getFilterNameControls();let i = index">
             <tr>
               <td [class.markAppliedFilter]="markAppliedFilterRow(f)">
-                <span (click)="applyFilter(f)" style="cursor:pointer">{{f.name}}</span>
+                <input (click)="applyFilter(filters[i], i)" formControlName="{{i}}" size="15" class="filterNameInput">
               </td>
               <td style="padding-left: 10px;">
-                <button type="button" mat-stroked-button class="pull-right" (click)="openAlertSettingsDialog(f)" *ngIf="f === appliedFilter">
+                <button type="button" mat-stroked-button class="pull-right"
+                  (click)="openAlertSettingsDialog(filters[i])" *ngIf="filters[i] === appliedFilter">
                   <mat-icon>{{'settings'}}</mat-icon>
                 </button>
               </td>
               <td style="padding-left: 10px;">
-                <button type="button" mat-stroked-button class="pull-right" (click)="openAlertSettingsDialog(f)" *ngIf="f === appliedFilter">
+                <button type="button" mat-stroked-button class="pull-right"
+                  (click)="openAlertSettingsDialog(filters[i])" *ngIf="filters[i] === appliedFilter">
                   <mat-icon>{{'delete'}}</mat-icon>
                 </button>
               </td>
@@ -31,7 +33,7 @@
         </table>
       </div>
       <mat-divider style="margin-bottom:10px"></mat-divider>
-      <div style="display: block;" [ngClass]="!!appliedFilter ? 'enabled-link' : 'disabled-link'">
+      <div style="display: block;" [ngClass]="!!appliedFilter && filterNameArray.valid ? 'enabled-link' : 'disabled-link'">
         <span (click)="saveAsCurrentFilter()" class="glyphicon glyphicon-check" style="margin-right: 8px;"></span>
         <span (click)="saveAsCurrentFilter()">Update selected filter</span>
       </div>
@@ -39,7 +41,8 @@
         <span style="margin-right: 9px;" class="glyphicon glyphicon-plus" (click)="newFilterNameInput.focus()"></span>
         <mat-form-field style="margin-right:15px" floatLabel="auto">
           <mat-label>Save as new filter</mat-label>
-          <input #newFilterNameInput  formControlName="newFilterName" matInput placeholder="New filter name" autocomplete="off">
+          <input #newFilterNameInput formControlName="newFilterName" matInput placeholder="New filter name"
+            autocomplete="off">
         </mat-form-field>
         {{newFilterName}}
         <button mat-stroked-button *ngIf="!!presetForm.value.newFilterName" (click)="saveNewFilterClick($event)">

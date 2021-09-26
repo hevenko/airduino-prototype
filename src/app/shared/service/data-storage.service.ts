@@ -477,6 +477,21 @@ export class DataStorageService {
       })
     );
   }
+  saveFilterAs(cloneName: string, filterId: string): Observable<any> {
+    let params: any = {};
+    params = {id: filterId, name: cloneName};    
+
+    return this.http.request('post', this.getURL('filters/copy/full'), {body: params})
+    .pipe(
+      catchError(this.handleError),
+      map((v: any) => {
+        if(v.error) {
+          throw (v.error);
+        }
+        return v;
+      })
+    );
+  }
   createFilterSensor(filterId: string, sensorName: string, sensorValue: string, minMax: string): Observable<any> {
     let params: any = {};
     params = {filter: filterId, sensor: sensorName, value: Number.parseFloat(sensorValue), min_max: minMax};    
