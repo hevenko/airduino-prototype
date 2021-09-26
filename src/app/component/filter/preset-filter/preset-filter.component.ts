@@ -16,21 +16,8 @@ import { FilterModel } from 'src/app/model/filter-model';
 })
 export class PresetFilterComponent extends AirduinoComponent implements OnInit  {
   stayOpened = Constants.STAY_OPEN;
-  filters = [
-    {id: '1', name: 'Filter A'},
-    {id: '2', name: 'Filter B'},
-    {id: '3', name: 'Da li sused kuri kakvu plastiku'},
-    {id: '4', name: 'Long named filter'},
-    {id: '5', name: 'Prijatelu sam hakiral uređaje, daj njih'},
-    {id: '6', name: 'Svi uređaji'},
-    {id: '7', name: 'Samo tam gdi je fejst vruće'},
-    {id: '8', name: 'Pravni slučaj jedan'},
-    {id: '9', name: 'Skladište'},
-    {id: '10', name: 'Autobusni'},
-  ];
   dialogIsOpen = false;
   presetForm: FormGroup = new FormGroup({});
-  filterEnabledIcon = 'report_problem';
   appliedFilter = null;
   showSaveAsNewFilterBtn = false;
   newFilterName = '';
