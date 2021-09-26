@@ -8,4 +8,6 @@ a {
     font-weight: normal;
     text-decoration: none;
 }
-
+#sensorMenu {
+    width: 420px;
+}
