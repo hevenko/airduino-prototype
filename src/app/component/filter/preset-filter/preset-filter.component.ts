@@ -22,6 +22,7 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit  
   showSaveAsNewFilterBtn = false;
   newFilterName = '';
   subscription;
+  filters = [];
   constructor(public dialog: MatDialog, private messageService: MessageService, private dataStorageService: DataStorageService, private filterModel: FilterModel ) {
     super();
   }
@@ -81,7 +82,10 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit  
     dialog.afterClosed().subscribe(result => {
       this.setDialogIsOpen(false);
       if (result) {
-        this.messageService.showMessage(Constants.MSG_FILTER_OVERWRITTEN, MessageColor.Green);
+        this.dataStorageService.updateFilterMetaData(this.appliedFilter.name, this.appliedFilter.id, this.appliedFilter.enabled,
+          this.appliedFilter.action, this.appliedFilter.visibility, this.filterModel).subscribe(v => {
+            this.messageService.showMessage(Constants.MSG_FILTER_OVERWRITTEN, MessageColor.Green);
+          });
       }
     });
   }
@@ -96,4 +100,5 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit  
     let result = rowFilter === this.appliedFilter;
     return result;
   }
+  
 }

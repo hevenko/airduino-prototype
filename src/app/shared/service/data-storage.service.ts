@@ -458,10 +458,13 @@ export class DataStorageService {
       map(res => res.data)
     ).toPromise();
   }
-  updateFilterMetaData(filterId: string, enabled: boolean, action: string, visibility: string): Observable<any> {
+  updateFilterMetaData(name: string, filterId: string, enabled: boolean, action: string, visibility: string, details: any = {}): Observable<any> {
     let params: any = {};
     params.ids = [{id: filterId}];    
-    params.values = {enabled: enabled, action: action, visibility: visibility};
+    params.values = {name: name, enabled: enabled, action: action, visibility: visibility};
+    params.values.sensors = details._sensors;
+    params.values.time = details._time;
+    params.values.locations = details._locations;
 
     return this.http.request('put', this.getURL('filters/fast'), {body: params})
     .pipe(

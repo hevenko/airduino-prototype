@@ -110,7 +110,7 @@ export class AlertComponent implements OnInit, AfterViewInit {
     let obsList = [];
     let deleteList = [];
     let insertList = []
-    obsList.push(this.dataStorageService.updateFilterMetaData(this.data.id, this.form.value.enabled, this.form.value.action, this.form.value.visibility));    // general data like enabled, action
+    obsList.push(this.dataStorageService.updateFilterMetaData(this.data.name, this.data.id, this.form.value.enabled, this.form.value.action, this.form.value.visibility));    // general data like enabled, action
 
     this.sensorArray.controls.map((v, i) => { // sensor data
       if (v.value.crud === this.CRUD_INSERTED) {
