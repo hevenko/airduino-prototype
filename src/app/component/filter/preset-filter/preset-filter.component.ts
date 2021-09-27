@@ -27,7 +27,7 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit {
   subscription;
   filters = [];
   filterNameArray = new FormArray([]);
-  newFilterNameControl = new FormControl({value: '', disabled: true}, Validators.required, );
+  newFilterNameControl = new FormControl('', Validators.required);
 
   constructor(public dialog: MatDialog, private messageService: MessageService, private dataStorageService: DataStorageService, private filterModel: FilterModel) {
     super();
@@ -43,8 +43,6 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit {
     this.appliedFilterInd = '';
     this.appliedFilter = null;
     this.filterNameArray.controls = [];
-    this.newFilterNameControl.disable();
-    this.newFilterNameControl.setValue('');
     let s = this.dataStorageService.fetchFilterList().then(l => { // filter list
       this.filters = l;
       this.filters.forEach(f => {
@@ -66,7 +64,6 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit {
   applyFilter(f: any, ind: number) {
     this.appliedFilterInd = ind + '';
     this.appliedFilter = f;
-    this.newFilterNameControl.enable();
     this.dataStorageService.presetChangedBus.next(f);
     setTimeout(() => { this.delayFetchData() }, 1000); // setting presets is async so ill just wait a little before getting data, hope Tihomir doesen't see this hack :)
   }
@@ -112,19 +109,17 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit {
     });
   }
   saveNewFilterClick(e: any): void {
-    if (this.appliedFilter) {
-      this.dataStorageService.saveFilterAs(this.presetForm.controls['newFilterName'].value, this.appliedFilter.id + '').subscribe(v => {
-        
-        this.showInfoMessage(this.dialog, Constants.MSG_FILTER_ADDED).afterClosed().subscribe(result => {
-          this.setDialogIsOpen(false);
-        });
-        this.setDialogIsOpen(true);
-        this.fetchFilterList();
-      }, e => {
-        console.error(e)
-        this.messageService.showErrorMessage(e);
-      })
-    }
+    this.dataStorageService.saveFilterAs(this.presetForm.controls['newFilterName'].value, false, "email", "private", this.filterModel).subscribe(v => {
+
+      this.showInfoMessage(this.dialog, Constants.MSG_FILTER_ADDED).afterClosed().subscribe(result => {
+        this.setDialogIsOpen(false);
+      });
+      this.setDialogIsOpen(true);
+      this.fetchFilterList();
+    }, e => {
+      console.error(e)
+      this.messageService.showErrorMessage(e);
+    })
   }
   markAppliedFilterRow(rowFilter: any): boolean {
     let result = rowFilter === this.appliedFilter;
@@ -139,7 +134,7 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit {
   deleteFilter(): void {
     if (this.appliedFilter) {
       this.dataStorageService.deleteFilter(this.appliedFilter.id + '').then(v => {
-        
+
         this.showInfoMessage(this.dialog, '"' + this.appliedFilter.name + '" deleted').afterClosed().subscribe(result => {
           this.setDialogIsOpen(false);
         });
