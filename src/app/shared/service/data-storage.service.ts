@@ -439,8 +439,16 @@ export class DataStorageService {
       catchError(this.handleError)
     ).toPromise();
   }
+  deleteFilter(filterId: string): Promise<any> {
+    let params: any = {};
+    params.ids = [{id: filterId}];    
+    return this.http.request('delete', this.getURL('filters/'), {body: params})
+    .pipe(
+      catchError(this.handleError)
+    ).toPromise();
+  }
   fetchFilterList(): Promise<any[]> {
-    return this.http.get<Data>(this.getURL('filters/'))
+    return this.http.get<Data>(this.getURL('filters?order=name'))
     .pipe(
       catchError(this.handleError),
       map((v: any) => {

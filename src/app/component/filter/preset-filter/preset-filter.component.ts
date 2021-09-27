@@ -136,4 +136,20 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit {
   disableNewFilter(): boolean {
     return !this.appliedFilter;
   }
+  deleteFilter(): void {
+    if (this.appliedFilter) {
+      this.dataStorageService.deleteFilter(this.appliedFilter.id + '').then(v => {
+        
+        this.showInfoMessage(this.dialog, '"' + this.appliedFilter.name + '" deleted').afterClosed().subscribe(result => {
+          this.setDialogIsOpen(false);
+        });
+        this.setDialogIsOpen(true);
+        this.fetchFilterList();
+      }, e => {
+        console.error(e)
+        this.messageService.showErrorMessage(e);
+      })
+    }
+
+  }
 }

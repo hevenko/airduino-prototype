@@ -24,7 +24,7 @@
               </td>
               <td style="padding-left: 10px;">
                 <button type="button" mat-stroked-button class="pull-right"
-                  *ngIf="filters[i] === appliedFilter">
+                  (click)="deleteFilter()" *ngIf="filters[i] === appliedFilter">
                   <mat-icon>{{'delete'}}</mat-icon>
                 </button>
               </td>
