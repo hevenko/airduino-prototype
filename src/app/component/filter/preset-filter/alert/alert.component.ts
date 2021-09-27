@@ -32,13 +32,13 @@ export class AlertComponent implements OnInit, AfterViewInit {
   ];
   form: FormGroup;
   sensorArray: FormArray = new FormArray([]);
-  allSensors: Array<any>;
   fetchedSensorValues: any[]; // fetched from data base
   selectedRow: FormGroup;
   sensorList: any[];
   CRUD_STORED = 'S'; // stored in db
   CRUD_INSERTED = "I"; // newly inserted
   CRUD_DELETED = 'D'; // should be deleted from db
+  sensorsMarkedForDeletion = [];
 
   constructor(private dialogRef: MatDialogRef<AlertComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private dataStorageService: DataStorageService, private fb: FormBuilder, private messageService: MessageService) {
 
@@ -63,7 +63,6 @@ export class AlertComponent implements OnInit, AfterViewInit {
       this.form.controls['action'].setValue(j[0].data[0].action);
       this.form.controls['visibility'].setValue(j[0].data[0].visibility);
       this.fetchedSensorValues = j[1];
-      this.allSensors = j[1];
       this.makeSensorList(j[1]);
     });
     this.sensorList = SensorComponent.sensorList.filter(v => {
@@ -109,25 +108,27 @@ export class AlertComponent implements OnInit, AfterViewInit {
   saveFilter(e: any): void {
     let obsList = [];
     let deleteList = [];
-    let insertList = []
+    let insertList = [];
     obsList.push(this.dataStorageService.updateFilterMetaData(this.data.name, this.data.id, this.form.value.enabled, this.form.value.action, this.form.value.visibility));    // general data like enabled, action
 
-    this.sensorArray.controls.map((v, i) => { // sensor data
+    let allSensors = this.sensorArray.controls.concat(this.sensorsMarkedForDeletion);
+
+    allSensors.map((v, i) => { // sensor data
       if (v.value.crud === this.CRUD_INSERTED) {
-        insertList.push(this.dataStorageService.createFilterSensor(v.value.primKey.filter, v.value.sensor, v.value.value, v.value.minMax));
+        insertList.push({filter: v.value.primKey.filter, sensor: v.value.sensor, value: v.value.value, min_max: v.value.minMax});
       } else if (v.value.crud === this.CRUD_DELETED) {
-        deleteList.push(this.dataStorageService.deleteFilterSensor(v.value.primKey.filter, v.value.primKey.sensor, v.value.primKey.min_max).pipe(catchError(this.handleError)));
+        deleteList.push(v.value.primKey);
       } else if (v.value.crud === this.CRUD_STORED) { // fetched  from db
         if (v.dirty) {
-          deleteList.push(this.dataStorageService.deleteFilterSensor(v.value.primKey.filter, v.value.primKey.sensor, v.value.primKey.min_max).pipe(catchError(this.handleError)));
-          insertList.push(this.dataStorageService.createFilterSensor(v.value.primKey.filter, v.value.sensor, v.value.value, v.value.minMax).pipe(catchError(this.handleError)));
+          deleteList.push(v.value.primKey);
+          insertList.push({filter: v.value.primKey.filter, sensor: v.value.sensor, value: v.value.value, min_max: v.value.minMax});
         } else {
           // sensor was not changed by user
         }
       }
     });
     let all = [];
-    all = all.concat(obsList, deleteList, insertList);
+    all = all.concat(obsList, [(this.dataStorageService.deleteFilterSensor(deleteList))], [this.dataStorageService.createFilterSensor(insertList)]);
     from(all).pipe(
       concatAll()).pipe(toArray()).subscribe(v => {
         this.messageService.showMessage("Filter saved", MessageColor.Green);
@@ -154,13 +155,14 @@ export class AlertComponent implements OnInit, AfterViewInit {
   addNewSensor(): void {
     this.selectedRow = this.makeSensor({ filter: this.data.id, sensor: '', value: '', min_max: '' }, this.CRUD_INSERTED, this.sensorArray.length);
     this.sensorArray.insert(0, this.selectedRow);
-    this.form.updateValueAndValidity();
     this.resetInd();
+    this.form.updateValueAndValidity();
   }
   deleteSensor(): void {
     if (this.selectedRow) {
       if (this.selectedRow.value.crud === this.CRUD_STORED) {
         this.selectedRow.controls['crud'].setValue(this.CRUD_DELETED);
+        this.sensorsMarkedForDeletion.push(this.sensorArray?.controls.splice(this.selectedRow.value.sensorInd, 1)[0]);
       } else {
         this.sensorArray?.controls.splice(this.selectedRow.value.sensorInd, 1);
         this.resetInd();
@@ -169,10 +171,5 @@ export class AlertComponent implements OnInit, AfterViewInit {
     } else {
       this.messageService.showErrorMessage(Constants.SELECT_SENSOR_ERROR);
     }
-  }
-  getSensorList(): any[] {
-    return this.sensorArray?.controls.filter(v => {
-      return v.value.crud !== this.CRUD_DELETED;
-    })
   }
 }

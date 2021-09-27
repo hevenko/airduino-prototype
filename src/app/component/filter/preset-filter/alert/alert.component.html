@@ -26,14 +26,14 @@
         </tr>
       </thead>
       <tbody formArrayName="sensors">
-        <ng-container *ngFor="let s of getSensorList();let i = index">
+        <ng-container *ngFor="let s of sensorArray.controls;let i = index">
           <tr [formGroupName]="i" class="flex-container" (click)="setSelectedRow(s)">
             <td style="padding-bottom: 5px; vertical-align: bottom;">
               <mat-label style="margin-right:30px" *ngIf="!isSelectedRow(s)">{{s.value.sensor}}</mat-label>
               <mat-select matNativeControl formControlName="sensor" *ngIf="isSelectedRow(s)" style="min-width: 100px;">
-                <ng-container *ngFor="let s of sensorList">
-                  <mat-option [value]="s.sensor">
-                    {{s.sensor}}
+                <ng-container *ngFor="let sl of sensorList">
+                  <mat-option [value]="sl.sensor">
+                    {{sl.sensor}}
                   </mat-option>
                 </ng-container>
               </mat-select>      
