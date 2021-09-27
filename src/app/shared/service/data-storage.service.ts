@@ -485,11 +485,13 @@ export class DataStorageService {
       })
     );
   }
-  saveFilterAs(cloneName: string, filterId: string): Observable<any> {
-    let params: any = {};
-    params = {id: filterId, name: cloneName};    
+  saveFilterAs(name: string, enabled: boolean, action: string, visibility: string, details: any = {}): Observable<any> {
+    let params: any = {name: name, enabled: enabled, action: action, visibility: visibility};
+    params.sensors = details._sensors;
+    params.time = details._time;
+    params.locations = details._locations;
 
-    return this.http.request('post', this.getURL('filters/copy/full'), {body: params})
+    return this.http.request('post', this.getURL('filters/fast'), {body: params})
     .pipe(
       catchError(this.handleError),
       map((v: any) => {
@@ -500,19 +502,27 @@ export class DataStorageService {
       })
     );
   }
-  createFilterSensor(filterId: string, sensorName: string, sensorValue: string, minMax: string): Observable<any> {
+  createFilterSensor(primKeyList: any[]): Observable<any> {
     let params: any = {};
-    params = {filter: filterId, sensor: sensorName, value: Number.parseFloat(sensorValue), min_max: minMax};    
-    return this.http.request('post', this.getURL('filter-items/fast'), {body: params})
-    .pipe(
-      catchError(this.handleError),
-      map((v: any) => {
-        if(v.error) {
-          throw (v.error);
-        }
-        return v;
-      })
-    );
+    params = [];    
+    primKeyList.forEach((v, i) => {
+      let j = {filter: v.filter, sensor: v.sensor, value: Number.parseFloat(v.value), min_max: v.min_max}
+      params.push(j);
+    });
+    if (params.length > 0) {
+      return this.http.request('post', this.getURL('filter-items/multiple/fast'), {body: params})
+      .pipe(
+        catchError(this.handleError),
+        map((v: any) => {
+          if(v.error) {
+            throw (v.error);
+          }
+          return v;
+        })
+      );  
+    } else {
+      return of({});
+    }
   }
   updateFilterSensor(filterId: string, sensorName: string, sensorValue: string, minMax: string): Observable<any> {
     let params: any = {};
@@ -529,19 +539,27 @@ export class DataStorageService {
       })
     );
   }
-  deleteFilterSensor(filterId: string, sensorName: string, minMax: string): Observable<any> {
+  deleteFilterSensor(primKeyList: any[]): Observable<any> {
     let params: any = {};
-    params.ids = [{filter: filterId, sensor: sensorName, min_max: minMax}];    
-    return this.http.request('delete', this.getURL('filter-items'), {body: params})
-    .pipe(
-      catchError(this.handleError),
-      map((v: any) => {
-        if(v.error) {
-          throw (v.error);
-        }
-        return v;
-      })
-    );
+    params.ids = [];    
+    primKeyList.forEach((v, i) => {
+      let j = {filter: v.filter, sensor: v.sensor, min_max: v.min_max}
+      params.ids.push(j);
+    });
+    if (params.ids.length > 0) {
+      return this.http.request('delete', this.getURL('filter-items'), {body: params})
+      .pipe(
+        catchError(this.handleError),
+        map((v: any) => {
+          if(v.error) {
+            throw (v.error);
+          }
+          return v;
+        })
+      );  
+    } else {
+      return of({});
+    }
   }
 
 }
