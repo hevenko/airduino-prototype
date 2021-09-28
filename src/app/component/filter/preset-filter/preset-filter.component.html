@@ -6,25 +6,25 @@
     </a>
     <div class="dropdown-menu filter-menu-expanded" style="padding: 15px" id="presetCoponentDropdown">
       <mat-form-field>
-        <input matInput placeholder="Search preset filters">
-        <mat-icon matSuffix (click)="searchPresetFilters()">search</mat-icon>
+        <input matInput placeholder="Search preset filters" (keyup)="searchPresetFilters($event)">
+        <mat-icon matSuffix >search</mat-icon>
       </mat-form-field>
       <div style="height:140px;overflow:auto;">
         <table style="width: 100%;white-space: nowrap;margin-bottom: 10px;" formArrayName="nameArray">
-          <ng-container *ngFor="let f of getFilterNameControls();let i = index">
-            <tr>
+          <ng-container *ngFor="let f of filteredFormArray.controls;let i = index">
+            <tr [formGroupName]="i">
               <td [class.markAppliedFilter]="markAppliedFilterRow(f)">
-                <input (click)="applyFilter(filters[i], i)" formControlName="{{i}}" size="15" class="filterNameInput">
+                <input (click)="applyFilter(f)" formControlName="name" size="15" class="filterNameInput">
               </td>
               <td style="padding-left: 10px;">
                 <button type="button" mat-stroked-button class="pull-right"
-                  (click)="openAlertSettingsDialog(filters[i])" *ngIf="filters[i] === appliedFilter">
+                  (click)="openAlertSettingsDialog(f)" *ngIf="findFilterDataForControl(f)?.id === appliedFilter?.id">
                   <mat-icon>{{'settings'}}</mat-icon>
                 </button>
               </td>
               <td style="padding-left: 10px;">
                 <button type="button" mat-stroked-button class="pull-right"
-                  (click)="deleteFilter()" *ngIf="filters[i] === appliedFilter">
+                  (click)="deleteFilter()" *ngIf="findFilterDataForControl(f)?.id === appliedFilter?.id">
                   <mat-icon>{{'delete'}}</mat-icon>
                 </button>
               </td>
@@ -33,7 +33,7 @@
         </table>
       </div>
       <mat-divider style="margin-bottom:10px"></mat-divider>
-      <div style="display: block;" [ngClass]="!!appliedFilter && filterNameArray.valid ? 'enabled-link' : 'disabled-link'">
+      <div style="display: block;" [ngClass]="!!appliedFilter && filteredFormArray.valid ? 'enabled-link' : 'disabled-link'">
         <span (click)="saveAsCurrentFilter()" class="glyphicon glyphicon-check" style="margin-right: 8px;"></span>
         <span (click)="saveAsCurrentFilter()">Update selected filter</span>
       </div>
@@ -45,7 +45,7 @@
             autocomplete="off">
         </mat-form-field>
         {{newFilterName}}
-        <button mat-stroked-button *ngIf="!!presetForm.value.newFilterName" (click)="saveNewFilterClick($event)">
+        <button type="button" mat-stroked-button *ngIf="!!presetForm.value.newFilterName" (click)="saveNewFilterClick($event)">
           <mat-icon style="color: warn;">save</mat-icon>
         </button>
       </div>
