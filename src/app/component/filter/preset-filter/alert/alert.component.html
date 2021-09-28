@@ -36,7 +36,7 @@
                     {{sl.sensor}}
                   </mat-option>
                 </ng-container>
-              </mat-select>      
+              </mat-select>
             </td>
             <td style="padding-bottom: 5px; vertical-align: bottom;">
               <input formControlName="value" matInput style="text-align: center;" type="text" placeholder="Treshold">
@@ -71,27 +71,29 @@
       </tbody>
     </table>
   </div>
-  <div style="display: flex; align-items: center; margin-top: 25px; margin-bottom: 25px">
-    <mat-slide-toggle formControlName="enabled" labelPosition='before'>
-      Enabled
-    </mat-slide-toggle>
-    <span class="spacer"></span>
-    <label class="example-label" for="action" style="margin-right: 10px;margin-bottom: 0px;">Action</label>
-    <mat-select formControlName="action" id="action" style="width: 70px;border-bottom: 1px solid;">
-      <mat-option *ngFor="let act of actions" [value]="act.value">
-        {{act.desc}}
-      </mat-option>
-    </mat-select>
-  </div>
-  <div style="display: flex; align-items: center; margin-top: 25px; margin-bottom: 25px">
-    <label class="example-label" for="visible" style="margin-right: 10px;margin-bottom: 0px;">Visibility</label>
-    <mat-select formControlName="visibility" style="width: 70px;border-bottom: 1px solid;">
-      <mat-option value="private">private</mat-option>
-      <mat-option value="public">public</mat-option>
-    </mat-select>
+  <div formGroupName="meta">
+    <div style="display: flex; align-items: center; margin-top: 25px; margin-bottom: 25px">
+      <mat-slide-toggle formControlName="enabled" labelPosition='before'>
+        Enabled
+      </mat-slide-toggle>
+      <span class="spacer"></span>
+      <label class="example-label" for="action" style="margin-right: 10px;margin-bottom: 0px;">Action</label>
+      <mat-select formControlName="action" id="action" style="width: 70px;border-bottom: 1px solid;">
+        <mat-option *ngFor="let act of actions" [value]="act.value">
+          {{act.desc}}
+        </mat-option>
+      </mat-select>
+    </div>
+    <div style="display: flex; align-items: center; margin-top: 25px; margin-bottom: 25px">
+      <label class="example-label" for="visible" style="margin-right: 10px;margin-bottom: 0px;">Visibility</label>
+      <mat-select formControlName="visibility" style="width: 70px;border-bottom: 1px solid;">
+        <mat-option value="private">private</mat-option>
+        <mat-option value="public">public</mat-option>
+      </mat-select>
+    </div>
   </div>
 </form>
 <div mat-dialog-actions>
   <button mat-stroked-button mat-dialog-close style="margin-right: 5px;">Cancel</button>
-  <button mat-stroked-button (click)="saveFilter($event)" [disabled]="form.invalid">Save</button>
+  <button mat-stroked-button (click)="saveFilter($event)" [disabled]="form.invalid || !form.dirty">Save</button>
 </div>

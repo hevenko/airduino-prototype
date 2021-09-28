@@ -31,6 +31,7 @@ export class AlertComponent implements OnInit, AfterViewInit {
     { value: 'sms', desc: 'sms' },
   ];
   form: FormGroup;
+  filterGeneralDataForm: FormGroup;
   sensorArray: FormArray = new FormArray([]);
   fetchedSensorValues: any[]; // fetched from data base
   selectedRow: FormGroup;
@@ -47,11 +48,14 @@ export class AlertComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     let observables = [];
     this.sensorArray = this.fb.array([]);
-    this.form = this.fb.group({
-      sensors: this.sensorArray,
+    this.filterGeneralDataForm = this.fb.group({
       enabled: this.fb.control(null, Validators.required),
       action: this.fb.control(null, Validators.required),
       visibility: this.fb.control('private', Validators.required)
+    });
+    this.form = this.fb.group({
+      sensors: this.sensorArray,
+      meta: this.filterGeneralDataForm
     });
     observables.push(this.dataStorageService.fetchFilter(this.data.id));
     observables.push(this.dataStorageService.fetchFilterDetail(this.data.id));
@@ -59,9 +63,10 @@ export class AlertComponent implements OnInit, AfterViewInit {
     forkJoin(observables).subscribe(v => {
       console.log(v);
       let j: any = (v as any);
-      this.form.controls['enabled'].setValue(j[0].data[0].enabled);
-      this.form.controls['action'].setValue(j[0].data[0].action);
-      this.form.controls['visibility'].setValue(j[0].data[0].visibility);
+      let generalDataForm: FormGroup = this.form.controls['meta'] as FormGroup;
+      generalDataForm.controls['enabled'].setValue(j[0].data[0].enabled);
+      generalDataForm.controls['action'].setValue(j[0].data[0].action);
+      generalDataForm.controls['visibility'].setValue(j[0].data[0].visibility);
       this.fetchedSensorValues = j[1];
       this.makeSensorList(j[1]);
     });
@@ -109,7 +114,10 @@ export class AlertComponent implements OnInit, AfterViewInit {
     let obsList = [];
     let deleteList = [];
     let insertList = [];
-    obsList.push(this.dataStorageService.updateFilterMetaData(this.data.name, this.data.id, this.form.value.enabled, this.form.value.action, this.form.value.visibility));    // general data like enabled, action
+    if(this.filterGeneralDataForm.dirty) {
+      obsList.push(this.dataStorageService.updateFilterMetaData(this.data.name, this.data.id,
+        this.filterGeneralDataForm.value.enabled, this.filterGeneralDataForm.value.action, this.filterGeneralDataForm.value.visibility));    // general data like enabled, action  
+    }
 
     let allSensors = this.sensorArray.controls.concat(this.sensorsMarkedForDeletion);
 
