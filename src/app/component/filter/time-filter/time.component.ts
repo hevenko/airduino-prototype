@@ -1,7 +1,9 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { ReplaySubject } from 'rxjs';
 import { FilterModel } from 'src/app/model/filter-model';
 import { Constants } from 'src/app/shared/constants';
+import { FormIntactChecker } from 'src/app/shared/FormIntactChecker';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
 import { MessageService } from 'src/app/shared/service/message.service';
 
@@ -34,6 +36,9 @@ export class TimeComponent implements OnInit, AfterViewInit {
     { value: 'P?Y', desc: 'Year' }
   ];
   timeForm: FormGroup = new FormGroup({});
+  _formIntactChecker: FormIntactChecker;
+  _isIntact: boolean;
+  _rs = new ReplaySubject<boolean>();
   _label;
   static label;
   date: any;
@@ -58,6 +63,24 @@ export class TimeComponent implements OnInit, AfterViewInit {
   }
   ngAfterViewInit() {
   }
+  get isIntact(): boolean {
+    return this._rs ? this._isIntact : this._formIntactChecker.lastIntact;
+  };
+  setupFormIntactChecker() {
+    if (this._rs) {
+      this._rs.subscribe((isIntact: boolean) => {
+        this._isIntact = isIntact;
+        if (isIntact) { // form is intact
+          this.timeForm.markAsPristine();
+        } else { // form is dirty
+        }
+      })
+    }
+
+    this._formIntactChecker = new FormIntactChecker(this.timeForm, this._rs);
+    this._formIntactChecker.markIntact();
+
+  }
   initForm() {
     this.timeForm = new FormGroup({
       slidingRange: new FormControl(),
@@ -80,8 +103,9 @@ export class TimeComponent implements OnInit, AfterViewInit {
     this.timeForm.controls.slidingRange.setValue(initValue.value);
     this.setSlidingRange(initValue);
     this.dataStorageService.allMenusClosedBus.subscribe(b => {
-      if (Constants.TIME_MENU_LAST_CLOSED === b) {
+      if (Constants.TIME_MENU_LAST_CLOSED === b && !this.isIntact) {
         this.fetchData();
+        this._formIntactChecker.markIntact();
       }
     });
     this.dataStorageService.usubscribeBroadcastBus.subscribe(v => { //prevents drawing feaures (dots) outside poligon
@@ -89,6 +113,7 @@ export class TimeComponent implements OnInit, AfterViewInit {
         this.subscription?.unsubscribe();
       }
     });
+    this.setupFormIntactChecker();
   }
   fetchData = () => {
     if (this.subscription) {
@@ -225,6 +250,7 @@ export class TimeComponent implements OnInit, AfterViewInit {
           let parts = this.extractCustomInterval(intervalFrom);
           this.setCustomRange(parts[1], parts[0]);
         }
+        this._formIntactChecker.markIntact();
       } else {
         this.messageService.showErrorMessage("Unsuported time preset combination: " + v.time_from_type + ', ' + v.time_to_type);
       }

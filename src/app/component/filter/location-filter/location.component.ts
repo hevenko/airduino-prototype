@@ -2,9 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatRadioChange } from '@angular/material/radio';
 import { Router } from '@angular/router';
+import { ReplaySubject } from 'rxjs';
 import { FilterModel } from 'src/app/model/filter-model';
 import { Region } from 'src/app/model/region';
 import { Constants } from 'src/app/shared/constants';
+import { FormIntactChecker } from 'src/app/shared/FormIntactChecker';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
 import { MapComponent } from '../../map/map.component';
 
@@ -18,6 +20,10 @@ export class LocationComponent implements OnInit {
   selectedRegion: any;
   regionList: Region[];
   locationForm: FormGroup = new FormGroup({});
+  _formIntactChecker: FormIntactChecker;
+  _isIntact: boolean;
+  _rs = new ReplaySubject<boolean>();
+
   lastItemValue = '';
   locationList = [
     { value: '1', desc: 'My devices' },
@@ -35,6 +41,26 @@ export class LocationComponent implements OnInit {
 
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel, private router: Router) { }
 
+  setupFormIntactChecker(): void {
+    this.subscribeToPreseting();
+    if (this._rs) {
+      this._rs.subscribe((isIntact: boolean) => {
+        this._isIntact = isIntact;
+        if (isIntact) { // form is intact
+          this.locationForm.markAsPristine();
+        } else { // form is dirty
+        }
+      })
+    }
+
+    this._formIntactChecker = new FormIntactChecker(this.locationForm, this._rs);
+    this._formIntactChecker.markIntact();
+
+  }
+  get isIntact(): boolean {
+    return this._rs ? this._isIntact : this._formIntactChecker.lastIntact;
+  };
+
   ngOnInit(): void {
     LocationComponent.label = this.defaultLabel;
     this.filterModel.locationFilterChangedBus.next(null); //to show default label on filter-info component
@@ -49,7 +75,6 @@ export class LocationComponent implements OnInit {
       selectedDevices: new FormControl(),
       selectedRegion: new FormControl()
     })
-
     this.locationForm.valueChanges.subscribe(() => {
       LocationComponent.label = this.makeLabel();
       if (!!this.locationForm.value.selectedRegion) {
@@ -86,16 +111,18 @@ export class LocationComponent implements OnInit {
       }
     });
     this.dataStorageService.allMenusClosedBus.subscribe(b => {
-      if (Constants.LOCATION_MENU_LAST_CLOSED === b) {
+      if (Constants.LOCATION_MENU_LAST_CLOSED === b && !this.isIntact) {
         if ([0, 3].indexOf(this.clickedOptionInd) !== -1) { //My devices, region
           this.subscription = this.dataStorageService.fetchData(this.filterModel);
+          this._formIntactChecker.markIntact();
         } else {
           this.subscription?.unsubscribe();
           this.dataStorageService.usubscribeBroadcastBus.next(Constants.UNSUB_SRC_LOCACTION_COMPONENT);
         }
       }
     });
-    this.subscribeToPreseting();
+    this.setupFormIntactChecker();
+
   }
 
   makeLabel(): string {
