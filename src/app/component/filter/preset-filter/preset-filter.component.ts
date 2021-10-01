@@ -173,6 +173,7 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit {
   }
   searchPresetFilters(e: any) {
     this.searchFilter = e ? e.target.value : '';
+    this.searchFilter = this.searchFilter.trim();
     this.setFilteredList();
   }
   disableNewFilter(): boolean {
