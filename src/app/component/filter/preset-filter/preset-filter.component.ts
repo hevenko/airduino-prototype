@@ -45,7 +45,7 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit {
     let s = this.dataStorageService.fetchFilterList().then(l => { // filter list
       this.filters = l;
       this.filters.forEach(f => {
-        this.unfilteredFormArray.push(new FormGroup({name: new FormControl(f.name, Validators.required), filterId: new FormControl(f.id)}));
+        this.unfilteredFormArray.push(new FormGroup({ name: new FormControl(f.name, Validators.required), filterId: new FormControl(f.id) }));
       });
       this.setFilteredList();
     });
@@ -143,20 +143,27 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit {
     })
   }
   deleteFilter(): void {
-    if (this.appliedFilter) {
-      this.dataStorageService.deleteFilter(this.appliedFilter.id + '').then(v => {
+    let d = this.showConfirmationDialog(this.dialog, "Delete '" + this.appliedFilter?.name + "' ?");
+    this.setDialogIsOpen(true);
+    d.afterClosed().subscribe(d => {
+      this.setDialogIsOpen(false);
+      if (d) {
+        if (this.appliedFilter) {
+          this.dataStorageService.deleteFilter(this.appliedFilter.id + '').then(v => {
 
-        this.showInfoMessage(this.dialog, '"' + this.appliedFilter.name + '" deleted').afterClosed().subscribe(result => {
-          this.setDialogIsOpen(false);
-        });
-        this.setDialogIsOpen(true);
-        this.deleteControl(this.appliedFilter.id);
-        this.setAppliedFilter(null);
-      }, e => {
-        console.error(e)
-        this.messageService.showErrorMessage(e);
-      })
-    }
+            this.showInfoMessage(this.dialog, '"' + this.appliedFilter.name + '" deleted').afterClosed().subscribe(result => {
+              this.setDialogIsOpen(false);
+            });
+            this.setDialogIsOpen(true);
+            this.deleteControl(this.appliedFilter.id);
+            this.setAppliedFilter(null);
+          }, e => {
+            console.error(e)
+            this.messageService.showErrorMessage(e);
+          })
+        }
+      }
+    });
   }
   markAppliedFilterRow(rowFilter: any): boolean {
     let result = rowFilter === this.appliedFilter;
