@@ -213,8 +213,9 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit {
   }
   setFilteredList(): void {
     this.filteredFormArray.clear();
+    const searchValue = this.searchFilter.toUpperCase().trim();
     let result = this.unfilteredFormArray.controls.filter((v: FormGroup) => {
-      return (v.controls['name'].value as string).toUpperCase().indexOf(this.searchFilter.toUpperCase()) === 0
+      return (v.controls['name'].value as string).toUpperCase().indexOf(searchValue) === 0
     });
     result.forEach(v => {
       this.filteredFormArray.push(v);
