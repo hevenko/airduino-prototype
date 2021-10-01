@@ -2,10 +2,11 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { AfterViewInit, Component, Inject, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { BehaviorSubject, concat, EMPTY, forkJoin, from, Observable, of, throwError } from 'rxjs';
+import { BehaviorSubject, concat, EMPTY, forkJoin, from, Observable, of, ReplaySubject, throwError } from 'rxjs';
 import { catchError, concatAll, concatMap, mergeMap, switchMap, toArray } from 'rxjs/operators';
 import { Constants } from 'src/app/shared/constants';
 import { DialogData } from 'src/app/shared/dialog-data';
+import { FormIntactChecker } from 'src/app/shared/FormIntactChecker';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
 import { MessageColor, MessageService } from 'src/app/shared/service/message.service';
 import { SensorComponent } from '../../sensor-filter/sensor.component';
@@ -31,6 +32,10 @@ export class AlertComponent implements OnInit, AfterViewInit {
     { value: 'sms', desc: 'sms' },
   ];
   form: FormGroup;
+  _formIntactChecker: FormIntactChecker;
+  _isIntact: boolean;
+  _rs = new ReplaySubject<boolean>();
+
   filterGeneralDataForm: FormGroup;
   sensorArray: FormArray = new FormArray([]);
   fetchedSensorValues: any[]; // fetched from data base
@@ -43,6 +48,22 @@ export class AlertComponent implements OnInit, AfterViewInit {
 
   constructor(private dialogRef: MatDialogRef<AlertComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private dataStorageService: DataStorageService, private fb: FormBuilder, private messageService: MessageService) {
 
+  }
+  get isIntact(): boolean {
+    return this._rs ? this._isIntact : this._formIntactChecker.lastIntact;
+  };
+  setupFormIntactChecker() {
+    if (this._rs) {
+      this._rs.subscribe((isIntact: boolean) => {
+        this._isIntact = isIntact;
+        if (isIntact) { // form is intact
+          this.form.markAsPristine();
+        } else { // form is dirty
+        }
+      })
+    }
+
+    this._formIntactChecker = new FormIntactChecker(this.form, this._rs);
   }
 
   ngOnInit(): void {
@@ -69,10 +90,12 @@ export class AlertComponent implements OnInit, AfterViewInit {
       generalDataForm.controls['visibility'].setValue(j[0].data[0].visibility);
       this.fetchedSensorValues = j[1];
       this.makeSensorList(j[1]);
+      this._formIntactChecker.markIntact();
     });
     this.sensorList = SensorComponent.sensorList.filter(v => {
       return !v.hidden;
     });
+    this.setupFormIntactChecker();
   }
 
   ngAfterViewInit(): void {
@@ -139,6 +162,7 @@ export class AlertComponent implements OnInit, AfterViewInit {
     all = all.concat(obsList, [(this.dataStorageService.deleteFilterSensor(deleteList))], [this.dataStorageService.createFilterSensor(insertList)]);
     from(all).pipe(
       concatAll()).pipe(toArray()).subscribe(v => {
+        this._formIntactChecker.markIntact();
         this.messageService.showMessage("Filter saved", MessageColor.Green);
         this.dialogRef.close(true);
       }, e => {

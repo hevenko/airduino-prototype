@@ -95,5 +95,5 @@
 </form>
 <div mat-dialog-actions>
   <button mat-stroked-button mat-dialog-close style="margin-right: 5px;">Cancel</button>
-  <button mat-stroked-button (click)="saveFilter($event)" [disabled]="form.invalid || !form.dirty">Save</button>
+  <button mat-stroked-button (click)="saveFilter($event)" [disabled]="form.invalid || isIntact">Save</button>
 </div>
