@@ -148,7 +148,7 @@ export class TimeComponent implements OnInit, AfterViewInit {
   setFixedRange(newRange: any) {
     this.filterModel.timeFilterType = TimeComponent.filterTypeFixed; // time filter type
     if (newRange !== '') {
-      this.label = newRange
+      this.label = newRange?.targetElement.value;
     } else {
       this.label = this.defaultLabel;
     }
