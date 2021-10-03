@@ -148,7 +148,7 @@ export class TimeComponent implements OnInit, AfterViewInit {
   setFixedRange(newRange: any) {
     this.filterModel.timeFilterType = TimeComponent.filterTypeFixed; // time filter type
     if (newRange !== '') {
-      this.label = newRange?.targetElement.value;
+      this.label = newRange.targetElement ? newRange.targetElement.value : newRange;
     } else {
       this.label = this.defaultLabel;
     }
@@ -248,6 +248,8 @@ export class TimeComponent implements OnInit, AfterViewInit {
         if (isCustomRange) {
           let intervalFrom = v.time?.from?.interval;
           let parts = this.extractCustomInterval(intervalFrom);
+          this.timeForm.controls['customRange'].setValue(parts[1]);
+          this.timeForm.controls['customRangeUnits'].setValue(parts[0]);
           this.setCustomRange(parts[1], parts[0]);
         }
         this._formIntactChecker.markIntact();
