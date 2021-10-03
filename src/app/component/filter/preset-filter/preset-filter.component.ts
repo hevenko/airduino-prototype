@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Constants } from 'src/app/shared/constants';
-import { filter } from 'rxjs/operators';
+import { concatAll, filter, mergeAll } from 'rxjs/operators';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AlertComponent } from './alert/alert.component';
@@ -9,7 +9,7 @@ import { MessageService, MessageColor } from 'src/app/shared/service/message.ser
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
 import { FilterModel } from 'src/app/model/filter-model';
 import sub from 'date-fns/sub';
-import { Subscription } from 'rxjs';
+import { from, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-preset-filter',
@@ -30,6 +30,7 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit {
   newFilterNameControl = new FormControl('');
   searchFilter = '';
   filteredList = [];
+  filterValueModified = false;
   constructor(public dialog: MatDialog, private messageService: MessageService, private dataStorageService: DataStorageService, private filterModel: FilterModel) {
     super();
   }
@@ -45,18 +46,41 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit {
     let s = this.dataStorageService.fetchFilterList().then(l => { // filter list
       this.filters = l;
       this.filters.forEach(f => {
+        if (this.appliedFilter && f.id === this.appliedFilter.id) {
+          this.setAppliedFilter(f); // updating current filter
+          this.setFilterModified(); // updating modified flag = false
+        }
         this.unfilteredFormArray.push(new FormGroup({ name: new FormControl(f.name, Validators.required), filterId: new FormControl(f.id) }));
       });
       this.setFilteredList();
     });
   }
-
+  setFilterModified() { // comparing filter and filterModel values to see if user changed preseted value
+    if (this.appliedFilter) {
+      let locationChanged = JSON.stringify(this.appliedFilter.locations) !== JSON.stringify(this.filterModel.locations);
+      let sensorsChanged = JSON.stringify(this.appliedFilter.sensors) !== JSON.stringify(this.filterModel.sensors);
+      let timeChanged = JSON.stringify(this.appliedFilter.time) !== JSON.stringify(this.filterModel.time);
+      this.filterValueModified = locationChanged || sensorsChanged || timeChanged;  
+    } else {
+      this.filterValueModified = false;
+    }
+  }
+  listenForUserPresetChange() {
+    let locationSubs = this.filterModel.locationFilterChangedBus;
+    let sensorSubs = this.filterModel.sensorFilterChangedBus;
+    let timeSubs = this.filterModel.timeFiterChangedBus;
+    
+    from([locationSubs, sensorSubs, timeSubs]).pipe(mergeAll()).subscribe(v => {
+      this.setFilterModified();
+    });
+  }
   ngOnInit(): void {
     this.initForm();
     this.fetchFilterList();
     this.dataStorageService.usubscribeBroadcastBus.subscribe(v => { //prevents drawing feaures (dots) outside poligon
       this.subscription?.unsubscribe();
     });
+    this.listenForUserPresetChange();
   }
   delayFetchData() {
     this.subscription = this.dataStorageService.fetchData(this.filterModel);

@@ -33,7 +33,7 @@
         </table>
       </div>
       <mat-divider style="margin-bottom:10px"></mat-divider>
-      <div style="display: block;" [ngClass]="!!appliedFilter && filteredFormArray.valid ? 'enabled-link' : 'disabled-link'">
+      <div style="display: block;" [ngClass]="!!appliedFilter && filteredFormArray.valid && filterValueModified ? 'enabled-link' : 'disabled-link'">
         <span (click)="saveAsCurrentFilter()" class="glyphicon glyphicon-check" style="margin-right: 8px;"></span>
         <span (click)="saveAsCurrentFilter()">Update selected filter</span>
       </div>
