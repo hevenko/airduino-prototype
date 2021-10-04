@@ -79,10 +79,6 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit {
       let sensorsChanged = JSON.stringify(nonHiddenFilterSensors) !==  JSON.stringify(nonHiddenModelSensors);
       let timeChanged = JSON.stringify(this.appliedFilter.time) !== JSON.stringify(this.filterModel.time);
       this.filterValueModified = locationChanged || sensorsChanged || timeChanged;
-      if (this.filterValueModified) {
-        console.log("**********************************");
-        console.log(locationChanged + ";" + sensorsChanged + ";" + timeChanged);
-      }
     } else {
       this.filterValueModified = false;
     }
