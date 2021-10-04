@@ -10,6 +10,8 @@ import { DataStorageService } from 'src/app/shared/service/data-storage.service'
 import { FilterModel } from 'src/app/model/filter-model';
 import sub from 'date-fns/sub';
 import { from, Subscription } from 'rxjs';
+import { SensorComponent } from '../sensor-filter/sensor.component';
+import { exit } from 'process';
 
 @Component({
   selector: 'app-preset-filter',
@@ -55,12 +57,32 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit {
       this.setFilteredList();
     });
   }
+  removeHiddenSensors(list: string[]): string[] {
+    let result = list?.filter(v => {
+      let isHidden = true;
+      SensorComponent.sensorList.forEach(s => {
+        if (v === s.sensor) {
+          isHidden = s.hidden;
+          exit;
+        }
+      });
+      let result = isHidden ? false : true 
+      return result;
+    });
+    return result;
+  }
   setFilterModified() { // comparing filter and filterModel values to see if user changed preseted value
     if (this.appliedFilter) {
       let locationChanged = JSON.stringify(this.appliedFilter.locations) !== JSON.stringify(this.filterModel.locations);
-      let sensorsChanged = JSON.stringify(this.appliedFilter.sensors) !== JSON.stringify(this.filterModel.sensors);
+      let nonHiddenFilterSensors = this.removeHiddenSensors(this.appliedFilter.sensors).sort();
+      let nonHiddenModelSensors = this.removeHiddenSensors(this.filterModel.sensors).sort();
+      let sensorsChanged = JSON.stringify(nonHiddenFilterSensors) !==  JSON.stringify(nonHiddenModelSensors);
       let timeChanged = JSON.stringify(this.appliedFilter.time) !== JSON.stringify(this.filterModel.time);
-      this.filterValueModified = locationChanged || sensorsChanged || timeChanged;  
+      this.filterValueModified = locationChanged || sensorsChanged || timeChanged;
+      if (this.filterValueModified) {
+        console.log("**********************************");
+        console.log(locationChanged + ";" + sensorsChanged + ";" + timeChanged);
+      }
     } else {
       this.filterValueModified = false;
     }
@@ -69,7 +91,7 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit {
     let locationSubs = this.filterModel.locationFilterChangedBus;
     let sensorSubs = this.filterModel.sensorFilterChangedBus;
     let timeSubs = this.filterModel.timeFiterChangedBus;
-    
+
     from([locationSubs, sensorSubs, timeSubs]).pipe(mergeAll()).subscribe(v => {
       this.setFilterModified();
     });
