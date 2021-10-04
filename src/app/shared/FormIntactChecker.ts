@@ -11,9 +11,7 @@ export class FormIntactChecker {
 
     constructor(private _form: FormGroup, private _replaySubject?: ReplaySubject<boolean>) {
         this._form.valueChanges.subscribe(() => {
-            if(this._form.dirty) {
-                this.lastIntact = this._originalValue === JSON.stringify(this._form.value);
-            }
+            this.lastIntact = this._originalValue === JSON.stringify(this._form.value);
         })
     }
 

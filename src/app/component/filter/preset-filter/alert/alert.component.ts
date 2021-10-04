@@ -194,12 +194,14 @@ export class AlertComponent implements OnInit, AfterViewInit {
     if (this.selectedRow) {
       if (this.selectedRow.value.crud === this.CRUD_STORED) {
         this.selectedRow.controls['crud'].setValue(this.CRUD_DELETED);
-        this.sensorsMarkedForDeletion.push(this.sensorArray?.controls.splice(this.selectedRow.value.sensorInd, 1)[0]);
+        this.sensorsMarkedForDeletion.push(this.selectedRow);
+        this.sensorArray?.removeAt(this.selectedRow.value.sensorInd)
       } else {
         this.sensorArray?.controls.splice(this.selectedRow.value.sensorInd, 1);
         this.resetInd();
       }
-      this.sensorArray.updateValueAndValidity();
+      this.selectedRow = null;
+      this.form.updateValueAndValidity({emitEvent: true});
     } else {
       this.messageService.showErrorMessage(Constants.SELECT_SENSOR_ERROR);
     }
