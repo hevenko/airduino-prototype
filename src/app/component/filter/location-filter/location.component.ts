@@ -132,7 +132,7 @@ export class LocationComponent implements OnInit {
     return !!result ? result : this.defaultLabel;
   }
 
-  locationOnChange() {
+  locationOnChange(e: any = null) {
     if (this.locationForm.controls.selectedDevices.value !== '4') { // deselecting region
       this.locationForm.controls.selectedRegion.setValue('');
     }
@@ -140,7 +140,7 @@ export class LocationComponent implements OnInit {
       this.subscription = this.dataStorageService.fetchData(this.filterModel);
       this.dataStorageService.usubscribeBroadcastBus.next(Constants.UNSUB_SRC_LOCACTION_COMPONENT);
     }
-    if (this.locationForm.value.selectedDevices == "2" || this.locationForm.value.selectedDevices == "3") {
+    if (e && (this.locationForm.value.selectedDevices == "2" || this.locationForm.value.selectedDevices == "3")) { // if there is e (event) there was user interaction
       this.router.navigate(['/map']);
     }
   }
