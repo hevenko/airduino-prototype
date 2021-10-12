@@ -18,7 +18,8 @@
       </mat-form-field>
 
       <div style="text-align: left;">
-        <input formControlName="customRange" placeholder="Custom" size="5" style="border: 0px;background: transparent;" #customTime
+        <label style="margin-right: 5px;" >Last</label>
+        <input formControlName="customRange" placeholder="Custom" size="5" style="border: 0px;background: transparent;text-align: center;" #customTime
                (keyup)="setCustomRange(customTime.value, timeUnit.value)">
         <select formControlName="customRangeUnits" style="margin-left: 5px;" #timeUnit (change)="setCustomRange(customTime.value, timeUnit.value)">
           <option *ngFor="let tu of customTimeUnits" value="{{tu.value}}">{{tu.desc}}</option>
