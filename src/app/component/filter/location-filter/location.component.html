@@ -9,9 +9,10 @@
             <mat-radio-group aria-label="Select an option" formControlName="selectedDevices"
                 (change)="locationOnChange($event)">
                 <div class="locationitem" *ngFor="let k of locationList; let i = index;">
-                    <mat-radio-button value="{{k.value}}" (click)="setLocationSelected(i)"> 
+                    <mat-radio-button value="{{k.value}}" (click)="setLocationSelected(i)">
                         <ng-container *ngIf="i !== locationList.length - 1">{{k.desc}}</ng-container>
-                        <mat-select placeholder="Select a region" formControlName="selectedRegion" *ngIf="i === locationList.length - 1" (selectionChange)="regionOnChange()" (openedChange)="setRegionIsOpen($event)" >
+                        <mat-select placeholder="Select a region" formControlName="selectedRegion" *ngIf="i === locationList.length - 1" (selectionChange)="selectedRegionChanged()"
+                        (openedChange)="setRegionIsOpen($event)" >
                             <ng-container *ngFor="let r of regionList">
                                 <mat-option value="{{r.id}}">{{r.id}}</mat-option>
                             </ng-container>

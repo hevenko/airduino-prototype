@@ -153,6 +153,10 @@ export class LocationComponent implements OnInit {
     this.dataStorageService.sendLocationData(region);
     this.regionIsOpen = false;
   }
+  selectedRegionChanged(): void {
+    this.regionOnChange();
+    (this.locationForm.get('selectedDevices') as FormControl).setValue('4', {emitEvent: false});
+  }
   setRegionIsOpen(open: boolean) {
     this.regionIsOpen = open;
   }
@@ -162,15 +166,18 @@ export class LocationComponent implements OnInit {
   locationSelected(): boolean {
     return this.locationIsSelected;
   }
-  setLocationSelected(e: number) {
-    if (e !== -1) {
-      this.clickedOptionInd = e;
+  setLocationSelected(ind: number) {
+    let allowSelectRadio = true;
+    if (ind !== -1) {
+      this.clickedOptionInd = ind;
     }
-    if (["0", "1", "2",].indexOf(e + '') !== -1) {
+    if (["0", "1", "2",].indexOf(ind + '') !== -1) {
       this.locationIsSelected = true;
     } else {
       this.locationIsSelected = false;
+      allowSelectRadio = false;
     }
+    return allowSelectRadio;
   }
   subscribeToPreseting() {
     this.dataStorageService.presetChangedBus.subscribe(v => {
