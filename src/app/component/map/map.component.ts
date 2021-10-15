@@ -272,17 +272,17 @@ export class MapComponent implements OnInit, OnDestroy {
     });
     this.dataStorageService.drawDataBus.subscribe((region: any) => {
       console.log("named location:", region);
-      if (!region || !region.length /* || (this.filterModel.locations && (this.filterModel.locations.polygon || this.filterModel.locations.circle)) */) {
+      if (!region /* || (this.filterModel.locations && (this.filterModel.locations.polygon || this.filterModel.locations.circle)) */) {
         return;
       }
       let geometry;
-      if (region[0].gtype == "Polygon") {
-        const coords = region[0].coordinates[0].map(p => fromLonLat(p));
+      if (region.gtype == "Polygon") {
+        const coords = region.coordinates[0].map(p => fromLonLat(p));
         console.log("coords:", coords);
         geometry = new Polygon([coords])
         console.log("polygon created");
-      } else if (region[0].gtype == "Circle") {
-        geometry = new Circle(fromLonLat(region[0].center), region[0].radius / MapComponent.RADIUS_FACTOR)
+      } else if (region.gtype == "Circle") {
+        geometry = new Circle(fromLonLat(region.center), region.radius / MapComponent.RADIUS_FACTOR)
       }
       const feature = new Feature({ geometry });
       console.log("feature created");

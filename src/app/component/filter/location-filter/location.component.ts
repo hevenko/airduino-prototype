@@ -127,7 +127,7 @@ export class LocationComponent implements OnInit {
 
   makeLabel(): string {
     let selectedDevice = this.locationList.filter((v) => { return v.value === this.locationForm.value.selectedDevices });
-    let label = selectedDevice.map((v, i) => { return !!v ? v.value === this.lastItemValue ? this.locationForm.value.selectedRegion : v.desc : this.defaultLabel })
+    let label = selectedDevice.map((v, i) => { return !!v ? v.value === this.lastItemValue ? this.getSelectedRegion()?.name : v.desc : this.defaultLabel })
     let result = label[0];
     return !!result ? result : this.defaultLabel;
   }
@@ -144,9 +144,13 @@ export class LocationComponent implements OnInit {
       this.router.navigate(['/map']);
     }
   }
-
+  getSelectedRegion(): any {
+    let list = this.regionList?.filter((v) => (v.id + '') === this.locationForm.value.selectedRegion);
+    let result =  list ? list[0] : list;
+    return result;
+  }
   regionOnChange(): void {
-    const region = this.regionList?.filter((v) => v.id === this.locationForm.value.selectedRegion);
+    let region = this.getSelectedRegion();
     console.log("location.component region:", region);
     //MapComponent.deleteMap();
     //this.dataStorageService.sendLocationData(MapComponent.regionToGeoJSON(region));
@@ -191,7 +195,7 @@ export class LocationComponent implements OnInit {
       } else if (v.locations_type === 'circle') {
         this.locationForm.controls['selectedDevices'].setValue('3');
         this.locationOnChange();
-        let geo = [{gtype : 'Circle', radius: v.locations.circle.radius, center: v.locations.circle.center}];
+        let geo = {gtype : 'Circle', radius: v.locations.circle.radius, center: v.locations.circle.center};
         this.dataStorageService.sendLocationData(geo);
         const center = v.locations.circle.center;
         const radius = v.locations.circle.radius;
@@ -203,7 +207,7 @@ export class LocationComponent implements OnInit {
       } else if (v.locations_type === 'polygon') {
         this.locationForm.controls['selectedDevices'].setValue('2');
         this.locationOnChange();
-        let geo = [{gtype : 'Polygon', coordinates: [v.locations.polygon]}];
+        let geo = {gtype : 'Polygon', coordinates: [v.locations.polygon]};
         this.dataStorageService.sendLocationData(geo);
         const polygon = { polygon: v.locations.polygon };
         this.filterModel.locations = polygon;

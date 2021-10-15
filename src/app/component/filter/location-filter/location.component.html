@@ -14,7 +14,7 @@
                         <mat-select placeholder="Select a region" formControlName="selectedRegion" *ngIf="i === locationList.length - 1" (selectionChange)="selectedRegionChanged()"
                         (openedChange)="setRegionIsOpen($event)" >
                             <ng-container *ngFor="let r of regionList">
-                                <mat-option value="{{r.id}}">{{r.id}}</mat-option>
+                                <mat-option value="{{r.id}}">{{r.name}}</mat-option>
                             </ng-container>
                         </mat-select>
                     </mat-radio-button>
