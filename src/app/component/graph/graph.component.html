@@ -2,7 +2,7 @@
   <div #graphComponent style="position:absolute;overflow-y: scroll;width: 100%;height:100%;">
     <form [formGroup]="compForm">
       <mat-form-field style="padding-left: 30px;">
-        <mat-select matNativeControl formControlName="showChartSelect" >
+        <mat-select matNativeControl formControlName="showChartSelect" placeholder="Select a graph...">
           <ng-container *ngFor="let s of activeSensors">
             <mat-option [value]="getSensorDetails(s).sensor">
               {{getSensorDetails(s).desc}}
