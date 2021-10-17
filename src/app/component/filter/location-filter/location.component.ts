@@ -176,7 +176,7 @@ export class LocationComponent extends AirduinoComponent implements OnInit {
     this.regionIsOpen = open;
   }
   shouldStayOpen(): boolean {
-    return this.regionIsOpen || this.dialogIsOpen || this.regionNameInput?.nativeElement.value;
+    return this.regionIsOpen || this.dialogIsOpen;
   }
   locationSelected(): boolean {
     return this.locationIsSelected;
@@ -198,7 +198,7 @@ export class LocationComponent extends AirduinoComponent implements OnInit {
     this.dataStorageService.presetChangedBus.subscribe(v => {
       if (v.locations_type === 'name') {
         this.locationForm.controls['selectedDevices'].setValue('4');
-        this.locationForm.controls['selectedRegion'].setValue(v.locations.name);
+        this.locationForm.controls['selectedRegion'].setValue(v.locations.name + '');
         this.regionOnChange();
       } else if (v.locations_type === 'interval') { 
         this.locationForm.controls['selectedDevices'].setValue('1'); // why is it the same as devices
@@ -286,7 +286,7 @@ export class LocationComponent extends AirduinoComponent implements OnInit {
       this.locationOnChange();  
     }
   }
-  regionNameOnChange(): void {
+  regionNameStartEdit(): void {
     this.selectPolygonRadio();
   }
 }

@@ -29,7 +29,35 @@ export class DropdownDirective {
     } else {
       result = result || this.shouldParentCloseTheMenu(target.parentNode); // recursive parent search
     }
-    return result
+    return result;
+  }
+
+  isMapClicked(target: any): boolean {
+    let result = false;
+    if (target.tagName.toUpperCase().indexOf("APP-") != -1) { //stop if this component root DOM is reached
+      result = false;
+    } else if (target.id === 'map') {
+      result = true;
+    } else {
+      result = result || this.isMapClicked(target.parentNode); // recursive parent search
+    }
+    return result;
+  }
+  /**
+   * when user is trying to add a region the menu will not close when map is clicked.
+   * Clicking on other menus will close location menu.
+   * @param event 
+   * @returns 
+   */
+  newRegionIsBeeingEntered(event: any) {
+    let result = this.menuId === 'locationMenu' 
+    
+    && this.elRef.nativeElement.getElementsByClassName('region-name-input-id')[0].value !== '' // input contanins new region name
+    && this.isMapClicked(event.target) // user is clicking on the map to make polygon of new region
+    && (DropdownDirective.fetchDataState.get('locationMenu') === 'opened' // after opening locations menu it's state is 'opened' but click on map will change state to 'same' and a map click must not change it's state (see code below)
+      || DropdownDirective.fetchDataState.get('locationMenu') === 'same');
+    
+    return result;
   }
   @HostListener('document:click', ['$event']) toggleOpen(event: any) {
       let isOpenNewValue = false;
@@ -45,6 +73,8 @@ export class DropdownDirective {
         } else {
           isOpenNewValue = true; // click was inside of this component
         }
+      } else if (this.newRegionIsBeeingEntered(event)) {
+          isOpenNewValue = this.isOpen; // while user is entering new region, clicking on map must not change location menu open state (if open it should remain so, it will be closed if other menu was clicked)
       } else {
         isOpenNewValue = false; // click was outside of this component
       }
