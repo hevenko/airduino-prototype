@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatRadioChange } from '@angular/material/radio';
 import { Router } from '@angular/router';
 import { ReplaySubject } from 'rxjs';
@@ -8,6 +9,8 @@ import { Region } from 'src/app/model/region';
 import { Constants } from 'src/app/shared/constants';
 import { FormIntactChecker } from 'src/app/shared/FormIntactChecker';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
+import { MessageService } from 'src/app/shared/service/message.service';
+import { AirduinoComponent } from '../../airduino/airduino.component';
 import { MapComponent } from '../../map/map.component';
 
 @Component({
@@ -15,7 +18,7 @@ import { MapComponent } from '../../map/map.component';
   templateUrl: './location.component.html',
   styleUrls: ['./location.component.css']
 })
-export class LocationComponent implements OnInit {
+export class LocationComponent extends AirduinoComponent implements OnInit {
   selectedDevices: string;
   selectedRegion: any;
   regionList: Region[];
@@ -38,8 +41,13 @@ export class LocationComponent implements OnInit {
   regionIsOpen;
   locationIsSelected;
   clickedOptionInd = 0;
+  dialogIsOpen = false;
+  @ViewChild('regionNameInput') regionNameInput: ElementRef;
 
-  constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel, private router: Router) { }
+  constructor(public dialog: MatDialog, private dataStorageService: DataStorageService, private filterModel: FilterModel, private router: Router,
+    private messageService: MessageService) { 
+    super();
+  }
 
   setupFormIntactChecker(): void {
     this.subscribeToPreseting();
@@ -60,6 +68,11 @@ export class LocationComponent implements OnInit {
   get isIntact(): boolean {
     return this._rs ? this._isIntact : this._formIntactChecker.lastIntact;
   };
+  fetchRegions(): void {
+    this.dataStorageService.fetchRegions().subscribe((data: Region[]) => {
+      this.regionList = data;
+    });  
+  }
 
   ngOnInit(): void {
     LocationComponent.label = this.defaultLabel;
@@ -67,9 +80,7 @@ export class LocationComponent implements OnInit {
 
     this.lastItemValue = this.locationList[this.locationList.length - 1].value;
 
-    this.dataStorageService.fetchRegions().subscribe((data: Region[]) => {
-      this.regionList = data;
-    });
+    this.fetchRegions();
 
     this.locationForm = new FormGroup({
       selectedDevices: new FormControl(),
@@ -165,7 +176,7 @@ export class LocationComponent implements OnInit {
     this.regionIsOpen = open;
   }
   shouldStayOpen(): boolean {
-    return this.regionIsOpen;
+    return this.regionIsOpen || this.dialogIsOpen || this.regionNameInput?.nativeElement.value;
   }
   locationSelected(): boolean {
     return this.locationIsSelected;
@@ -213,5 +224,69 @@ export class LocationComponent implements OnInit {
         this.filterModel.locations = polygon;
         }
     });
+  }
+  setDialogIsOpen(isOpen: boolean) {
+    this.dialogIsOpen = isOpen;
+  }
+  enableSaveNewRegion(): boolean {
+    return this.regionNameInput?.nativeElement?.value?.length > 2;
+  }
+  saveNewRegion(regionName: string): void {
+    if (this.filterModel.locations.polygon?.length) {
+      this.dataStorageService.saveNewRegion(this.filterModel, regionName).subscribe((v) => {
+        let message = v.success ? Constants.MSG_REGION_CREATED : Constants.MSG_REGION_SAVE_FAILED;
+        this.showInfoMessage(this.dialog, message).afterClosed().subscribe(result => {
+          this.setDialogIsOpen(false);
+        });
+        this.setDialogIsOpen(true);
+          this.fetchRegions();
+      }, e => {
+        console.error(e)
+        this.messageService.showErrorMessage(e);
+      });  
+    } else {
+      this.showInfoMessage(this.dialog, Constants.MSG_NO_REGION).afterClosed().subscribe(result => {
+        this.setDialogIsOpen(false);
+      });
+      this.setDialogIsOpen(true);
+    }
+  }
+  updateRegion(regionName: string, regionId): void {
+    if(this.filterModel.locations.polygon?.length) {
+      this.dataStorageService.updateRegion(this.filterModel, regionName, regionId).subscribe((v) => {
+        let message = v.success ? Constants.MSG_REGION_UPDATED : Constants.MSG_REGION_UPDATE_FAILED;
+        this.showInfoMessage(this.dialog, message).afterClosed().subscribe(result => {
+          this.setDialogIsOpen(false);
+        });
+        this.setDialogIsOpen(true);
+          this.fetchRegions();
+      }, e => {
+        console.error(e)
+        this.messageService.showErrorMessage(e);
+      });
+    } else {
+      this.showInfoMessage(this.dialog, Constants.MSG_NO_REGION).afterClosed().subscribe(result => {
+        this.setDialogIsOpen(false);
+      });
+      this.setDialogIsOpen(true);;
+    }
+  }
+  saveRegionChanges(regionName: string): void {
+    let list = this.regionList?.filter((v) => (v.name) === regionName);
+    let id = list.length ? list[0].id : null;
+    if (id) {
+      this.updateRegion(regionName, id);
+    } else {
+      this.saveNewRegion(regionName);
+    }
+  }
+  selectPolygonRadio(): void {
+    if (this.locationForm.get('selectedDevices').value !== '2') {
+      this.locationForm.get('selectedDevices').setValue('2');
+      this.locationOnChange();  
+    }
+  }
+  regionNameOnChange(): void {
+    this.selectPolygonRadio();
   }
 }

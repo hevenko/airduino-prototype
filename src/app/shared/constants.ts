@@ -1,5 +1,5 @@
 export class Constants {
-  static STAY_OPEN = 'stay_open'; // the class prevents the directive from closing component upon date select
+  static STAY_OPEN = 'stay_open'; // the class prevents the directive from closing component
   static MSG_ALREADY_LOGGED_IN = 'Redirecting, already logged in.';
   static MSG_LOGIN_TO_ACCESS = 'Redirecting, please log in to access the page.';
   static MSG_LOGGED_OUT = 'You have been logged out.';
@@ -35,4 +35,9 @@ export class Constants {
   static LOCATION_MENU_LAST_CLOSED = "locationMenu";
   static SAVE_ERROR = "Save failed";
   static SELECT_SENSOR_ERROR = "Select sensor";
+  static MSG_REGION_CREATED = "Region created.";
+  static MSG_REGION_SAVE_FAILED = "Region save failed.";
+  static MSG_REGION_UPDATED = "Region updated.";
+  static MSG_REGION_UPDATE_FAILED = "Region update failed.";
+  static MSG_NO_REGION = "No region.";
 }

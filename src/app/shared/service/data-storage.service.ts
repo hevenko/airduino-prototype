@@ -142,7 +142,44 @@ export class DataStorageService {
         map(res => res.data)
     );
   }
-
+  saveNewRegion(filterModel: any, regionName: string): Observable<any> {
+    let newRegion: any = {};
+    newRegion.type = 'county';
+    newRegion.name = regionName;
+    newRegion.gtype = 'Polygon';
+    newRegion.coordinates = filterModel.locations.polygon;
+    
+    return this.http.post<Data>(this.getURL('regions/fast'), newRegion, { headers: this.headers })
+      .pipe(
+        catchError(this.handleError),
+        map((v: any) => {
+          if(v.error) {
+            throw (v.error);
+          }
+          return v;
+        })
+    );
+  }
+  updateRegion(fiterModel: any, regionName: string, regionId: string): Observable<any> {
+    let newRegion: any = {};
+    newRegion.ids = [{id: regionId}]
+    newRegion.values = {};
+    newRegion.values.type = 'county';
+    newRegion.values.name = regionName;
+    newRegion.values.gtype = 'Polygon';
+    newRegion.values.coordinates = fiterModel.locations.polygon;
+    
+    return this.http.put<Data>(this.getURL('regions/fast'), newRegion, { headers: this.headers })
+      .pipe(
+        catchError(this.handleError),
+        map((v: any) => {
+          if(v.error) {
+            throw (v.error);
+          }
+          return v;
+        })
+    );
+  }
   fetchPages(filter: any, page: number, availableData: RawData[]): Observable<any> {
     return this.http.post<Data>(this.getURL('data/') + page, filter, { headers: this.headers })
     .pipe(
