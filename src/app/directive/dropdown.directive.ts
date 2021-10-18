@@ -22,7 +22,7 @@ export class DropdownDirective {
   //closeMenu flag may be set on clicked item or higher up the DOM
   shouldParentCloseTheMenu(target: any): boolean {
     let result = false;
-    if (target.tagName.toUpperCase().indexOf("APP-") != -1) { //stop if this component root DOM is reached
+    if (target.tagName?.toUpperCase().indexOf("APP-") != -1) { //stop if this component root DOM is reached
       result = false;
     } else if (target.classList.contains('closeMenu')) {
       result = true;
@@ -34,7 +34,7 @@ export class DropdownDirective {
 
   isMapClicked(target: any): boolean {
     let result = false;
-    if (target.tagName.toUpperCase().indexOf("APP-") != -1) { //stop if this component root DOM is reached
+    if (target.tagName?.toUpperCase().indexOf("APP-") != -1) { //stop if this component root DOM is reached
       result = false;
     } else if (target.id === 'map') {
       result = true;
