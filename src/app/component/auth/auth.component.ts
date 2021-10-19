@@ -13,8 +13,8 @@ import { User } from './user.model';
   styleUrls: ['./auth.component.css']
 })
 export class AuthComponent implements OnInit {
-  email = 'abc@abc.com';
-  password = 'abc';
+  email = 'bela@bela.com';
+  password = 'bela';
   isLoginMode = true;
   isLoading = false;
   constants = Constants;
