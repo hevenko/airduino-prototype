@@ -21,7 +21,9 @@
   height: auto;
   padding: 0 0;
 }
-
+.mat-toolbar-multiple-rows {
+  min-height: auto;
+}
 .spacer {
   flex: 1 1 auto;
 }

@@ -1,13 +1,16 @@
-<button *ngIf="!isAuthenticated" class="btn btn-secondary" type="button" id="dropdownMenuButton" (click)="login()">
-  {{getLabel()}}
-</button>
-<div *ngIf="isAuthenticated" appDropdown class="dropdown pull-right">
-  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
-          data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+<div style="min-width: 80px;text-align: center;border-left: 1px solid lightgray">
+  <button *ngIf="!isAuthenticated" mat-button style="height: 30;padding-right: 10px" type="button"
+    id="dropdownMenuButton" (click)="login()">
     {{getLabel()}}
   </button>
-  <div class="dropdown-menu filter-menu-expanded" style="padding: 15px;" id="senssorComponentDropdown">
-    <a style="display: block;" class="closeMenu" [routerLink]="'/user'">User</a>
-    <a style="display: block;cursor: pointer" class="closeMenu" (click)="logout()">Logout</a>
+  <div *ngIf="isAuthenticated" appDropdown class="dropdown pull-right">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-toggle="dropdown"
+      aria-haspopup="true" aria-expanded="false">
+      {{getLabel()}}
+    </button>
+    <div class="dropdown-menu filter-menu-expanded" style="padding: 15px;" id="senssorComponentDropdown">
+      <a style="display: block;" class="closeMenu" [routerLink]="'/user'">User</a>
+      <a style="display: block;cursor: pointer" class="closeMenu" (click)="logout()">Logout</a>
+    </div>
   </div>
 </div>
