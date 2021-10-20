@@ -1,4 +1,4 @@
- .sidenav-container {
+.sidenav-container {
   position: absolute;
   top: 0px;
   bottom: 0px;
@@ -17,7 +17,8 @@
 .sidenav .mat-toolbar {
   background: inherit;
 }
-.mat-toolbar-row, .mat-toolbar-single-row {
+.mat-toolbar-row,
+.mat-toolbar-single-row {
   height: auto;
   padding: 0 0;
 }
@@ -33,8 +34,14 @@ mat-nav-list a.mat-list-item {
 }
 
 mat-sidenav-content {
-    display: flex;
-    flex-direction: column;
-    background-color: white;
-    overflow: inherit; /* hidden */
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  overflow: inherit; /* hidden */
+}
+
+.toolbar-filters {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
 }

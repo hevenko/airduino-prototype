@@ -11,7 +11,7 @@ import { FormIntactChecker } from 'src/app/shared/FormIntactChecker';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
 import { MessageService } from 'src/app/shared/service/message.service';
 import { AirduinoComponent } from '../../airduino/airduino.component';
-import { MapComponent } from '../../map/map.component';
+import { faMapMarkedAlt } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-location',
@@ -19,6 +19,7 @@ import { MapComponent } from '../../map/map.component';
   styleUrls: ['./location.component.css']
 })
 export class LocationComponent extends AirduinoComponent implements OnInit {
+  faMapMarkedAlt = faMapMarkedAlt;
   selectedDevices: string;
   selectedRegion: any;
   regionList: Region[];

@@ -4,6 +4,7 @@ import { exit } from 'process';
 import { FilterModel } from 'src/app/model/filter-model';
 import { Constants } from 'src/app/shared/constants';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
+import { faHubspot } from '@fortawesome/free-brands-svg-icons';
 
 @Component({
   selector: 'app-sensor',
@@ -30,6 +31,7 @@ export class SensorComponent implements OnInit {
     {sensor: 'measured', desc: 'Measured', label: 'Msrd', hidden:true}
     
   ];
+  faHubspot = faHubspot;
   compForm: FormGroup = new FormGroup({});
   faSensors: FormArray = new FormArray([]);
   defaultLabel = 'Sensors';

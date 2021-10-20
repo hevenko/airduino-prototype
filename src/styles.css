@@ -2,8 +2,15 @@
 @import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
 @import "../node_modules/ag-grid-community/dist/styles/ag-theme-alpine.css";
 
-html, body { height: 100%; }
-body { width: 100%; margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  height: 100%;
+}
+body {
+  width: 100%;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
 
 .filter-menu-expanded {
   background: white !important;
@@ -13,26 +20,41 @@ body { width: 100%; margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif
 }
 .filter {
   border-left: 1px solid lightgrey;
-  min-width: 100px;
-  text-align: center;
+  amin-width: 100px;
+  text-align: end;
   padding-right: 10px;
   padding-left: 10px;
 }
 .open {
-  background: white!important;
+  background: white !important;
 }
 .button-spacing {
   margin-left: 5px;
 }
 .disabled-link {
-  pointer-events:none;
-  cursor:default;
-  color: rgba(0,0,0,.12);
+  pointer-events: none;
+  cursor: default;
+  color: rgba(0, 0, 0, 0.12);
 }
 .enabled-link {
-  pointer-events:auto;
-  cursor:pointer;
+  pointer-events: auto;
+  cursor: pointer;
 }
 button {
   line-height: inherit !important;
+}
+
+.filter-icon {
+  margin-right: 2rem;
+  color: #888;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
 }

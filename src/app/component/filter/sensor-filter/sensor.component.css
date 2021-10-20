@@ -1,13 +1,12 @@
 div {
-  
-    background-color: inherit;
-    cursor: pointer;
+  background-color: inherit;
+  cursor: pointer;
 }
 a {
-    font-size: 14px;
-    font-weight: normal;
-    text-decoration: none;
+  font-size: 14px;
+  font-weight: normal;
+  text-decoration: none;
 }
 #sensorMenu {
-    width: 420px;
+  awidth: 420px;
 }

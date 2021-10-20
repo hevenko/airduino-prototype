@@ -58,6 +58,7 @@ import { BlockUIModule } from 'ng-block-ui';
 import { GetDataComponent } from './component/get-data/get-data.component';
 import { FilterInfoComponent } from './component/filter-info/filter-info.component';
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 export const DATE_FORMATS = {
   parse: {
@@ -106,6 +107,7 @@ export const DATE_FORMATS = {
     FormsModule,
     ReactiveFormsModule,
     BrowserModule,
+    FontAwesomeModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     MatButtonModule,

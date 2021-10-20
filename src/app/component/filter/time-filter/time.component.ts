@@ -6,6 +6,7 @@ import { Constants } from 'src/app/shared/constants';
 import { FormIntactChecker } from 'src/app/shared/FormIntactChecker';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
 import { MessageService } from 'src/app/shared/service/message.service';
+import { faHistory } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-time',
@@ -16,6 +17,7 @@ export class TimeComponent implements OnInit, AfterViewInit {
   static filterTypeSliding = "sliding_range";
   static filterTypeCustom = "custom_range";
   static filterTypeFixed = "fixed_range";
+  faHistory = faHistory;
 
   defaultLabel = 'Time period';
   hoursTime = [

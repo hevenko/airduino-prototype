@@ -1,5 +1,6 @@
 <form [formGroup]="compForm">
-  <div appDropdown id="sensorMenu" class="dropdown pull-right filter">
+  <div appDropdown id="sensorMenu" class="dropdown pull-right filter item-filter noselect">
+    <fa-icon class="filter-icon" [icon]="faHubspot"></fa-icon>
     <a class="dropdown-toogle" data-toggle="collapse" href="#senssorComponentDropdown"
        role="button" aria-expanded="false" aria-controls="senssorComponentDropdown"  onclick="return false;">
       <span  [innerHTML]="makeLabel()">Sensors</span><span class="caret"></span>

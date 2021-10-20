@@ -1,5 +1,6 @@
 <form [formGroup]="locationForm">
-    <div appDropdown id="locationMenu" [ngClass]="shouldStayOpen() ? stayOpened :''" class="dropdown pull-right filter">
+    <div appDropdown id="locationMenu" [ngClass]="shouldStayOpen() ? stayOpened :''" class="dropdown pull-right filter noselect">
+        <fa-icon class="filter-icon" class="filter-icon" [icon]="faMapMarkedAlt"></fa-icon>
         <a class="dropdown-toogle" data-toggle="collapse" href="#locationComponentDropdown" (click)="setLocationSelected(-1);false"
             role="button" aria-expanded="false" aria-controls="locationComponentDropdown">
             <span [innerHTML]="makeLabel()"></span>
