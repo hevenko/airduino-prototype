@@ -1,9 +1,9 @@
 <form [formGroup]="timeForm">
   <div appDropdown id="timeMenu" [ngClass]="shouldStayOpen() && !setCloseMenuClass ? stayOpened :''" class="dropdown pull-right filter noselect">
-    <fa-icon class="filter-icon" [icon]="faHistory"></fa-icon>
     <a class="dropdown-toogle" data-toggle="collapse" href="#timeCoponentDropdown" role="button" aria-expanded="false"
        aria-controls="timeCoponentDropdown"  (click)="closeMenuClass(false);false;">
-      <span [innerHTML]="label"></span><span class="caret"></span>
+       <fa-icon class="filter-icon" [icon]="faHistory"></fa-icon>
+       <span [innerHTML]="label"></span><span class="caret"></span>
     </a>
     <div [ngClass]="setCloseMenuClass ? 'closeMenu' : ''" class="dropdown-menu filter-menu-expanded" style="padding: 15px;" id="timeCoponentDropdown">
       <mat-form-field>

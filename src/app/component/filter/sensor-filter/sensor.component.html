@@ -1,9 +1,9 @@
 <form [formGroup]="compForm">
   <div appDropdown id="sensorMenu" class="dropdown pull-right filter item-filter noselect">
-    <fa-icon class="filter-icon" [icon]="faHubspot"></fa-icon>
     <a class="dropdown-toogle" data-toggle="collapse" href="#senssorComponentDropdown"
        role="button" aria-expanded="false" aria-controls="senssorComponentDropdown"  onclick="return false;">
-      <span  [innerHTML]="makeLabel()">Sensors</span><span class="caret"></span>
+       <fa-icon class="filter-icon" [icon]="faHubspot"></fa-icon>
+       <span  [innerHTML]="makeLabel()">Sensors</span><span class="caret"></span>
     </a>
     <div class="dropdown-menu filter-menu-expanded" style="padding: 15px;max-height: 80vh;overflow: auto;" id="senssorComponentDropdown">
       <ng-container formArrayName="sensors" *ngFor="let s of getSensorControls();let i = index">
