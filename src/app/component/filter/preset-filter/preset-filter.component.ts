@@ -229,4 +229,7 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit {
   disableNewFilter(): boolean {
     return !this.appliedFilter;
   }
+  isFilterNameChanged(): boolean {
+    return this.findControlForFilterData(this.appliedFilter)?.controls['name']?.dirty
+  }
 }
