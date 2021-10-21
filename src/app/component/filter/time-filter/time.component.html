@@ -1,5 +1,5 @@
 <form [formGroup]="timeForm">
-  <div appDropdown id="timeMenu" [ngClass]="shouldStayOpen() && !setCloseMenuClass ? stayOpened :''" class="dropdown pull-right filter noselect">
+  <div appDropdown id="timeMenu" [ngClass]="shouldStayOpen() && !setCloseMenuClass ? stayOpened :''" class="dropdown filter noselect">
     <a class="dropdown-toogle" data-toggle="collapse" href="#timeCoponentDropdown" role="button" aria-expanded="false"
        aria-controls="timeCoponentDropdown"  (click)="closeMenuClass(false);false;">
        <fa-icon class="filter-icon" [icon]="faHistory"></fa-icon>

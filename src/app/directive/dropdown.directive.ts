@@ -9,7 +9,26 @@ import { DataStorageService } from '../shared/service/data-storage.service';
   selector: '[appDropdown]'
 })
 export class DropdownDirective {
+  leftPos = 0;
   @HostBinding('class.open') isOpen = false;
+  @HostBinding('class.pull-left') get pullLeft() {
+    if (this.menuId === 'timeMenu') {
+      let result = false;
+      let currentPos = this.elRef.nativeElement.offsetLeft;
+      if (this.leftPos !== currentPos) {
+        console.log(this.elRef.nativeElement.offsetLeft)
+        this.leftPos = currentPos;
+      }
+      result = this.leftPos <= 200;
+      return result;  
+    }
+  };
+  @HostBinding('class.pull-right') get pullRight() {
+    if (this.menuId === 'timeMenu') {
+      let result = this.leftPos > 200;
+      return result;  
+    }
+  };
   menuId: any;
   
   static fetchDataTriggerList = ['locationMenu','sensorMenu','timeMenu'];
