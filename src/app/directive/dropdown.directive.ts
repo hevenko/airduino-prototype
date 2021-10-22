@@ -10,24 +10,37 @@ import { DataStorageService } from '../shared/service/data-storage.service';
 })
 export class DropdownDirective {
   leftPos = 0;
+  offsetTrigger = 180;
   @HostBinding('class.open') isOpen = false;
   @HostBinding('class.pull-left') get pullLeft() {
-    if (this.menuId === 'timeMenu') {
-      let result = false;
-      let currentPos = this.elRef.nativeElement.offsetLeft;
-      if (this.leftPos !== currentPos) {
-        console.log(this.elRef.nativeElement.offsetLeft)
-        this.leftPos = currentPos;
-      }
-      result = this.leftPos <= 200;
-      return result;  
+    let result = true;
+    let logit = false;
+    if (!this.elRef.nativeElement.classList.contains('open')) {
+      return result;
     }
+    let currentPos = this.elRef.nativeElement.offsetLeft;
+    if (this.leftPos !== currentPos) {
+      this.leftPos = currentPos;
+      logit = true;
+    } else {
+      logit = false;
+    }
+    result = this.leftPos <= this.offsetTrigger;
+    if (result && logit) {
+      console.log('pull-left:' + this.leftPos);
+    } else if (!result && logit){
+      console.log('pull-right:' + this.leftPos);
+    }
+    return result;  
   };
   @HostBinding('class.pull-right') get pullRight() {
-    if (this.menuId === 'timeMenu') {
-      let result = this.leftPos > 200;
-      return result;  
+    let result = false;
+    let logit = false
+    if (!this.elRef.nativeElement.classList.contains('open')) {
+      return result;
     }
+    result = this.leftPos > this.offsetTrigger;
+    return result;  
   };
   menuId: any;
   
