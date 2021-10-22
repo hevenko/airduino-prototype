@@ -68,7 +68,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
     let configTemplate: ChartOptions  = {
       series: [],
       chart: {
-        height : '500',
+        height : '100%',
         width : '100%',
         type: "line",
         group: 'aqi',

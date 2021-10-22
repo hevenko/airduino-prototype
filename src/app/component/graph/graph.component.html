@@ -1,5 +1,5 @@
 <block-ui>
-  <div #graphComponent style="position:absolute;overflow-y: scroll;width: 100%;height:100%;">
+  <div #graphComponent style="display: flex; flex-direction: column; width: 100%; height:100%; padding: 1em;">
     <form [formGroup]="compForm">
       <mat-form-field style="padding-left: 30px;">
         <mat-select matNativeControl formControlName="showChartSelect" placeholder="Select a graph...">
@@ -12,7 +12,7 @@
       </mat-form-field>
     </form>
       <ng-container *ngFor="let d of getSensorList(); let i = index">
-      <apx-chart *ngIf="renderChart(d.sensor)"
+      <apx-chart style="height:100%" *ngIf="renderChart(d.sensor)"
         [tooltip]="getChartConfig(d.sensor)?.tooltip" 
         [series]="getChartConfig(d.sensor)?.series"
         [chart]="getChartConfig(d.sensor)?.chart"
