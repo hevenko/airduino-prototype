@@ -41,8 +41,6 @@ export class GraphComponent implements OnInit, AfterViewInit {
   drillPath: string[] = []; 
   isLoadingData = true;
   public chartConfig: Partial<ChartOptions>[] = [];
-  public panChartConfig: Partial<ChartOptions>[] = []; //for panning
-  isChartRendered = false;
   @ViewChild('graphComponent') graphComponent: any;
   fullHeight = document.body.offsetHeight - 25;
   chartWidthReduction = 30;
@@ -65,26 +63,18 @@ export class GraphComponent implements OnInit, AfterViewInit {
     if(this.chartConfig[config.config.chart.id]) {
       this.chartConfig[config.config.chart.id].series = [this.chartData[config.config.chart.id]];
     }
-    this.isChartRendered = true;
-  }
-  afterPannChartRendered = (chartContext: any, config?: any) => {
-    let id = config.config.chart.brush.target;
-    if(this.panChartConfig[id]) {
-      this.panChartConfig[id].series = [this.chartData[id]];
-      this.panChartConfig[id].chart.selection.xaxis.min = this.chartData[id].data[0].x;
-      this.panChartConfig[id].chart.selection.xaxis.max = this.chartData[id].data[this.chartData[id].data.length - 1].x;
-    }
   }
   getChartConfigTemplate(): ChartOptions {
     let configTemplate: ChartOptions  = {
       series: [],
       chart: {
-        height : 300,
+        height : '100%',
         width : '100%',
         type: "line",
+        group: 'aqi',
         zoom: {
           type: "x",
-          enabled: false,
+          enabled: true,
           autoScaleYaxis: true
         },
         events: {
@@ -133,69 +123,6 @@ export class GraphComponent implements OnInit, AfterViewInit {
     };
     return configTemplate;
   }
-  getPanChart(parentChartName): any {
-    let result;
-    if (this.panChartConfig[parentChartName]) {
-      result = this.panChartConfig[parentChartName]
-    } else {
-      let configTemplate = {
-        series: [],
-        chart: {
-          height : 130,
-          width : '100%',
-          type: "line",
-          brush: {
-            target: "",
-            enabled: true
-          },
-          selection: {
-            enabled: true,
-            xaxis: {
-              min: 0,
-              max: 0
-            }  
-          },
-          events: {
-            mounted: null
-          }  
-        },
-        colors: ["#008FFB"],
-        fill: {
-          type: "gradient",
-          gradient: {
-            opacityFrom: 0.91,
-            opacityTo: 0.1
-          }
-        },        
-        dataLabels: {
-          enabled: false
-        },
-        stroke: {
-          curve: "straight"
-        },
-        yaxis: {
-          labels: {
-            minWidth: 40
-          }
-        },
-        xaxis: {
-          type : 'datetime',
-          tooltip: {
-            enabled: false
-          }
-        }
-        };
-      let chartForPaning: Partial<ChartOptions> = JSON.parse(JSON.stringify(configTemplate));
-      chartForPaning.chart.id = 'panChart_' + parentChartName;
-      chartForPaning.series = [];
-      chartForPaning.chart.brush.target = parentChartName;
-      chartForPaning.chart.brush.enabled = true;
-      chartForPaning.chart.events.mounted = this.afterPannChartRendered;
-      this.panChartConfig[parentChartName] = chartForPaning;
-      result = chartForPaning;
-    }
-    return result;
-  }
   getChartConfig(chartId: string): ChartOptions {
     let result: ChartOptions;
     if(!this.chartConfig[chartId]) {
@@ -208,7 +135,6 @@ export class GraphComponent implements OnInit, AfterViewInit {
     }
     return result;
   }
-
   initCharts(data: DataSet[]) {
     if(!data || data.length == 0) {
       this.chartConfig.forEach(ch => {
@@ -226,7 +152,6 @@ export class GraphComponent implements OnInit, AfterViewInit {
       this.chartConfig[element.name].chart.events.mounted = this.afterChartRendered;
 
       this.chartData[element.name] = element;
-      this.getPanChart(element.name);
     });
   }
 
