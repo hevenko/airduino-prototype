@@ -43,3 +43,7 @@ button {
 .filterNameInput {
   border: 0px;
 }
+.pull-left {
+  left: 0px;
+  right: auto;
+}
