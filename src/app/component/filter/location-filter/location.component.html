@@ -2,7 +2,7 @@
     <div appDropdown id="locationMenu" [ngClass]="shouldStayOpen() ? stayOpened :''" class="dropdown pull-right filter noselect">
         <a class="dropdown-toogle" data-toggle="collapse" href="#locationComponentDropdown" (click)="setLocationSelected(-1);false"
             role="button" aria-expanded="false" aria-controls="locationComponentDropdown">
-            <fa-icon class="filter-icon" class="filter-icon" [icon]="faMapMarkedAlt"></fa-icon>
+            <fa-icon class="filter-icon" [icon]="faMapMarkedAlt"></fa-icon>
             <span [innerHTML]="makeLabel()"></span>
             <span class="caret"></span>
         </a>
