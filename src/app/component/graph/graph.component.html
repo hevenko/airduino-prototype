@@ -1,6 +1,6 @@
 <block-ui>
   <div #graphComponent style="display: flex; flex-direction: column; width: 100%; height:100%; padding: 1em;">
-    <form [formGroup]="compForm">
+    <form [formGroup]="compForm" style="margin: 0px">
       <mat-form-field style="padding-left: 30px;">
         <mat-select matNativeControl formControlName="showChartSelect" placeholder="Select a graph...">
           <ng-container *ngFor="let s of activeSensors">
@@ -11,17 +11,19 @@
         </mat-select>
       </mat-form-field>
     </form>
-      <ng-container *ngFor="let d of getSensorList(); let i = index">
-      <apx-chart style="height:100%" *ngIf="renderChart(d.sensor)"
-        [tooltip]="getChartConfig(d.sensor)?.tooltip" 
-        [series]="getChartConfig(d.sensor)?.series"
-        [chart]="getChartConfig(d.sensor)?.chart"
-        [xaxis]="getChartConfig(d.sensor)?.xaxis"
-        [dataLabels]="getChartConfig(d.sensor)?.dataLabels"
-        [grid]="getChartConfig(d.sensor)?.grid"
-        [stroke]="getChartConfig(d.sensor)?.stroke"
-        
-      ></apx-chart>
+    <ng-container *ngFor="let d of getSensorList(); let i = index">
+      <div>
+        <apx-chart style="height:100%" *ngIf="renderChart(d.sensor)" [tooltip]="getChartConfig(d.sensor)?.tooltip"
+          [series]="getChartConfig(d.sensor)?.series" [chart]="getChartConfig(d.sensor)?.chart"
+          [xaxis]="getChartConfig(d.sensor)?.xaxis" [dataLabels]="getChartConfig(d.sensor)?.dataLabels"
+          [grid]="getChartConfig(d.sensor)?.grid" [stroke]="getChartConfig(d.sensor)?.stroke"></apx-chart>
+      </div>
+      <div>
+        <apx-chart *ngIf="renderChart(d.sensor) && isChartRendered" [series]="getPanChart(d.sensor).series"
+          [chart]="getPanChart(d.sensor).chart" [xaxis]="getPanChart(d.sensor).xaxis"
+          [colors]="getPanChart(d.sensor).colors" [fill]="getPanChart(d.sensor).fill"
+          [yaxis]="getPanChart(d.sensor).yaxis"></apx-chart>
+      </div>
     </ng-container>
   </div>
 </block-ui>
