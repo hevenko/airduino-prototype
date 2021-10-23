@@ -11,12 +11,12 @@
         </select>
     </form>
     <ng-container *ngFor="let d of getSensorList(); let i = index">
-        <apx-chart [style.height.%]="100" style="margin:0px" *ngIf="renderChart(d.sensor)" [tooltip]="getChartConfig(d.sensor)?.tooltip"
+        <apx-chart [style.height.%]="phoneIsVertical ? 70 : 100" style="margin:0px" *ngIf="renderChart(d.sensor)" [tooltip]="getChartConfig(d.sensor)?.tooltip"
           [series]="getChartConfig(d.sensor)?.series" [chart]="getChartConfig(d.sensor)?.chart"
           [xaxis]="getChartConfig(d.sensor)?.xaxis" [dataLabels]="getChartConfig(d.sensor)?.dataLabels"
           [grid]="getChartConfig(d.sensor)?.grid" [stroke]="getChartConfig(d.sensor)?.stroke"></apx-chart>
         
-        <apx-chart  #panChart [class.hidePannGraph]="!phoneIsVertical" style="height:30%;margin:0px" *ngIf="renderChart(d.sensor) && isBrushTargetChartRendered" [series]="getPanChart(d.sensor).series"
+        <apx-chart  #panChart style="height:30%;margin:0px" *ngIf="phoneIsVertical && renderChart(d.sensor) && isBrushTargetChartRendered" [series]="getPanChart(d.sensor).series"
           [chart]="getPanChart(d.sensor).chart" [xaxis]="getPanChart(d.sensor).xaxis"
           [colors]="getPanChart(d.sensor).colors" [fill]="getPanChart(d.sensor).fill"
           [yaxis]="getPanChart(d.sensor).yaxis"></apx-chart>
