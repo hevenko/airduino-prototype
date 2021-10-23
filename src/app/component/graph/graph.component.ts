@@ -56,7 +56,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
   chartData: DataSet[] = [];
   compForm: FormGroup;
   static selectecChartName: string;
-  phoneIsVertical = false;
+  phoneIsVertical = true;
 
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { 
     this.detectPhoneOriendation();
@@ -83,10 +83,12 @@ export class GraphComponent implements OnInit, AfterViewInit {
       this.panChartConfig[config.config.chart.id].chart.brush.enabled = true;
       this.panChartConfig[config.config.chart.id].chart.brush.target = config.config.chart.id;
       this.panChartConfig[config.config.chart.id].series = [this.chartData[config.config.chart.id]];
-      let diff = this.chartData[config.config.chart.id].data[this.chartData[config.config.chart.id].data.length - 1].x - this.chartData[config.config.chart.id].data[0].x;
-      diff = diff/3
-      this.panChartConfig[config.config.chart.id].chart.selection.xaxis.min = this.chartData[config.config.chart.id].data[0].x + diff;
-      this.panChartConfig[config.config.chart.id].chart.selection.xaxis.max = this.chartData[config.config.chart.id].data[this.chartData[config.config.chart.id].data.length - 1].x - diff;
+      if (this.panChartConfig[config.config.chart.id].chart.selection.xaxis.min === 0) {
+        let diff = this.chartData[config.config.chart.id].data[this.chartData[config.config.chart.id].data.length - 1].x - this.chartData[config.config.chart.id].data[0].x;
+        diff = diff/3
+        this.panChartConfig[config.config.chart.id].chart.selection.xaxis.min = this.chartData[config.config.chart.id].data[0].x + diff;
+        this.panChartConfig[config.config.chart.id].chart.selection.xaxis.max = this.chartData[config.config.chart.id].data[this.chartData[config.config.chart.id].data.length - 1].x - diff;  
+      }
     }
     this.isBrushTargetChartRendered = true;
   }
@@ -109,7 +111,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
         type: "line",
         zoom: {
           type: "x",
-          enabled: false,
+          enabled: true,
           autoScaleYaxis: true
         },
         events: {
@@ -117,7 +119,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
         },
         toolbar: {
           autoSelected: "pan",
-          show: false
+          show: true
         },
         animations : {enabled: false},
         redrawOnWindowResize: true,
@@ -178,7 +180,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
             enabled: true,
             xaxis: {
               min: 0,
-              max: 100
+              max: 0
             }  
           },
           events: {

@@ -2,3 +2,6 @@
   height: 100%;
   position: relative; /* remove this and y scroller will exit the screen bottom */
 }
+.hidePannGraph {
+  display: none;
+}
