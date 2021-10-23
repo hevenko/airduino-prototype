@@ -13,7 +13,8 @@ import {
   ApexStroke,
   ApexGrid,
   ApexTooltip,
-  ApexYAxis
+  ApexYAxis,
+  ChartComponent
 } from "ng-apexcharts";
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
@@ -42,7 +43,8 @@ export class GraphComponent implements OnInit, AfterViewInit {
   isLoadingData = true;
   public chartConfig: Partial<ChartOptions>[] = [];
   public panChartConfig: Partial<ChartOptions>[] = []; //for panning
-  isChartRendered = false;
+  @ViewChild('panChart') panChart: ChartComponent;
+  isBrushTargetChartRendered = false;
   @ViewChild('graphComponent') graphComponent: any;
   fullHeight = document.body.offsetHeight - 25;
   chartWidthReduction = 30;
@@ -53,33 +55,56 @@ export class GraphComponent implements OnInit, AfterViewInit {
   activeSensors = [];
   chartData: DataSet[] = [];
   compForm: FormGroup;
+  static selectecChartName: string;
+  phoneIsVertical = false;
 
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { 
+    this.detectPhoneOriendation();
   }
   
+  detectPhoneOriendation(): void {
+    if (screen.orientation) {
+      screen.orientation.addEventListener("change", (event: any)  => {
+          this.phoneIsVertical = event.currentTarget.type === 'portrait-primary';  
+      }, true);
+      this.phoneIsVertical = screen.orientation.type === 'portrait-primary';
+    }
+  }
   renderChart(chartName: string) {
     return this.activeSensors.indexOf(chartName) !== -1 && this.compForm.value['showChartSelect'] === chartName;
   }
-
+  selectChartOnChange(e: any): void {
+    this.isBrushTargetChartRendered = false;
+    GraphComponent.selectecChartName = e.target.value;
+  }
   afterChartRendered = (chartContext: any, config?: any) => {
     if(this.chartConfig[config.config.chart.id]) {
       this.chartConfig[config.config.chart.id].series = [this.chartData[config.config.chart.id]];
+      this.panChartConfig[config.config.chart.id].chart.brush.enabled = true;
+      this.panChartConfig[config.config.chart.id].chart.brush.target = config.config.chart.id;
+      this.panChartConfig[config.config.chart.id].series = [this.chartData[config.config.chart.id]];
+      let diff = this.chartData[config.config.chart.id].data[this.chartData[config.config.chart.id].data.length - 1].x - this.chartData[config.config.chart.id].data[0].x;
+      diff = diff/3
+      this.panChartConfig[config.config.chart.id].chart.selection.xaxis.min = this.chartData[config.config.chart.id].data[0].x + diff;
+      this.panChartConfig[config.config.chart.id].chart.selection.xaxis.max = this.chartData[config.config.chart.id].data[this.chartData[config.config.chart.id].data.length - 1].x - diff;
     }
-    this.isChartRendered = true;
+    this.isBrushTargetChartRendered = true;
   }
   afterPannChartRendered = (chartContext: any, config?: any) => {
+    //this.panChart.render();
     let id = config.config.chart.brush.target;
     if(this.panChartConfig[id]) {
-      this.panChartConfig[id].series = [this.chartData[id]];
-      this.panChartConfig[id].chart.selection.xaxis.min = this.chartData[id].data[0].x;
-      this.panChartConfig[id].chart.selection.xaxis.max = this.chartData[id].data[this.chartData[id].data.length - 1].x;
+      //this.panChartConfig[id].chart.brush.enabled = true;
+      //this.panChartConfig[id].series = [this.chartData[id]];
+      //this.panChartConfig[id].chart.selection.xaxis.min = this.chartData[id].data[0].x;
+      //this.panChartConfig[id].chart.selection.xaxis.max = this.chartData[id].data[this.chartData[id].data.length - 1].x;
     }
   }
   getChartConfigTemplate(): ChartOptions {
     let configTemplate: ChartOptions  = {
       series: [],
       chart: {
-        height : 300,
+        height : '100%',
         width : '100%',
         type: "line",
         zoom: {
@@ -91,7 +116,8 @@ export class GraphComponent implements OnInit, AfterViewInit {
           mounted: null
         },
         toolbar: {
-          show: true
+          autoSelected: "pan",
+          show: false
         },
         animations : {enabled: false},
         redrawOnWindowResize: true,
@@ -141,7 +167,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
       let configTemplate = {
         series: [],
         chart: {
-          height : 130,
+          height : '100%',
           width : '100%',
           type: "line",
           brush: {
@@ -152,21 +178,17 @@ export class GraphComponent implements OnInit, AfterViewInit {
             enabled: true,
             xaxis: {
               min: 0,
-              max: 0
+              max: 100
             }  
           },
           events: {
             mounted: null
+          },
+          toolbar: {
+            show: false
           }  
         },
         colors: ["#008FFB"],
-        fill: {
-          type: "gradient",
-          gradient: {
-            opacityFrom: 0.91,
-            opacityTo: 0.1
-          }
-        },        
         dataLabels: {
           enabled: false
         },
@@ -174,9 +196,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
           curve: "straight"
         },
         yaxis: {
-          labels: {
-            minWidth: 40
-          }
+          tickAmount: 2
         },
         xaxis: {
           type : 'datetime',
@@ -184,15 +204,15 @@ export class GraphComponent implements OnInit, AfterViewInit {
             enabled: false
           }
         }
-        };
-      let chartForPaning: Partial<ChartOptions> = JSON.parse(JSON.stringify(configTemplate));
-      chartForPaning.chart.id = 'panChart_' + parentChartName;
-      chartForPaning.series = [];
-      chartForPaning.chart.brush.target = parentChartName;
-      chartForPaning.chart.brush.enabled = true;
-      chartForPaning.chart.events.mounted = this.afterPannChartRendered;
-      this.panChartConfig[parentChartName] = chartForPaning;
-      result = chartForPaning;
+      };
+      let chartConfig: Partial<ChartOptions> = JSON.parse(JSON.stringify(configTemplate));
+      chartConfig.chart.id = 'panChart_' + parentChartName;
+      //chartForPaning.series = [];
+      //chartForPaning.chart.brush.target = parentChartName;
+      chartConfig.chart.brush.enabled = false;
+      chartConfig.chart.events.mounted = this.afterPannChartRendered;
+      this.panChartConfig[parentChartName] = chartConfig;
+      result = chartConfig;
     }
     return result;
   }
@@ -214,10 +234,13 @@ export class GraphComponent implements OnInit, AfterViewInit {
       this.chartConfig.forEach(ch => {
         ch.series = [];
       })
+      this.chartData = [];
       this.blockUI.stop();
-      return;
+      //return;
     }
     this.chartConfig = [];
+    this.panChartConfig = [];
+    this.isBrushTargetChartRendered = false;
     data.forEach((element: any, i:number) => {
       this.chartConfig[element.name] = JSON.parse(JSON.stringify(this.getChartConfigTemplate()));
       this.chartConfig[element.name].chart.id = element.name;
@@ -229,9 +252,14 @@ export class GraphComponent implements OnInit, AfterViewInit {
       this.getPanChart(element.name);
     });
   }
-
+  initSelectedSensor(): void {
+    if (GraphComponent.selectecChartName && this.activeSensors.indexOf(GraphComponent.selectecChartName) !== -1) {
+      this.compForm.get('showChartSelect').setValue(GraphComponent.selectecChartName);
+    } else {
+      this.compForm.get('showChartSelect').setValue(this.activeSensors[0]);
+    }
+  }
   ngAfterViewInit(): void {
-
   }
   getColor(sensorName: string): string { 
     let result = '';
@@ -309,12 +337,12 @@ export class GraphComponent implements OnInit, AfterViewInit {
         this.activeSensors = sensorList.filter(v => {
           return !this.getSensorDetails(v).hidden;
         });
-      },200);
+        this.initSelectedSensor();
+      }, 200);
     });
     this.compForm = new FormGroup({
-      showChartSelect: new FormControl()
+      showChartSelect: new FormControl('')
     })
-    this.compForm.controls.showChartSelect.setValue('temp');
   }
   filterChartSensorData(sensorNames: string[]): DataSet[] {
     return this.originalChartData.filter((v:DataSet) => {
