@@ -213,7 +213,7 @@ export class LocationComponent extends AirduinoComponent implements OnInit {
         const radius = v.locations.circle.radius;
         const circle = { circle: { center, radius }}; 
         this.filterModel.locations = circle;
-        } else if (v.locations_type === 'devices') {
+      } else if (v.locations_type === 'devices') {
         this.locationForm.controls['selectedDevices'].setValue('1');
         this.locationOnChange();
       } else if (v.locations_type === 'polygon') {

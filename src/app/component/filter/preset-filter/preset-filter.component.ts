@@ -33,6 +33,8 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit {
   searchFilter = '';
   filteredList = [];
   filterValueModified = false;
+  pendingUnsubscribe = false; // fetcth start is delayed so using this flag to prevent unecesery data fetch
+
   constructor(public dialog: MatDialog, private messageService: MessageService, private dataStorageService: DataStorageService, private filterModel: FilterModel) {
     super();
   }
@@ -97,11 +99,16 @@ export class PresetFilterComponent extends AirduinoComponent implements OnInit {
     this.fetchFilterList();
     this.dataStorageService.usubscribeBroadcastBus.subscribe(v => { //prevents drawing feaures (dots) outside poligon
       this.subscription?.unsubscribe();
+      this.pendingUnsubscribe = true;
     });
     this.listenForUserPresetChange();
   }
   delayFetchData() {
-    this.subscription = this.dataStorageService.fetchData(this.filterModel);
+    if (this.pendingUnsubscribe) { // am unsubscribe flag is set when another component started data fetch
+      this.pendingUnsubscribe = false;
+    } else {
+      this.subscription = this.dataStorageService.fetchData(this.filterModel);
+    }
   }
   setAppliedFilter(filter: any): void {
     this.appliedFilter = filter;
