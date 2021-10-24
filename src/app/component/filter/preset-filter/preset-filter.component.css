@@ -43,7 +43,7 @@ button {
 .filterNameInput {
   border: 0px;
 }
-.pull-left {
-  left: 0px;
+.pull-left #presetCoponentDropdown {
+  left: -90px;
   right: auto;
 }
