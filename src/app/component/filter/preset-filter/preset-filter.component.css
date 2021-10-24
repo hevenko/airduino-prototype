@@ -44,6 +44,6 @@ button {
   border: 0px;
 }
 .pull-left #presetCoponentDropdown {
-  left: -90px;
+  left: -100px;
   right: auto;
 }
