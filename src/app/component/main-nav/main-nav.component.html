@@ -2,12 +2,26 @@
   <mat-sidenav #drawer class="sidenav" fixedInViewport [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
     [mode]="'over'" [opened]="false">
     <mat-nav-list (click)="drawer.close()">
-      <a mat-list-item [routerLink]="'/userDevices'">Devices</a>
-      <a mat-list-item [routerLink]="'/map'">Map</a>
-      <a mat-list-item [routerLink]="'/graph'">Graph</a>
-      <a mat-list-item [routerLink]="'/rawData'">Raw data</a>
-      <a mat-list-item [routerLink]="'/user'">User</a>
-      <a mat-list-item (click)="authenticationOnCick()">{{isAuthenticated ? 'Logout' : 'Login'}}</a>
+      <a mat-list-item [routerLink]="'/userDevices'">
+        <fa-icon class="sb-icon fa-lg" [icon]="faDevices" [fixedWidth]="true"></fa-icon>
+        <span>Devices</span>
+      </a>
+      <a mat-list-item [routerLink]="'/map'">
+        <fa-icon class="sb-icon fa-lg" [icon]="faMap" [fixedWidth]="true"></fa-icon>
+        <span>Map</span>
+      </a>
+      <a mat-list-item [routerLink]="'/graph'">
+        <fa-icon class="sb-icon fa-lg" [icon]="faChartBar" [fixedWidth]="true"></fa-icon>
+        <span>Graph</span>
+      </a>
+      <a mat-list-item [routerLink]="'/rawData'">
+        <fa-icon class="sb-icon fa-lg" [icon]="faRawData" [fixedWidth]="true"></fa-icon>
+        <span>Raw data</span>
+      </a>
+      <a mat-list-item [routerLink]="'/user'">
+        <fa-icon class="sb-icon fa-lg" [icon]="faUser" [fixedWidth]="true"></fa-icon>
+        <span>User</span>
+      </a>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>

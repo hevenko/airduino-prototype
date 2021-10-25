@@ -7,6 +7,7 @@ import { AuthComponent } from '../auth/auth.component';
 import { AuthService } from '../auth/auth.service';
 import { Router } from '@angular/router';
 import { User } from '../auth/user.model';
+import { faChartBar, faTh, faSatelliteDish, faMap, faUser, faSquare } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-main-nav',
@@ -14,6 +15,12 @@ import { User } from '../auth/user.model';
   styleUrls: ['./main-nav.component.css']
 })
 export class MainNavComponent implements OnInit {
+  faChartBar = faChartBar;
+  faRawData = faTh;
+  faDevices = faSatelliteDish;
+  faMap = faMap;
+  faUser = faUser;
+  faSquare = faSquare;
   isAuthenticated = false;
   welcomeLabel = '';
   constructor(private breakpointObserver: BreakpointObserver,
