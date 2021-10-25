@@ -12,6 +12,7 @@ import sub from 'date-fns/sub';
 import { from, Subscription } from 'rxjs';
 import { SensorComponent } from '../sensor-filter/sensor.component';
 import { exit } from 'process';
+import { faFilter } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-preset-filter',
@@ -19,6 +20,7 @@ import { exit } from 'process';
   styleUrls: ['./preset-filter.component.css']
 })
 export class PresetFilterComponent extends AirduinoComponent implements OnInit {
+  faFilter = faFilter;
   stayOpened = Constants.STAY_OPEN;
   dialogIsOpen = false;
   presetForm: FormGroup = new FormGroup({});

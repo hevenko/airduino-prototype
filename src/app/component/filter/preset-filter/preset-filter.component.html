@@ -2,6 +2,7 @@
   <div appDropdown [ngClass]="dialogIsOpen ? stayOpened :''" class="dropdown filter dropright">
     <a class="dropdown-toogle" data-toggle="collapse" href="#presetCoponentDropdown" onclick="return false"
       role="button" aria-expanded="false" aria-controls="presetCoponentDropdown">
+      <fa-icon class="filter-icon" [icon]="faFilter"></fa-icon>
       <span [innerHTML]="getLabel()"></span><span class="caret"></span>
     </a>
     <div class="dropdown-menu filter-menu-expanded" style="padding: 15px" id="presetCoponentDropdown">
