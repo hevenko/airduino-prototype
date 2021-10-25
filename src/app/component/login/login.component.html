@@ -1,12 +1,13 @@
 <div style="min-width: 80px;text-align: center;border-left: 1px solid lightgray">
   <button *ngIf="!isAuthenticated" mat-button style="height: 30;padding-right: 10px" type="button"
     id="dropdownMenuButton" (click)="login()">
-    <fa-icon class="filter-icon" [icon]="faUserPlus"></fa-icon>
+    <fa-icon class="filter-icon" [icon]="faUser"></fa-icon>
     {{getLabel()}}
   </button>
   <div *ngIf="isAuthenticated" appDropdown class="dropdown pull-right">
     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-toggle="dropdown"
       aria-haspopup="true" aria-expanded="false">
+      <fa-icon class="filter-icon" [icon]="faUser"></fa-icon>
       {{getLabel()}}
     </button>
     <div class="dropdown-menu filter-menu-expanded" style="padding: 15px;" id="senssorComponentDropdown">
