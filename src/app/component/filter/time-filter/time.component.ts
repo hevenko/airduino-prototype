@@ -32,10 +32,10 @@ export class TimeComponent implements OnInit, AfterViewInit {
   intervalEnd = { 'interval': 'PT0S' };
 
   customTimeUnits = [
-    { value: 'PT?H', desc: 'Hour' },
-    { value: 'P?D', desc: 'Day' },
-    { value: 'P?W', desc: 'Week' },
-    { value: 'P?Y', desc: 'Year' }
+    { value: 'PT?H', desc: 'Hours' },
+    { value: 'P?D', desc: 'Days' },
+    { value: 'P?W', desc: 'Weeks' },
+    { value: 'P?Y', desc: 'Years' }
   ];
   timeForm: FormGroup = new FormGroup({});
   _formIntactChecker: FormIntactChecker;
