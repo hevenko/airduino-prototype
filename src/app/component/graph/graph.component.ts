@@ -344,7 +344,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
         this.blockUI.start('Loading...');
       }
     });
-    this.filterModel.sensorFilterChangedBus.subscribe((sensorList: string[]) => {
+    this.filterModel.sensorFilterChangedBus.subscribe((sensorList: string[]) => { // only checked sensors are in the dropdown menu
       clearTimeout(this.sensorSelectionChangedTimeout);
       this.sensorSelectionChangedTimeout = setTimeout(() => {
         this.activeSensors = sensorList.filter(v => {
