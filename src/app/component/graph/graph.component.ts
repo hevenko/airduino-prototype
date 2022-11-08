@@ -14,7 +14,8 @@ import {
   ApexGrid,
   ApexTooltip,
   ApexYAxis,
-  ChartComponent
+  ChartComponent,
+  ApexMarkers
 } from "ng-apexcharts";
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
@@ -31,6 +32,7 @@ export type ChartOptions = {
   stroke: ApexStroke;
   title: ApexTitleSubtitle;
   tooltip: ApexTooltip;
+  markers: ApexMarkers;
 };
 @Component({
   selector: 'app-graph',
@@ -39,10 +41,11 @@ export type ChartOptions = {
 })
 export class GraphComponent implements OnInit, AfterViewInit {
   drillStart = 'Hrvatska';
-  drillPath: string[] = []; 
+  drillPath: string[] = [];
   isLoadingData = true;
   public chartConfig: Partial<ChartOptions>[] = [];
   @ViewChild('panChart') panChart: ChartComponent;
+  @ViewChild('activeChart') activeChart: ChartComponent;
   @ViewChild('graphComponent') graphComponent: any;
   fullHeight = document.body.offsetHeight - 25;
   chartWidthReduction = 30;
@@ -60,14 +63,32 @@ export class GraphComponent implements OnInit, AfterViewInit {
   isBrushTargetChartRendered = false;
   brushScrollPosition: any;
 
-  constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) { 
+  panChartXmin;
+  panChartXmax;
+
+  constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) {
     this.detectPhoneOriendation();
   }
-  
+
   detectPhoneOriendation(): void {
     if (screen.orientation) {
       screen.orientation.addEventListener("change", (event: any)  => {
-          this.phoneIsVertical = event.currentTarget.type === 'portrait-primary';  
+          this.phoneIsVertical = event.currentTarget.type === 'portrait-primary';
+          if (!this.phoneIsVertical) {
+            let  id = this.activeChart.chart.id;
+            this.panChart.updateOptions({
+              chart: {
+                selection: {
+                  xaxis : { // when horizontal show whole graph
+                    min: this.panChartXmin, 
+                    max: this.panChartXmax
+                  }
+                }
+              }
+            })
+            // this.panChartConfig[id].chart.selection.xaxis.min = this.panChartXmin;
+            // this.panChartConfig[id].chart.selection.xaxis.max = this.panChartXmax;
+          }
       }, true);
       this.phoneIsVertical = screen.orientation.type === 'portrait-primary';
     }
@@ -89,23 +110,26 @@ export class GraphComponent implements OnInit, AfterViewInit {
         let diff = this.chartData[config.config.chart.id].data[this.chartData[config.config.chart.id].data.length - 1].x - this.chartData[config.config.chart.id].data[0].x;
         diff = diff/3
         this.panChartConfig[config.config.chart.id].chart.selection.xaxis.min = this.chartData[config.config.chart.id].data[0].x + diff;
-        this.panChartConfig[config.config.chart.id].chart.selection.xaxis.max = this.chartData[config.config.chart.id].data[this.chartData[config.config.chart.id].data.length - 1].x - diff;  
+        this.panChartConfig[config.config.chart.id].chart.selection.xaxis.max = this.chartData[config.config.chart.id].data[this.chartData[config.config.chart.id].data.length - 1].x - diff;
       }
     }
     this.isBrushTargetChartRendered = true;
+    //this.activeChart.resetSeries();
   }
   afterPannChartRendered = (chartContext: any, config?: any) => {
     //this.panChart.render();
     let id = config.config.chart.brush.target;
     if(this.panChartConfig[id]) {
       if (this.brushScrollPosition) {
-        this.panChartConfig[id].chart.selection.xaxis.min = this.brushScrollPosition.xaxis.min;
-        this.panChartConfig[id].chart.selection.xaxis.max = this.brushScrollPosition.xaxis.max;  
+        // this.panChartConfig[id].chart.selection.xaxis.min = this.brushScrollPosition.xaxis.min;
+        // this.panChartConfig[id].chart.selection.xaxis.max = this.brushScrollPosition.xaxis.max;
       }
         //this.panChartConfig[id].chart.brush.enabled = true;
       //this.panChartConfig[id].series = [this.chartData[id]];
-      //this.panChartConfig[id].chart.selection.xaxis.min = this.chartData[id].data[0].x;
-      //this.panChartConfig[id].chart.selection.xaxis.max = this.chartData[id].data[this.chartData[id].data.length - 1].x;
+      // this.panChartConfig[id].chart.selection.xaxis.min = this.chartData[id].data[0].x;
+      // this.panChartConfig[id].chart.selection.xaxis.max = this.chartData[id].data[this.chartData[id].data.length - 1].x;
+      this.panChartXmax = this.chartData[id].data[this.chartData[id].data.length - 1].x;
+      this.panChartXmin = this.chartData[id].data[0].x;
     }
   }
   getChartConfigTemplate(): ChartOptions {
@@ -115,21 +139,12 @@ export class GraphComponent implements OnInit, AfterViewInit {
         height : '100%',
         width : '100%',
         type: "line",
-        zoom: {
-          type: "x",
-          enabled: true,
-          autoScaleYaxis: true
-        },
         events: {
           mounted: null
         },
-        toolbar: {
-          autoSelected: "pan",
-          show: true
-        },
         animations : {enabled: false},
-        redrawOnWindowResize: true,
-        redrawOnParentResize: true
+        redrawOnWindowResize: false,
+        redrawOnParentResize: false,
       },
       dataLabels: {
         enabled: false
@@ -162,8 +177,16 @@ export class GraphComponent implements OnInit, AfterViewInit {
           show: false,
           format: 'dd.MM.yyyy HH:mm:ss'
         }
+      },
+      markers: {
+        size: 4,
+        radius: 2,
+        colors: ['red'],
+        strokeColors: 'red',
+        fillOpacity: 10,
+        shape: 'circle',
+        strokeWidth: 10
       }
-
     };
     return configTemplate;
   }
@@ -184,21 +207,21 @@ export class GraphComponent implements OnInit, AfterViewInit {
           type: "line",
           brush: {
             target: "",
-            enabled: true
+            enabled: false // see line 86
           },
           selection: {
             enabled: true,
             xaxis: {
               min: 0,
               max: 0
-            }  
+            }
           },
           events: {
             mounted: null
           },
           toolbar: {
             show: false
-          }  
+          }
         },
         colors: ["#008FFB"],
         dataLabels: {
@@ -222,6 +245,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
       //chartForPaning.series = [];
       //chartForPaning.chart.brush.target = parentChartName;
       chartConfig.chart.brush.enabled = false;
+      chartConfig.chart.brush.target = parentChartName;
       chartConfig.chart.events.beforeMount = this.afterPannChartRendered;
       chartConfig.chart.events.brushScrolled = this.rememberBrushScrollPosition;
       this.panChartConfig[parentChartName] = chartConfig;
@@ -237,7 +261,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
         result.title.text = chartId;
         this.chartConfig[chartId] = result;
     } else {
-      result = this.chartConfig[chartId];  
+      result = this.chartConfig[chartId];
     }
     return result;
   }
@@ -274,7 +298,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
   }
   ngAfterViewInit(): void {
   }
-  getColor(sensorName: string): string { 
+  getColor(sensorName: string): string {
     let result = '';
     let colors = ['rgb(0, 0, 102)', //used every trid color from color palete. started at top right corner (https://www.w3schools.com/colors/colors_picker.asp)
                 'rgb(0, 0, 153)',
@@ -311,7 +335,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
           this.originalChartData = [];
           this.seriesLabels = d && d.length > 0 ? Object.keys(d[0]) : []; //using first row to extract sensor names (used to name data series and set chart id's )
           this.seriesLabels = this.seriesLabels.filter(v => {return v != 'measured' && v != 'gps'})
-          
+
           let getDataSetForSensor = (sensorName: string): DataSet  => { //returns new/existing data set for sensor name
             let result;
             let existingDs = this.originalChartData.filter(ds => {
@@ -326,7 +350,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
             }
             return result;
           }
-          
+
           d.forEach((row: RawData) => {
             this.seriesLabels.forEach(sensorName => {
               if('measured' !== sensorName && 'gps' !== sensorName) {
@@ -335,7 +359,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
               }
             });
           });
-          
+
           console.log(this.originalChartData);
           this.initCharts(this.filterChartSensorData(this.getSensorList().map(v => {return v.sensor}))); // fixed sensor list ensures chart population after navigation
           this.blockUI.stop();
@@ -363,10 +387,10 @@ export class GraphComponent implements OnInit, AfterViewInit {
     })
   }
   getSensorDetails(s:string) {
-    return SensorComponent.sensorList.filter(v =>{return v.sensor === s;})[0];    
+    return SensorComponent.sensorList.filter(v =>{return v.sensor === s;})[0];
   }
   getSensorList() {
     return SensorComponent.sensorList;
   }
- 
+
 }

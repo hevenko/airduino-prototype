@@ -11,7 +11,7 @@
         </select>
     </form>
     <ng-container *ngFor="let d of getSensorList(); let i = index">
-        <apx-chart [style.height.%]="phoneIsVertical ? 70 : 100" style="margin:0px" *ngIf="renderChart(d.sensor)" [tooltip]="getChartConfig(d.sensor)?.tooltip"
+        <apx-chart #activeChart [style.height.%]="phoneIsVertical ? 70 : 100" style="margin:0px" *ngIf="renderChart(d.sensor)" [tooltip]="getChartConfig(d.sensor)?.tooltip"
           [series]="getChartConfig(d.sensor)?.series" [chart]="getChartConfig(d.sensor)?.chart"
           [xaxis]="getChartConfig(d.sensor)?.xaxis" [dataLabels]="getChartConfig(d.sensor)?.dataLabels"
           [grid]="getChartConfig(d.sensor)?.grid" [stroke]="getChartConfig(d.sensor)?.stroke"></apx-chart>
