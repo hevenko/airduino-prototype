@@ -143,8 +143,8 @@ export class GraphComponent implements OnInit, AfterViewInit {
           mounted: null
         },
         animations : {enabled: false},
-        redrawOnWindowResize: false,
-        redrawOnParentResize: false,
+        redrawOnWindowResize: true, // remove this and you bad display on iPhone in horizontal mode
+        redrawOnParentResize: true, // remove this and you bad display on iPhone in horizontal mode
       },
       dataLabels: {
         enabled: false
