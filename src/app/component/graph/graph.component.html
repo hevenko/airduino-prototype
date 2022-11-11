@@ -1,4 +1,5 @@
 <block-ui>
+  <div [style.height.px]="windowHeight-150" [style.width.px]="windowWidth">
   <div #graphComponent style="display: flex; flex-direction: column; width: 100%; height:100%;">
     <form [formGroup]="compForm" style="margin: 0px">
         <select formControlName="showChartSelect" style="margin-top: 10px;margin-left: 15px;" (change)="selectChartOnChange($event)">
@@ -22,4 +23,5 @@
           [yaxis]="getPanChart(d.sensor).yaxis"></apx-chart>
     </ng-container>
   </div>
+</div>
 </block-ui>

@@ -66,6 +66,9 @@ export class GraphComponent implements OnInit, AfterViewInit {
   panChartXmin;
   panChartXmax;
 
+  windowHeight;
+  windowWidth;
+
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) {
     this.phoneOriendationChanged();    
   }
@@ -79,6 +82,8 @@ export class GraphComponent implements OnInit, AfterViewInit {
     this.phoneOriendationChanged();
   }
   phoneOriendationChanged = () => {
+    this.windowHeight = window.innerHeight;
+    this.windowWidth = window.innerWidth;
     this.phoneIsVertical = window.innerHeight > window.innerWidth;
     console.log('isVertical:'+this.phoneIsVertical);
     if (!this.phoneIsVertical) {
