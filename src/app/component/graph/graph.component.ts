@@ -1,5 +1,5 @@
 import { DataSource } from '@angular/cdk/collections';
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { RawData } from 'src/app/model/raw-data';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
 import { DataSet } from './data-set';
@@ -67,34 +67,34 @@ export class GraphComponent implements OnInit, AfterViewInit {
   panChartXmax;
 
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) {
-    this.detectPhoneOriendation();
+    this.phoneOriendationChanged();    
   }
-
-  detectPhoneOriendation(): void {
-    let orientation = (screen.orientation || {}).type; //|| screen.mozOrientation || screen.msOrientation;
-    if (orientation) {
-      screen.orientation.onchange = (event: any)  => {
-          console.log('orientation:' + event.currentTarget.type);
-          this.phoneIsVertical = event.currentTarget.type === 'portrait-primary';
-          if (!this.phoneIsVertical) {
-            let  id = this.activeChart.chart.id;
-            this.panChart.updateOptions({
-              chart: {
-                selection: {
-                  xaxis : { // when horizontal show whole graph
-                    min: this.panChartXmin, 
-                    max: this.panChartXmax
-                  }
-                }
-              }
-            });
-            // this.panChartConfig[id].chart.selection.xaxis.min = this.panChartXmin;
-            // this.panChartConfig[id].chart.selection.xaxis.max = this.panChartXmax;
+  
+  // reportWindowSize() {
+  //   console.log('innerHeight: ' + window.innerHeight + ', outerHeight: ' + window.outerHeight);
+  //   console.log('innerWidth: ' + window.innerWidth + ', outerWidth: ' + window.outerWidth);
+  // }
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    this.phoneOriendationChanged();
+  }
+  phoneOriendationChanged = () => {
+    this.phoneIsVertical = window.innerHeight > window.innerWidth;
+    console.log('isVertical:'+this.phoneIsVertical);
+    if (!this.phoneIsVertical) {
+      let id = this.activeChart?.chart.id;
+      this.panChart?.updateOptions({
+        chart: {
+          selection: {
+            xaxis: { // when horizontal show whole graph
+              min: this.panChartXmin,
+              max: this.panChartXmax
+            }
           }
-      };
-      this.phoneIsVertical = screen.orientation.type === 'portrait-primary';
+        }
+      });
     }
-  }
+  };
   renderChart(chartName: string) {
     return this.activeSensors.indexOf(chartName) !== -1 && this.compForm.value['showChartSelect'] === chartName;
   }
