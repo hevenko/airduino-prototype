@@ -71,9 +71,10 @@ export class GraphComponent implements OnInit, AfterViewInit {
   }
 
   detectPhoneOriendation(): void {
-    if (screen.orientation) {
-      screen.orientation.addEventListener("change", (event: any)  => {
-          this.phoneIsVertical = event.currentTarget.type === 'portrait-primary';
+    let orientation = (screen.orientation || {}).type; //|| screen.mozOrientation || screen.msOrientation;
+    if (orientation) {
+      window.onorientationchange = (event: any)  => {
+          this.phoneIsVertical = window.orientation !== 90;
           if (!this.phoneIsVertical) {
             let  id = this.activeChart.chart.id;
             this.panChart.updateOptions({
@@ -89,7 +90,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
             // this.panChartConfig[id].chart.selection.xaxis.min = this.panChartXmin;
             // this.panChartConfig[id].chart.selection.xaxis.max = this.panChartXmax;
           }
-      }, true);
+      };
       this.phoneIsVertical = screen.orientation.type === 'portrait-primary';
     }
   }
