@@ -1,6 +1,6 @@
 <block-ui>
-  <div [style.height.px]="phoneIsVertical ? windowHeight-175 : windowHeight-175" [style.width.px]="windowWidth">
-  <div #graphComponent style="display: flex; flex-direction: column; width: 100%; height:100%;">
+  <!-- <div [style.height.px]="phoneIsVertical ? windowHeight-175 : 100" [style.width.px]="windowWidth"> -->
+  <div #graphComponent style="display: flex; flex-direction: column; width: 100%;">
     <form [formGroup]="compForm" style="margin: 0px">
         <select formControlName="showChartSelect" style="margin-top: 10px;margin-left: 15px;" (change)="selectChartOnChange($event)">
           <option value="" disabled>Select a graph...</option>
@@ -12,16 +12,16 @@
         </select>
     </form>
     <ng-container *ngFor="let d of getSensorList(); let i = index">
-        <apx-chart #activeChart [style.height.%]="phoneIsVertical ? 70 : 100" style="margin:0px" *ngIf="renderChart(d.sensor)" [tooltip]="getChartConfig(d.sensor)?.tooltip"
+        <apx-chart #activeChart style="margin-bottom:0px" *ngIf="renderChart(d.sensor)" [tooltip]="getChartConfig(d.sensor)?.tooltip" 
           [series]="getChartConfig(d.sensor)?.series" [chart]="getChartConfig(d.sensor)?.chart"
           [xaxis]="getChartConfig(d.sensor)?.xaxis" [dataLabels]="getChartConfig(d.sensor)?.dataLabels"
           [grid]="getChartConfig(d.sensor)?.grid" [stroke]="getChartConfig(d.sensor)?.stroke"></apx-chart>
         
-        <apx-chart  #panChart style="height:30%;margin:0px" *ngIf="phoneIsVertical && renderChart(d.sensor) && isBrushTargetChartRendered" [series]="getPanChart(d.sensor).series"
+        <apx-chart  #panChart style="height:30%;margin:0px" *ngIf="false && phoneIsVertical && renderChart(d.sensor) && isBrushTargetChartRendered" [series]="getPanChart(d.sensor).series"
           [chart]="getPanChart(d.sensor).chart" [xaxis]="getPanChart(d.sensor).xaxis"
           [colors]="getPanChart(d.sensor).colors" [fill]="getPanChart(d.sensor).fill"
           [yaxis]="getPanChart(d.sensor).yaxis"></apx-chart>
     </ng-container>
-  </div>
+  <!-- </div> -->
 </div>
 </block-ui>

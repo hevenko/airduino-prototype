@@ -46,7 +46,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
   public chartConfig: Partial<ChartOptions>[] = [];
   @ViewChild('panChart') panChart: ChartComponent;
   @ViewChild('activeChart') activeChart: ChartComponent;
-  @ViewChild('graphComponent') graphComponent: any;
+  // @ViewChild('graphComponent') graphComponent: any;
   fullHeight = document.body.offsetHeight - 25;
   chartWidthReduction = 30;
   @BlockUI() blockUI: NgBlockUI;
@@ -86,6 +86,11 @@ export class GraphComponent implements OnInit, AfterViewInit {
     this.windowWidth = window.innerWidth;
     this.phoneIsVertical = window.innerHeight > window.innerWidth;
     console.log('isVertical:'+this.phoneIsVertical);
+    this.activeChart?.updateOptions({
+      chart: {
+        height : window.innerHeight - 100
+      }
+    });
     if (!this.phoneIsVertical) {
       let id = this.activeChart?.chart.id;
       this.panChart?.updateOptions({
@@ -143,7 +148,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
     let configTemplate: ChartOptions  = {
       series: [],
       chart: {
-        height : '100%',
+        height : '510px',
         width : '100%',
         type: "line",
         events: {
