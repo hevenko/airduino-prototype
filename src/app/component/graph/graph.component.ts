@@ -70,6 +70,8 @@ export class GraphComponent implements OnInit, AfterViewInit {
   windowHeight;
   windowWidth;
 
+  delayOrientationChange: any;
+
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel, private componenetElem: ElementRef) {
     this.phoneIsVertical = window.innerHeight > window.innerWidth;
     this.windowHeight = window.innerHeight;
@@ -81,7 +83,11 @@ export class GraphComponent implements OnInit, AfterViewInit {
   // }
   @HostListener('window:resize', ['$event'])
   onResize(event) {
-    this.phoneOriendationChanged();
+    if(this.delayOrientationChange) {
+      clearTimeout(this.delayOrientationChange);
+    }
+    this.delayOrientationChange = setTimeout(this.phoneOriendationChanged, 500);
+    
   }
   phoneOriendationChanged = () => {
     //this.windowHeight = window.innerHeight;
