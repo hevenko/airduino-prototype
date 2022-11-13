@@ -1,5 +1,5 @@
 import { DataSource } from '@angular/cdk/collections';
-import { AfterViewInit, Component, HostListener, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { RawData } from 'src/app/model/raw-data';
 import { DataStorageService } from 'src/app/shared/service/data-storage.service';
 import { DataSet } from './data-set';
@@ -21,6 +21,7 @@ import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { SensorComponent } from '../filter/sensor-filter/sensor.component';
 import { FilterModel } from 'src/app/model/filter-model';
+import { convertCompilerOptionsFromJson } from 'typescript';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -69,8 +70,8 @@ export class GraphComponent implements OnInit, AfterViewInit {
   windowHeight;
   windowWidth;
 
-  constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel) {
-    this.phoneOriendationChanged();    
+  constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel, private componenetElem: ElementRef) {
+    console.log(componenetElem.nativeElement);
   }
   
   // reportWindowSize() {
@@ -82,15 +83,10 @@ export class GraphComponent implements OnInit, AfterViewInit {
     this.phoneOriendationChanged();
   }
   phoneOriendationChanged = () => {
-    this.windowHeight = window.innerHeight;
+    //this.windowHeight = window.innerHeight;
     this.windowWidth = window.innerWidth;
     this.phoneIsVertical = window.innerHeight > window.innerWidth;
     console.log('isVertical:'+this.phoneIsVertical);
-    this.activeChart?.updateOptions({
-      chart: {
-        height : window.innerHeight - 100
-      }
-    });
     if (!this.phoneIsVertical) {
       let id = this.activeChart?.chart.id;
       this.panChart?.updateOptions({
@@ -104,7 +100,12 @@ export class GraphComponent implements OnInit, AfterViewInit {
         }
       });
     }
-  };
+    this.activeChart?.updateOptions({
+      chart: {
+        height : this.getChartHeight()
+      }
+    });  
+};
   renderChart(chartName: string) {
     return this.activeSensors.indexOf(chartName) !== -1 && this.compForm.value['showChartSelect'] === chartName;
   }
@@ -127,6 +128,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
     }
     this.isBrushTargetChartRendered = true;
     //this.activeChart.resetSeries();
+    
   }
   afterPannChartRendered = (chartContext: any, config?: any) => {
     //this.panChart.render();
@@ -148,7 +150,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
     let configTemplate: ChartOptions  = {
       series: [],
       chart: {
-        height : '510px',
+        height : this.windowHeight,
         width : '100%',
         type: "line",
         events: {
@@ -308,7 +310,18 @@ export class GraphComponent implements OnInit, AfterViewInit {
       this.compForm.get('showChartSelect').setValue(this.activeSensors[0]);
     }
   }
+  getChartHeight(): number {
+    let height = this.componenetElem.nativeElement.getBoundingClientRect().height - 30;
+    console.log('toolbar height:' +   window.document.getElementById('matToolBar').getBoundingClientRect().height);
+    console.log('graf height:' + this.componenetElem.nativeElement.getBoundingClientRect().height);
+    console.log('graf height calc:' + (window.innerHeight - window.document.getElementById('matToolBar').getBoundingClientRect().height));
+    console.log('chart height:' + height);
+    // return height;
+    return window.innerHeight - window.document.getElementById('matToolBar').getBoundingClientRect().height - 30;
+  }
   ngAfterViewInit(): void {
+    console.log(this.componenetElem.nativeElement.getBoundingClientRect());
+    this.windowHeight = this.getChartHeight();
   }
   getColor(sensorName: string): string {
     let result = '';
@@ -376,6 +389,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
           this.initCharts(this.filterChartSensorData(this.getSensorList().map(v => {return v.sensor}))); // fixed sensor list ensures chart population after navigation
           this.blockUI.stop();
         })
+        this.phoneOriendationChanged();
       } else {
         this.blockUI.start('Loading...');
       }
@@ -392,6 +406,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
     this.compForm = new FormGroup({
       showChartSelect: new FormControl('')
     })
+    
   }
   filterChartSensorData(sensorNames: string[]): DataSet[] {
     return this.originalChartData.filter((v:DataSet) => {
