@@ -99,10 +99,17 @@ export class GraphComponent implements OnInit, AfterViewInit {
           }
         }
       });
+    } else {
+      this.panChart?.updateOptions({
+        chart: {
+          height: this.getChartHeight()*0.3
+        }
+      });
+
     }
     this.activeChart?.updateOptions({
       chart: {
-        height : this.getChartHeight()
+        height : this.getChartHeight()*(this.phoneIsVertical ? 0.7 : 1)
       }
     });  
 };
@@ -311,13 +318,10 @@ export class GraphComponent implements OnInit, AfterViewInit {
     }
   }
   getChartHeight(): number {
-    let height = this.componenetElem.nativeElement.getBoundingClientRect().height - 30;
-    console.log('toolbar height:' +   window.document.getElementById('matToolBar').getBoundingClientRect().height);
-    console.log('graf height:' + this.componenetElem.nativeElement.getBoundingClientRect().height);
-    console.log('graf height calc:' + (window.innerHeight - window.document.getElementById('matToolBar').getBoundingClientRect().height));
-    console.log('chart height:' + height);
-    // return height;
-    return window.innerHeight - window.document.getElementById('matToolBar').getBoundingClientRect().height - 30;
+    let windowHeight = window.innerHeight;
+    let toolbarHeight = window.document.getElementById('matToolBar').getBoundingClientRect().height;
+    let selectGraphMenuHeight = window.document.getElementById('selectGraphMenu').getBoundingClientRect().height;
+    return  windowHeight - toolbarHeight - selectGraphMenuHeight - 10;
   }
   ngAfterViewInit(): void {
     console.log(this.componenetElem.nativeElement.getBoundingClientRect());
