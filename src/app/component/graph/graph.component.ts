@@ -61,7 +61,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
 
   phoneIsVertical = true;
   public panChartConfig: Partial<ChartOptions>[] = []; //for panning
-  isBrushTargetChartRendered = false;
+  isBrushTargetChartRendered = true;
   brushScrollPosition: any;
 
   panChartXmin;
@@ -71,7 +71,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
   windowWidth;
 
   constructor(private dataStorageService: DataStorageService, private filterModel: FilterModel, private componenetElem: ElementRef) {
-    console.log(componenetElem.nativeElement);
+    
   }
   
   // reportWindowSize() {
@@ -87,29 +87,10 @@ export class GraphComponent implements OnInit, AfterViewInit {
     this.windowWidth = window.innerWidth;
     this.phoneIsVertical = window.innerHeight > window.innerWidth;
     console.log('isVertical:'+this.phoneIsVertical);
-    if (!this.phoneIsVertical) {
-      let id = this.activeChart?.chart.id;
-      this.panChart?.updateOptions({
-        chart: {
-          selection: {
-            xaxis: { // when horizontal show whole graph
-              min: this.panChartXmin,
-              max: this.panChartXmax
-            }
-          }
-        }
-      });
-    } else {
-      this.panChart?.updateOptions({
-        chart: {
-          height: this.getChartHeight()*0.3
-        }
-      });
-
-    }
-    this.activeChart?.updateOptions({
+    this.windowHeight = this.getChartHeight();
+    this.activeChart.updateOptions({
       chart: {
-        height : this.getChartHeight()*(this.phoneIsVertical ? 0.7 : 1)
+        height : this.windowHeight*(this.phoneIsVertical ? 0.8 : 1)
       }
     });  
 };
@@ -117,7 +98,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
     return this.activeSensors.indexOf(chartName) !== -1 && this.compForm.value['showChartSelect'] === chartName;
   }
   selectChartOnChange(e: any): void {
-    this.isBrushTargetChartRendered = false;
+    //this.isBrushTargetChartRendered = false;
     GraphComponent.selectecChartName = e.target.value;
   }
   afterChartRendered = (chartContext: any, config?: any) => {
@@ -133,11 +114,11 @@ export class GraphComponent implements OnInit, AfterViewInit {
         this.panChartConfig[config.config.chart.id].chart.selection.xaxis.max = this.chartData[config.config.chart.id].data[this.chartData[config.config.chart.id].data.length - 1].x - diff;
       }
     }
-    this.isBrushTargetChartRendered = true;
+    //this.isBrushTargetChartRendered = true;
     //this.activeChart.resetSeries();
-    
+    //this.phoneOriendationChanged();
   }
-  afterPannChartRendered = (chartContext: any, config?: any) => {
+  beforePannChartRendered = (chartContext: any, config?: any) => {
     //this.panChart.render();
     let id = config.config.chart.brush.target;
     if(this.panChartConfig[id]) {
@@ -149,8 +130,8 @@ export class GraphComponent implements OnInit, AfterViewInit {
       //this.panChartConfig[id].series = [this.chartData[id]];
       // this.panChartConfig[id].chart.selection.xaxis.min = this.chartData[id].data[0].x;
       // this.panChartConfig[id].chart.selection.xaxis.max = this.chartData[id].data[this.chartData[id].data.length - 1].x;
-      this.panChartXmax = this.chartData[id].data[this.chartData[id].data.length - 1].x;
-      this.panChartXmin = this.chartData[id].data[0].x;
+      this.panChartXmax = this.chartData[id]?.data[this.chartData[id].data.length - 1].x;
+      this.panChartXmin = this.chartData[id]?.data[0].x;
     }
   }
   getChartConfigTemplate(): ChartOptions {
@@ -228,13 +209,13 @@ export class GraphComponent implements OnInit, AfterViewInit {
           type: "line",
           brush: {
             target: "",
-            enabled: false // see line 86
+            enabled: true // see line 86
           },
           selection: {
             enabled: true,
             xaxis: {
               min: 0,
-              max: 0
+              max: 20
             }
           },
           events: {
@@ -267,7 +248,31 @@ export class GraphComponent implements OnInit, AfterViewInit {
       //chartForPaning.chart.brush.target = parentChartName;
       chartConfig.chart.brush.enabled = false;
       chartConfig.chart.brush.target = parentChartName;
-      chartConfig.chart.events.beforeMount = this.afterPannChartRendered;
+      chartConfig.chart.events.beforeMount = this.beforePannChartRendered;
+      chartConfig.chart.events.mounted = () => {
+        if (!this.phoneIsVertical) {
+          let id = this.activeChart?.chart.id;
+          this.panChart.updateOptions({
+            chart: {
+              height: 0,
+              selection: {
+                xaxis: { // when horizontal show whole graph
+                  min: this.panChartXmin,
+                  max: this.panChartXmax
+                }
+              }
+            }
+          });
+        } else {
+          this.panChart?.updateOptions({
+            chart: {          
+              height: this.windowHeight*0.2,
+            }
+          });
+    
+        }
+    
+      }
       chartConfig.chart.events.brushScrolled = this.rememberBrushScrollPosition;
       this.panChartConfig[parentChartName] = chartConfig;
       result = chartConfig;
@@ -298,7 +303,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
     }
     this.chartConfig = [];
     this.panChartConfig = [];
-    this.isBrushTargetChartRendered = false;
+    //this.isBrushTargetChartRendered = false;
     data.forEach((element: any, i:number) => {
       this.chartConfig[element.name] = JSON.parse(JSON.stringify(this.getChartConfigTemplate()));
       this.chartConfig[element.name].chart.id = element.name;
@@ -393,7 +398,6 @@ export class GraphComponent implements OnInit, AfterViewInit {
           this.initCharts(this.filterChartSensorData(this.getSensorList().map(v => {return v.sensor}))); // fixed sensor list ensures chart population after navigation
           this.blockUI.stop();
         })
-        this.phoneOriendationChanged();
       } else {
         this.blockUI.start('Loading...');
       }
