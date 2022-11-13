@@ -91,9 +91,23 @@ export class GraphComponent implements OnInit, AfterViewInit {
     this.windowHeight = this.getChartHeight();
     this.activeChart.updateOptions({
       chart: {
-        height : this.windowHeight*(this.phoneIsVertical ? 0.8 : 1)
+        height : this.phoneIsVertical ? this.windowHeight*0.8 : this.windowHeight - 10
       }
     });
+    if (!this.phoneIsVertical) {
+      let id = this.activeChart?.chart.id;
+      this.panChart?.updateOptions({
+        chart: {
+          selection: {
+            xaxis: { // when phone is horizontal extend pan graph to full and show whole main graph
+              min: this.activeSensorXAxisMin(id),
+              max: this.activeSensorXAxisMax(id)
+            }
+          }
+        }
+      });
+    }
+
   };
   renderChart(chartName: string) {
     return this.activeSensors.indexOf(chartName) !== -1 && this.compForm.value['showChartSelect'] === chartName;
@@ -123,6 +137,12 @@ export class GraphComponent implements OnInit, AfterViewInit {
     //this.activeChart.resetSeries();
     this.phoneOriendationChanged();
   }
+  activeSensorXAxisMin(sensorName: string): number {
+    return this.chartData[sensorName]?.data[0].x
+  }
+  activeSensorXAxisMax(sensorName): number  {
+    return this.chartData[sensorName]?.data[this.chartData[sensorName].data.length - 1].x;
+  }
   beforePannChartRendered = (chartContext: any, config?: any) => {
     //this.panChart.render();
     let id = config.config.chart.brush.target;
@@ -133,8 +153,11 @@ export class GraphComponent implements OnInit, AfterViewInit {
       }
         //this.panChartConfig[id].chart.brush.enabled = true;
       //this.panChartConfig[id].series = [this.chartData[id]];
-      this.panChartConfig[id].chart.selection.xaxis.min = this.chartData[id]?.data[0].x;
-      this.panChartConfig[id].chart.selection.xaxis.max = this.chartData[id]?.data[this.chartData[id].data.length - 1].x;
+      let xMin = this.activeSensorXAxisMin(id);
+      let xMax = this.activeSensorXAxisMax(id);
+      let xDiff = (xMax - xMin)/3 
+      this.panChartConfig[id].chart.selection.xaxis.min = xMin + xDiff;
+      this.panChartConfig[id].chart.selection.xaxis.max = xMax - xDiff;
       this.panChartConfig[id].chart.height = this.windowHeight*0.2
       // this.panChartXmax = this.chartData[id]?.data[this.chartData[id].data.length - 1].x;
       // this.panChartXmin = this.chartData[id]?.data[0].x;
