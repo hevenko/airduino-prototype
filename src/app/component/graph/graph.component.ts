@@ -87,11 +87,12 @@ export class GraphComponent implements OnInit, AfterViewInit {
     //this.windowHeight = window.innerHeight;
     this.windowWidth = window.innerWidth;
     this.phoneIsVertical = window.innerHeight > window.innerWidth;
-    console.log('isVertical:'+this.phoneIsVertical);
+    console.log('isVerticalInner:'+this.phoneIsVertical + 'innerHeight:' + window.innerHeight + 'innerWidth:' + window.innerWidth);
+    console.log('isVerticalOuter:'+(window.outerHeight > window.outerWidth) + 'outerHeight:' + window.outerHeight + 'innerWidth:' + window.outerWidth);
     this.windowHeight = this.getChartHeight();
     this.activeChart.updateOptions({
       chart: {
-        height : this.phoneIsVertical ? this.windowHeight*0.8 : this.windowHeight - 10
+        height : this.phoneIsVertical ? this.windowHeight*0.8 : this.windowHeight - 15
       }
     });
     if (!this.phoneIsVertical) {
