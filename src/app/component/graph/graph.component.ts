@@ -86,7 +86,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
     if(this.delayOrientationChange) {
       clearTimeout(this.delayOrientationChange);
     }
-    this.delayOrientationChange = setTimeout(this.phoneOriendationChanged, 500);
+    this.delayOrientationChange = setTimeout(this.phoneOriendationChanged, 100);
     
   }
   phoneOriendationChanged = () => {
