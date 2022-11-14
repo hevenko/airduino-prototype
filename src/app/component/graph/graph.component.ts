@@ -165,7 +165,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
     //this.panChart.render();
     let id = config.config.chart.brush.target;
     if(this.panChartConfig[id]) {
-      //min and max are start and and of series of active graph or stored values of a pan graph (smaller one)
+      //min and max are start and and of series of active graph or stored values of a pan graph (the smaller one)
       let xMin = this.activeSensorXAxisMin(id); 
       let xMax = this.activeSensorXAxisMax(id);
       if(this.brushScrollPositionStored(id)) {
@@ -192,8 +192,8 @@ export class GraphComponent implements OnInit, AfterViewInit {
           mounted: null
         },
         animations : {enabled: false},
-        redrawOnWindowResize: true, // remove this and you bad display on iPhone in horizontal mode
-        redrawOnParentResize: true, // remove this and you bad display on iPhone in horizontal mode
+        redrawOnWindowResize: true, // remove this and you get bad display on iPhone in horizontal mode
+        redrawOnParentResize: true, // remove this and you get bad display on iPhone in horizontal mode
       },
       dataLabels: {
         enabled: false
