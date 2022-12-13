@@ -35,7 +35,7 @@
     "bootstrap": "^3.4.1",
     "chart.js": "^2.9.3",
     "date-fns": "^2.16.1",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "jquery": "^3.5.1",
     "ng-apexcharts": "^1.5.8",
     "ng-block-ui": "^3.0.2",
