@@ -402,7 +402,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
           if(!d) d = [];
           console.log(d);
           this.originalChartData = [];
-          this.seriesLabels = d && d.length > 0 ? Object.keys(d[0]) : []; //using first row to extract sensor names (used to name data series and set chart id's )
+          this.seriesLabels = d && d.length > 0 && d[0] ? Object.keys(d[0]) : []; //using first row to extract sensor names (used to name data series and set chart id's )
           this.seriesLabels = this.seriesLabels.filter(v => {return v != 'measured' && v != 'gps'})
 
           let getDataSetForSensor = (sensorName: string): DataSet  => { //returns new/existing data set for sensor name
